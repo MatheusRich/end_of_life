@@ -24,6 +24,31 @@ Or install it yourself as:
 
 TODO: Write usage instructions here
 
+### As a CLI
+
+```sh
+$ GITHUB_TOKEN=something eol_ruby
+REPO                 RUBY_VERSION
+playground           2.0.0
+rails_demo           2.5.1
+my_org/shiny_thing   2.2.2
+
+$ GITHUB_TOKEN=something eol_ruby --exclude=rails_demo,shiny_thing
+REPO          RUBY_VERSION
+playground    2.0.0
+
+$ GITHUB_TOKEN=something eol_ruby --exclude=my_org
+REPO          RUBY_VERSION
+playground    2.0.0
+rails_demo    2.5.1
+```
+
+### As a library
+
+```sh
+EolRuby.
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
