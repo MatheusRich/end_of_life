@@ -6,7 +6,7 @@ module EolRuby
 
       response.items.map do |repo|
         Repository.new(
-          full_name: repo.full_name,
+          full_name: repo.full_name
         )
       end
     end
@@ -18,7 +18,7 @@ module EolRuby
     end
 
     def eol_ruby?
-      ruby_version && ruby_version.eol?
+      !!ruby_version&.eol?
     end
 
     def ruby_version
