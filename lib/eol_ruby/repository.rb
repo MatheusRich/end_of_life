@@ -1,13 +1,28 @@
 module EolRuby
   class Repository
-    def self.fetch(language:, user:)
-      response = GITHUB.search_repositories("user:#{user} language:#{language}", per_page: 100)
-      warn "Incomplete results" if response.incomplete_results
+    class << self
+      def fetch(language:, user: nil)
+        user ||= github.user.login
+        response = github.search_repositories("user:#{user} language:#{language}", per_page: 100)
+        warn "Incomplete results" if response.incomplete_results
 
-      response.items.map do |repo|
-        Repository.new(
-          full_name: repo.full_name
-        )
+        response.items.map do |repo|
+          Repository.new(full_name: repo.full_name)
+        end
+      end
+
+      def github
+        @github ||= github_client
+      end
+
+      private
+
+      def github_client
+        github_access_token = ENV.fetch("GITHUB_TOKEN") do
+          EolRuby.exit_with "Please set GITHUB_TOKEN environment variable"
+        end
+
+        Octokit::Client.new(access_token: github_access_token)
       end
     end
 
@@ -30,8 +45,12 @@ module EolRuby
 
     private
 
+    def github
+      self.class.github
+    end
+
     def fetch_file(file_path)
-      GITHUB.contents(full_name, path: file_path)
+      github.contents(full_name, path: file_path)
     rescue Octokit::NotFound
       nil
     end

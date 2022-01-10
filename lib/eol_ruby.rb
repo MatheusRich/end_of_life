@@ -12,21 +12,19 @@ module EolRuby
     exit(code)
   end
 
-  GITHUB = begin
-    Octokit::Client.new(access_token: ENV.fetch("GITHUB_TOKEN") { exit_with "Please set GITHUB_TOKEN environment variable" })
-  rescue => e
-    exit_with "Unexpected error: #{e}"
-  end
-
   class CLI
     def call(argv)
       Repository
-        .fetch(language: "ruby", user: GITHUB.user.login)
+        .fetch(language: "ruby", user: nil)
         .filter { |repo| repo.eol_ruby? }
-        .then { |repos| diagnose_for(repos) }
+        .then { |repos| print_diagnose_for(repos) }
+    rescue => e
+      EolRuby.exit_with "Unexpected error: #{e}"
     end
 
-    def diagnose_for(repos)
+    private
+
+    def print_diagnose_for(repos)
       return if repos.empty?
 
       puts
