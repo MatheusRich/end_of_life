@@ -7,7 +7,10 @@ module EolRuby
         warn "Incomplete results" if response.incomplete_results
 
         response.items.map do |repo|
-          Repository.new(full_name: repo.full_name)
+          Repository.new(
+            full_name: repo.full_name,
+            url: repo.html_url
+          )
         end
       end
 
@@ -19,17 +22,18 @@ module EolRuby
 
       def github_client
         github_access_token = ENV.fetch("GITHUB_TOKEN") do
-          EolRuby.exit_with "Please set GITHUB_TOKEN environment variable"
+          EolRuby.exit_with_error! "Please set GITHUB_TOKEN environment variable"
         end
 
         Octokit::Client.new(access_token: github_access_token)
       end
     end
 
-    attr :full_name
+    attr :full_name, :url
 
-    def initialize(full_name:)
+    def initialize(full_name:, url:)
       @full_name = full_name
+      @url = url
     end
 
     def eol_ruby?
@@ -37,10 +41,16 @@ module EolRuby
     end
 
     def ruby_version
-      ruby_version_files = [fetch_file(".ruby-version")].compact
-      return if ruby_version_files.empty?
+      return @ruby_version if defined?(@ruby_version)
 
-      ruby_version_files.map { |file| parse_version_file(file) }.min
+      @ruby_version = begin
+        ruby_version_files = [
+          fetch_file(".ruby-version")
+        ].compact
+        return if ruby_version_files.empty?
+
+        ruby_version_files.map { |file| parse_version_file(file) }.min
+      end
     end
 
     private

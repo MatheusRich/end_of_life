@@ -3,6 +3,11 @@ PATH
   specs:
     eol_ruby (0.1.0)
       octokit (~> 4.0)
+      pastel
+      tty-link
+      tty-spinner
+      tty-table
+      warning
 
 GEM
   remote: https://rubygems.org/
@@ -41,6 +46,8 @@ GEM
     parallel (1.21.0)
     parser (3.1.0.0)
       ast (~> 2.4.1)
+    pastel (0.8.0)
+      tty-color (~> 0.5)
     public_suffix (4.0.6)
     rainbow (3.0.0)
     rake (13.0.6)
@@ -81,7 +88,24 @@ GEM
     standard (1.6.0)
       rubocop (= 1.24.1)
       rubocop-performance (= 1.13.1)
+    strings (0.2.1)
+      strings-ansi (~> 0.2)
+      unicode-display_width (>= 1.5, < 3.0)
+      unicode_utils (~> 1.4)
+    strings-ansi (0.2.0)
+    tty-color (0.6.0)
+    tty-cursor (0.7.1)
+    tty-link (0.1.1)
+    tty-screen (0.8.1)
+    tty-spinner (0.9.3)
+      tty-cursor (~> 0.7)
+    tty-table (0.12.0)
+      pastel (~> 0.8)
+      strings (~> 0.2.0)
+      tty-screen (~> 0.8)
     unicode-display_width (2.1.0)
+    unicode_utils (1.4.0)
+    warning (1.2.1)
 
 PLATFORMS
   x86_64-darwin-20
