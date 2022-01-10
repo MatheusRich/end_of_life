@@ -23,11 +23,9 @@ module EolRuby
 
     def ruby_version
       ruby_version_files = [fetch_file(".ruby-version")].compact
-      return nil if ruby_version_files.empty?
+      return if ruby_version_files.empty?
 
-      ruby_version_files.map { |file|
-        parse_ruby_version_file(file)
-      }.min
+      ruby_version_files.map { |file| parse_version_file(file) }.min
     end
 
     private
@@ -38,18 +36,15 @@ module EolRuby
       nil
     end
 
-    def parse_ruby_version_file(file)
-      raise "Unsupported encoding: #{file.enconding.inspect}" if !file.enconding.nil? && file.enconding != "base64"
+    def parse_version_file(file)
+      RubyVersion.from_file(file_name: file.name, content: decode_file(file))
+    end
 
-      if file.name == ".ruby-version"
-        string_version = Base64.decode64(file.content).strip.delete_prefix("ruby-")
-        RubyVersion.new(string_version)
-      else
-        raise "Unsupported file #{file.name}"
-      end
-    rescue ArgumentError
-      puts "Unable to parse #{file.name} at #{file.path}"
-      RubyVersion.new("0.0.0")
+    def decode_file(file)
+      return file if file.encoding.nil?
+      return Base64.decode64(file.content) if file.encoding == "base64"
+
+      raise "Unsupported encoding: #{file.encoding.inspect}"
     end
   end
 end
