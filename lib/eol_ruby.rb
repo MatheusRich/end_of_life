@@ -6,53 +6,35 @@ require "warning"
 require_relative "eol_ruby/repository"
 require_relative "eol_ruby/ruby_version"
 require_relative "eol_ruby/terminal_helper"
+require_relative "eol_ruby/result"
 require_relative "eol_ruby/version"
-
-at_exit do
-  if defined?($error)
-    puts
-    puts $error
-  end
-end
 
 module EolRuby
   extend TerminalHelper
+
   Warning.ignore(/Faraday::Connection#authorization/)
-
-  class Exit < StandardError; end
-
-  def self.listen_for_exit(on_exit: nil)
-    yield
-  rescue Exit => e
-    $error = e.to_s
-    on_exit&.call
-    exit(-1)
-  end
 
   class CLI
     include TerminalHelper
 
     def call(argv)
-      EolRuby.listen_for_exit do
-        fetch_repositories
-          .then { |repositories| filter_repostories_with_eol_ruby(repositories) }
-          .then { |repositories| print_diagnose_for(repositories) }
-      rescue => e
-        EolRuby.exit_with_error! "Unexpected failure: #{e}"
-      end
+      fetch_repositories
+        .fmap { |repositories| filter_repositories_with_eol_ruby(repositories) }
+        .fmap { |repositories| print_diagnose_for(repositories) }
+        .or { |error| puts "\n#{error_msg(error)}" }
     end
 
     private
 
     def fetch_repositories
       with_loading_spinner("Fetching repositories...") do |spinner|
-        EolRuby.listen_for_exit(on_exit: -> { spinner.error }) do
-          Repository.fetch(language: "ruby", user: nil)
-        end
+        Repository
+          .fetch(language: "ruby", user: nil)
+          .on_failure { spinner.error }
       end
     end
 
-    def filter_repostories_with_eol_ruby(repositories)
+    def filter_repositories_with_eol_ruby(repositories)
       with_loading_spinner("Searching for EOL Ruby in repositories...") do
         repositories.filter { |repo| repo.eol_ruby? }
       end

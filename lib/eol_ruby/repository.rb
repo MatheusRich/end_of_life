@@ -1,31 +1,32 @@
+require "dry-monads"
+
 module EolRuby
   class Repository
     class << self
-      def fetch(language:, user: nil)
-        user ||= github.user.login
-        response = github.search_repositories("user:#{user} language:#{language}", per_page: 100)
-        warn "Incomplete results" if response.incomplete_results
+      include Dry::Monads[:result, :maybe, :try]
 
-        response.items.map do |repo|
-          Repository.new(
-            full_name: repo.full_name,
-            url: repo.html_url
-          )
+      def fetch(language:, user: nil)
+        github_client.fmap do |github|
+          user ||= github.user.login
+          response = github.search_repositories("user:#{user} language:#{language}", per_page: 100)
+          warn "Incomplete results" if response.incomplete_results
+
+          response.items.map do |repo|
+            Repository.new(
+              full_name: repo.full_name,
+              url: repo.html_url
+            )
+          end
+        rescue => e
+          Failure("Unexpected error: #{e}")
         end
       end
-
-      def github
-        @github ||= github_client
-      end
-
-      private
 
       def github_client
-        github_access_token = ENV.fetch("GITHUB_TOKEN") do
-          EolRuby.exit_with_error! "Please set GITHUB_TOKEN environment variable"
-        end
-
-        Octokit::Client.new(access_token: github_access_token)
+        @github_client ||= Maybe(ENV["GITHUB_TOKEN"])
+          .to_result
+          .fmap { |token| Octokit::Client.new(access_token: token) }
+          .or { Failure("Please set GITHUB_TOKEN environment variable") }
       end
     end
 
@@ -55,12 +56,14 @@ module EolRuby
 
     private
 
-    def github
-      self.class.github
+    def github_client
+      self.class.github_client
     end
 
     def fetch_file(file_path)
-      github.contents(full_name, path: file_path)
+      github_client
+        .fmap { |github| github.contents(full_name, path: file_path) }
+        .value_or(nil)
     rescue Octokit::NotFound
       nil
     end
