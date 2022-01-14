@@ -9,7 +9,7 @@ module EolRuby
         github_client.fmap do |github|
           user ||= github.user.login
           response = github.search_repositories("user:#{user} language:#{language}", per_page: 100)
-          warn "Incomplete results" if response.incomplete_results
+          warn "Incomplete results: we only search 100 repos at a time" if response.incomplete_results
 
           response.items.map do |repo|
             Repository.new(
