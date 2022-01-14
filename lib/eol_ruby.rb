@@ -6,7 +6,6 @@ require "warning"
 require_relative "eol_ruby/repository"
 require_relative "eol_ruby/ruby_version"
 require_relative "eol_ruby/terminal_helper"
-require_relative "eol_ruby/result"
 require_relative "eol_ruby/version"
 
 module EolRuby
@@ -28,9 +27,11 @@ module EolRuby
 
     def fetch_repositories
       with_loading_spinner("Fetching repositories...") do |spinner|
-        Repository
-          .fetch(language: "ruby", user: nil)
-          .on_failure { spinner.error }
+        result = Repository.fetch(language: "ruby", user: nil)
+
+        spinner.error if result.failure?
+
+        result
       end
     end
 
