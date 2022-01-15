@@ -12,4 +12,10 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  if ENV["CI"]
+    config.before(:example, :focus) { |example| raise "Focused spec found at #{example.location}" }
+  else
+    config.filter_run_when_matching :focus
+  end
 end
