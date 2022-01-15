@@ -38,23 +38,30 @@ module EolRuby
     end
 
     def eol_ruby?
-      !!ruby_version&.eol?
+      ruby_version&.eol?
     end
 
     def ruby_version
       return @ruby_version if defined?(@ruby_version)
 
-      @ruby_version = begin
-        ruby_version_files = [
-          fetch_file(".ruby-version")
-        ].compact
-        return if ruby_version_files.empty?
-
-        ruby_version_files.map { |file| parse_version_file(file) }.min
-      end
+      @ruby_version = ruby_versions.min
     end
 
     private
+
+    def ruby_versions
+      return @ruby_versions if defined?(@ruby_versions)
+
+      @ruby_versions = begin
+        ruby_version_files = [
+          fetch_file(".ruby-version"),
+          fetch_file("Gemfile"),
+          fetch_file("Gemfile.lock")
+        ].compact
+
+        ruby_version_files.filter_map { |file| parse_version_file(file) }
+      end
+    end
 
     def github_client
       self.class.github_client

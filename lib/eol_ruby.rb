@@ -27,7 +27,7 @@ module EolRuby
 
     def fetch_repositories
       with_loading_spinner("Fetching repositories...") do |spinner|
-        result = Repository.fetch(language: "ruby", user: nil)
+        result = Repository.fetch(language: "ruby")
 
         spinner.error if result.failure?
 
