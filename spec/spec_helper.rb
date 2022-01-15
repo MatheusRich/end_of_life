@@ -1,5 +1,14 @@
 # frozen_string_literal: true
 
+if ENV["COVERAGE"]
+  require "simplecov"
+
+  SimpleCov.start do
+    enable_coverage :branch
+    add_filter "/spec/"
+  end
+end
+
 require "eol_ruby"
 
 RSpec.configure do |config|
