@@ -63,6 +63,52 @@ RSpec.describe EolRuby::RubyVersion::Parser do
       end
     end
 
+    context "with Gemfile" do
+      it "returns the ruby version defined" do
+        gemfile = <<~GEMFILE
+          ruby "3.0.2"
+
+          source "https://rubygems.org"
+        GEMFILE
+
+        result = described_class.parse_file(file_name: "Gemfile", content: gemfile)
+
+        expect(result).to eq EolRuby::RubyVersion.new("3.0.2")
+      end
+
+      it "returns nil if it doesn't have ruby version defined" do
+        gemfile = <<~GEMFILE
+          source "https://rubygems.org"
+        GEMFILE
+
+        result = described_class.parse_file(file_name: "Gemfile", content: gemfile)
+
+        expect(result).to be_nil
+      end
+
+      it "returns nil if some error occurs while parsing Gemfile" do
+        gemfile = <<~GEMFILE
+          ruby "3.0.2"
+
+          source "https://rubygems.org"
+
+          gemspec # this will fail, since no gemspec is defined
+        GEMFILE
+
+        result = described_class.parse_file(file_name: "Gemfile", content: gemfile)
+
+        expect(result).to be_nil
+      end
+
+      it "returns nil if the file is empty" do
+        gemfile = ""
+
+        result = described_class.parse_file(file_name: "Gemfile", content: gemfile)
+
+        expect(result).to be_nil
+      end
+    end
+
     context "with .tool-versions" do
       it "returns the first ruby version defined" do
         result = described_class.parse_file(file_name: ".tool-versions", content: "  ruby 3.0.0\n ruby 2.5.1")

@@ -41,8 +41,6 @@ module EolRuby
         return if file_content.empty?
 
         with_temp_gemfile(file_content) do |temp_gemfile|
-          return nil if temp_gemfile.nil?
-
           gemfile_version = temp_gemfile.ruby_version&.gem_version
           return nil if gemfile_version.nil?
 
