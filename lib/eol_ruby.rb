@@ -49,6 +49,7 @@ module EolRuby
         return
       end
 
+      puts "Found #{repositories.size} repositories using EOL Ruby (<= #{RubyVersion::EOL}):"
       puts eol_ruby_table(repositories)
     end
 
