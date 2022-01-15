@@ -13,8 +13,10 @@ module EolRuby
           parse_gemfile_lock_file(content)
         elsif file_name == "Gemfile"
           parse_gemfile_file(content)
+        elsif file_name == ".tool-versions"
+          parse_tool_versions_file(content)
         else
-          raise "Unsupported file #{file_name}"
+          raise ArgumentError, "Unsupported file #{file_name}"
         end
       end
 
@@ -44,6 +46,17 @@ module EolRuby
 
           RubyVersion.new(gemfile_version)
         end
+      end
+
+      def parse_tool_versions_file(file_content)
+        file_content
+          .split("\n")
+          .filter_map do |line|
+            tool, version = line.strip.split
+
+            tool == "ruby" && RubyVersion.new(version)
+          end
+          .first
       end
 
       def with_temp_gemfile(contents)
