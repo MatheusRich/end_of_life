@@ -3,7 +3,7 @@ require "dry-monads"
 module EolRuby
   class Repository
     class << self
-      include Dry::Monads[:result, :maybe, :try]
+      include Dry::Monads[:result, :maybe]
 
       def fetch(language:, user: nil)
         github_client.fmap do |github|
