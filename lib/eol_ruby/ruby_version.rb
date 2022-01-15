@@ -1,5 +1,6 @@
 require "bundler"
 require "tempfile"
+require_relative "ruby_version/parser"
 
 module EolRuby
   class RubyVersion
@@ -12,15 +13,7 @@ module EolRuby
       .max
 
     def self.from_file(file_name:, content:)
-      if file_name == ".ruby-version"
-        parse_ruby_version_file(content)
-      elsif file_name == "Gemfile.lock"
-        parse_gemfile_lock_file(content)
-      elsif file_name == "Gemfile"
-        parse_gemfile_file(content)
-      else
-        raise "Unsupported file #{file_name}"
-      end
+      Parser.parse_file(file_name: file_name, content: content)
     end
 
     def self.parse_ruby_version_file(file_content)
