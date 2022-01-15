@@ -74,6 +74,7 @@ module EolRuby
           tempfile.write(contents)
           tempfile.rewind
           gemfile = with_silent_bundler do
+            # This is security problem, since it runs the code inside the file
             Bundler::Definition.build(tempfile.path, nil, {})
           end
 
