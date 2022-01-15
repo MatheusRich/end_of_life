@@ -1,3 +1,6 @@
+require "bundler"
+require "tempfile"
+
 module EolRuby
   class RubyVersion
     module Parser
@@ -44,6 +47,7 @@ module EolRuby
       end
 
       def with_temp_gemfile(contents)
+        # Bundler requires a file to parse, so we need to create a temporary file
         Tempfile.create("tempGemfile") do |tempfile|
           tempfile.write(contents)
           tempfile.rewind

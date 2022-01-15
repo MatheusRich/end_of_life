@@ -1,5 +1,3 @@
-require "bundler"
-require "tempfile"
 require_relative "ruby_version/parser"
 
 module EolRuby
