@@ -29,10 +29,12 @@ module EolRuby
       end
 
       def parse_gemfile_lock_file(file_content)
-        gemfile_lock_version = Bundler::LockfileParser.new(file_content).ruby_version
-        return if gemfile_lock_version.nil?
+        with_silent_bundler do
+          gemfile_lock_version = Bundler::LockfileParser.new(file_content).ruby_version
+          return if gemfile_lock_version.nil?
 
-        RubyVersion.new(gemfile_lock_version.delete_prefix("ruby "))
+          RubyVersion.new(gemfile_lock_version.delete_prefix("ruby "))
+        end
       end
 
       def parse_gemfile_file(file_content)
@@ -59,12 +61,23 @@ module EolRuby
           .first
       end
 
+      def with_silent_bundler
+        previous_ui = Bundler.ui
+        Bundler.ui = Bundler::UI::Silent.new
+
+        yield
+      ensure
+        Bundler.ui = previous_ui
+      end
+
       def with_temp_gemfile(contents)
         # Bundler requires a file to parse, so we need to create a temporary file
         Tempfile.create("tempGemfile") do |tempfile|
           tempfile.write(contents)
           tempfile.rewind
-          gemfile = Bundler::Definition.build(tempfile.path, nil, {})
+          gemfile = with_silent_bundler do
+            Bundler::Definition.build(tempfile.path, nil, {})
+          end
 
           yield(gemfile)
         rescue Bundler::BundlerError
