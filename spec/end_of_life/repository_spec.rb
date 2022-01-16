@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "climate_control"
+require "ostruct"
 
 RSpec.describe EndOfLife::Repository do
   describe ".github_client" do
@@ -26,6 +27,86 @@ RSpec.describe EndOfLife::Repository do
     end
 
     describe "#ruby_version" do
+      it "returns the minimum ruby version found in the repository" do
+        client = build_client(
+          repo: "thoughtbot/paperclip",
+          contents: {
+            ".ruby-version" => {content: "2.6.3"},
+            ".tool-versions" => {content: "ruby 2.5.0"},
+            "Gemfile" => nil,
+            "Gemfile.lock" => nil
+          }
+        )
+        repo = EndOfLife::Repository.new(
+          full_name: "thoughtbot/paperclip",
+          url: "https://github.com/thoughtbot/paperclip",
+          github_client: client
+        )
+
+        result = repo.ruby_version
+
+        expect(result).to eq(EndOfLife::RubyVersion.new("2.5.0"))
+      end
+
+      it "decodes base64 files" do
+        client = build_client(
+          repo: "thoughtbot/paperclip",
+          contents: {
+            ".ruby-version" => {content: "2.6.3", encoding: "base64"},
+            ".tool-versions" => nil,
+            "Gemfile" => nil,
+            "Gemfile.lock" => nil
+          }
+        )
+        repo = EndOfLife::Repository.new(
+          full_name: "thoughtbot/paperclip",
+          url: "https://github.com/thoughtbot/paperclip",
+          github_client: client
+        )
+
+        result = repo.ruby_version
+
+        expect(result).to eq(EndOfLife::RubyVersion.new("2.6.3"))
+      end
+
+      it "raises if file has unknown encoding" do
+        client = build_client(
+          repo: "thoughtbot/paperclip",
+          contents: {
+            ".ruby-version" => {content: "2.6.3", encoding: "unknown_encoding"},
+            ".tool-versions" => nil,
+            "Gemfile" => nil,
+            "Gemfile.lock" => nil
+          }
+        )
+        repo = EndOfLife::Repository.new(
+          full_name: "thoughtbot/paperclip",
+          url: "https://github.com/thoughtbot/paperclip",
+          github_client: client
+        )
+
+        expect { repo.ruby_version }.to raise_error(ArgumentError, 'Unsupported encoding: "unknown_encoding"')
+      end
+
+      it "returns nil if file doen't exist" do
+        client = build_client(
+          repo: "thoughtbot/paperclip",
+          contents: {
+            ".ruby-version" => {content: Octokit::NotFound},
+            ".tool-versions" => {content: Octokit::NotFound},
+            "Gemfile" => {content: Octokit::NotFound},
+            "Gemfile.lock" => {content: Octokit::NotFound}
+          }
+        )
+        repo = EndOfLife::Repository.new(
+          full_name: "thoughtbot/paperclip",
+          url: "https://github.com/thoughtbot/paperclip",
+          github_client: client
+        )
+
+        expect(repo.ruby_version).to be_nil
+      end
+
       it "searches for version in .ruby-version" do
         client = double(:client, contents: nil)
         repo = EndOfLife::Repository.new(
@@ -83,6 +164,31 @@ RSpec.describe EndOfLife::Repository do
 
     def with_env(...)
       ClimateControl.modify(...)
+    end
+
+    def build_client(repo:, contents:)
+      client = Object.new
+
+      contents.each do |path, config|
+        config ||= {}
+        encoder = config[:encoding] == "base64" ? Base64.method(:encode64) : ->(x) { x }
+
+        if config[:content] == Octokit::NotFound
+          allow(client).to receive(:contents).with(repo, path: path).and_raise(Octokit::NotFound)
+        else
+          allow(client).to receive(:contents).with(repo, path: path).and_return(
+            if config[:content]
+              OpenStruct.new(
+                content: encoder.call(config[:content]),
+                name: path,
+                encoding: config[:encoding]
+              )
+            end
+          )
+        end
+      end
+
+      client
     end
   end
 end

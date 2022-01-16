@@ -77,10 +77,10 @@ module EndOfLife
     end
 
     def decode_file(file)
-      return file if file.encoding.nil?
+      return file.content if file.encoding.nil?
       return Base64.decode64(file.content) if file.encoding == "base64"
 
-      raise "Unsupported encoding: #{file.encoding.inspect}"
+      raise ArgumentError, "Unsupported encoding: #{file.encoding.inspect}"
     end
   end
 end
