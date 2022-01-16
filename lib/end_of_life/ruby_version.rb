@@ -10,8 +10,8 @@ module EndOfLife
       .map { |version| Gem::Version.new(version[:latest]) }
       .max
 
-    def self.from_file(file_name:, content:)
-      Parser.parse_file(file_name: file_name, content: content)
+    def self.from_file(file_name:, content:, parser: Parser)
+      parser.parse_file(file_name: file_name, content: content)
     end
 
     attr :version
