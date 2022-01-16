@@ -58,7 +58,8 @@ module EndOfLife
         ruby_version_files = [
           fetch_file(".ruby-version"),
           fetch_file("Gemfile"),
-          fetch_file("Gemfile.lock")
+          fetch_file("Gemfile.lock"),
+          fetch_file(".tool-versions")
         ].compact
 
         ruby_version_files.filter_map { |file| parse_version_file(file) }

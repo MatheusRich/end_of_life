@@ -25,6 +25,60 @@ RSpec.describe EndOfLife::Repository do
       end
     end
 
+    describe "#ruby_version" do
+      it "searches for version in .ruby-version" do
+        client = double(:client, contents: nil)
+        repo = EndOfLife::Repository.new(
+          full_name: "thoughtbot/paperclip",
+          url: "https://github.com/thoughtbot/paperclip",
+          github_client: client
+        )
+
+        repo.ruby_version
+
+        expect(client).to have_received(:contents).with("thoughtbot/paperclip", path: ".ruby-version")
+      end
+
+      it "searches for version in Gemfile" do
+        client = double(:client, contents: nil)
+        repo = EndOfLife::Repository.new(
+          full_name: "thoughtbot/paperclip",
+          url: "https://github.com/thoughtbot/paperclip",
+          github_client: client
+        )
+
+        repo.ruby_version
+
+        expect(client).to have_received(:contents).with("thoughtbot/paperclip", path: "Gemfile")
+      end
+
+      it "searches for version in Gemfile.lock" do
+        client = double(:client, contents: nil)
+        repo = EndOfLife::Repository.new(
+          full_name: "thoughtbot/paperclip",
+          url: "https://github.com/thoughtbot/paperclip",
+          github_client: client
+        )
+
+        repo.ruby_version
+
+        expect(client).to have_received(:contents).with("thoughtbot/paperclip", path: "Gemfile.lock")
+      end
+
+      it "searches for version in .tool-versions" do
+        client = double(:client, contents: nil)
+        repo = EndOfLife::Repository.new(
+          full_name: "thoughtbot/paperclip",
+          url: "https://github.com/thoughtbot/paperclip",
+          github_client: client
+        )
+
+        repo.ruby_version
+
+        expect(client).to have_received(:contents).with("thoughtbot/paperclip", path: ".tool-versions")
+      end
+    end
+
     private
 
     def with_env(...)
