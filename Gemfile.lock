@@ -7,7 +7,7 @@ PATH
       pastel (~> 0.8.0)
       tty-spinner (~> 0.9.0)
       tty-table (~> 0.12.0)
-      warning
+      warning (~> 1.2.1)
 
 GEM
   remote: https://rubygems.org/
