@@ -9,7 +9,8 @@ Gem::Specification.new do |spec|
   spec.email = ["matheusrichardt@gmail.com"]
 
   spec.summary = "Lists repositories using end-of-life Ruby versions"
-  spec.description = spec.summary
+  spec.description = "Searches your GitHub repositores and lists the ones using end-of-life, i.e. " \
+                     "unmaintained, Ruby versions"
   spec.homepage = "https://github.com/MatheusRich/end_of_life"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 2.7.0"
