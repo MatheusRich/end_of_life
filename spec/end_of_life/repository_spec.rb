@@ -13,13 +13,14 @@ RSpec.describe EndOfLife::Repository do
       end
     end
 
-    context "when GITHUB_TOKEN env is not set" do
+    context "when GITHUB_TOKEN env is not set", :aggregate_failures do
       it "returns a failure monad" do
         with_env GITHUB_TOKEN: nil do
           pp ENV["GITHUB_TOKEN"]
           result = EndOfLife::Repository.github_client
 
           expect(result).to be_failure
+          expect(result.failure).to eq "Please set GITHUB_TOKEN environment variable"
         end
       end
     end
