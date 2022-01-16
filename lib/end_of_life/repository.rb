@@ -1,6 +1,6 @@
 require "dry-monads"
 
-module EolRuby
+module EndOfLife
   class Repository
     class << self
       include Dry::Monads[:result, :maybe]
@@ -37,7 +37,7 @@ module EolRuby
       @url = url
     end
 
-    def eol_ruby?
+    def end_of_life?
       ruby_version&.eol?
     end
 

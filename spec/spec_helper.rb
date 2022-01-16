@@ -9,7 +9,7 @@ if ENV["COVERAGE"]
   end
 end
 
-require "eol_ruby"
+require "end_of_life"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

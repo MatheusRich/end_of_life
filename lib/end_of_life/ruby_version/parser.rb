@@ -1,7 +1,7 @@
 require "bundler"
 require "tempfile"
 
-module EolRuby
+module EndOfLife
   class RubyVersion
     module Parser
       extend self

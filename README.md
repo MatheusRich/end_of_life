@@ -1,6 +1,6 @@
-# EolRuby
+# EndOfLife
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/eol_ruby`. To experiment with that code, run `bin/console` for an interactive prompt.
+Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/end_of_life`. To experiment with that code, run `bin/console` for an interactive prompt.
 
 TODO: Delete this and the text above, and describe your gem
 
@@ -9,7 +9,7 @@ TODO: Delete this and the text above, and describe your gem
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'eol_ruby'
+gem 'end_of_life'
 ```
 
 And then execute:
@@ -18,7 +18,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install eol_ruby
+    $ gem install end_of_life
 
 ## Usage
 
@@ -27,17 +27,17 @@ TODO: Write usage instructions here
 ### As a CLI
 
 ```sh
-$ GITHUB_TOKEN=something eol_ruby
+$ GITHUB_TOKEN=something end_of_life
 REPO                 RUBY_VERSION
 playground           2.0.0
 rails_demo           2.5.1
 my_org/shiny_thing   2.2.2
 
-$ GITHUB_TOKEN=something eol_ruby --exclude=rails_demo,shiny_thing
+$ GITHUB_TOKEN=something end_of_life --exclude=rails_demo,shiny_thing
 REPO          RUBY_VERSION
 playground    2.0.0
 
-$ GITHUB_TOKEN=something eol_ruby --exclude=my_org
+$ GITHUB_TOKEN=something end_of_life --exclude=my_org
 REPO          RUBY_VERSION
 playground    2.0.0
 rails_demo    2.5.1
@@ -46,7 +46,7 @@ rails_demo    2.5.1
 ### As a library
 
 ```sh
-EolRuby.
+EndOfLife.
 ```
 
 ## Development
@@ -57,7 +57,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/eol_ruby.
+Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/end_of_life.
 
 ## License
 

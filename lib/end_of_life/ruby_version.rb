@@ -1,10 +1,10 @@
 require_relative "ruby_version/parser"
 
-module EolRuby
+module EndOfLife
   class RubyVersion
     include Comparable
 
-    EOL = File.read("lib/eol_ruby.json")
+    EOL = File.read("lib/end_of_life.json")
       .then { |json| JSON.parse(json, symbolize_names: true) }
       .filter { |version| Date.parse(version[:eol]) <= Date.today }
       .map { |version| Gem::Version.new(version[:latest]) }

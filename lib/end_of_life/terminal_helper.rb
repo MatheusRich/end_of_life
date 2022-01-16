@@ -2,7 +2,7 @@ require "pastel"
 require "tty-spinner"
 require "tty-table"
 
-module EolRuby
+module EndOfLife
   module TerminalHelper
     def error_msg(message, label: "[ERROR]")
       label = paint.red("#{label} ")

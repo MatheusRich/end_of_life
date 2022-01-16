@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-require_relative "lib/eol_ruby/version"
+require_relative "lib/end_of_life/version"
 
 Gem::Specification.new do |spec|
-  spec.name = "eol_ruby"
-  spec.version = EolRuby::VERSION
+  spec.name = "end_of_life"
+  spec.version = EndOfLife::VERSION
   spec.authors = ["Matheus Richard"]
   spec.email = ["matheusrichardt@gmail.com"]
 
   spec.summary = "Lists repositories using end-of-life Ruby versions"
   spec.description = spec.summary
-  spec.homepage = "https://github.com/MatheusRich/eol_ruby"
+  spec.homepage = "https://github.com/MatheusRich/end_of_life"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 2.7.0"
 

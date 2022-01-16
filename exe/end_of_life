@@ -2,6 +2,6 @@
 
 $LOAD_PATH.unshift("#{__dir__}/../lib")
 
-require "eol_ruby"
+require "end_of_life"
 
-EolRuby::CLI.new.call(ARGV)
+EndOfLife::CLI.new.call(ARGV)

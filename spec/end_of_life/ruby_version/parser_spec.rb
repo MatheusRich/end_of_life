@@ -2,19 +2,19 @@
 
 require "spec_helper"
 
-RSpec.describe EolRuby::RubyVersion::Parser do
+RSpec.describe EndOfLife::RubyVersion::Parser do
   describe ".parse_file" do
     context "with .ruby-version" do
       it "returns ruby version defined" do
         result = described_class.parse_file(file_name: ".ruby-version", content: "3.0.0")
 
-        expect(result).to eq EolRuby::RubyVersion.new("3.0.0")
+        expect(result).to eq EndOfLife::RubyVersion.new("3.0.0")
       end
 
       it "removes the 'ruby-' prefix" do
         result = described_class.parse_file(file_name: ".ruby-version", content: "ruby-2.0.0\n")
 
-        expect(result).to eq EolRuby::RubyVersion.new("2.0.0")
+        expect(result).to eq EndOfLife::RubyVersion.new("2.0.0")
       end
     end
 
@@ -39,7 +39,7 @@ RSpec.describe EolRuby::RubyVersion::Parser do
 
         result = described_class.parse_file(file_name: "Gemfile.lock", content: gemfile_lock)
 
-        expect(result).to eq EolRuby::RubyVersion.new("3.0.2p107")
+        expect(result).to eq EndOfLife::RubyVersion.new("3.0.2p107")
       end
 
       it "returns nil if it doesn't have ruby version defined" do
@@ -73,7 +73,7 @@ RSpec.describe EolRuby::RubyVersion::Parser do
 
         result = described_class.parse_file(file_name: "Gemfile", content: gemfile)
 
-        expect(result).to eq EolRuby::RubyVersion.new("3.0.2")
+        expect(result).to eq EndOfLife::RubyVersion.new("3.0.2")
       end
 
       it "returns nil if it doesn't have ruby version defined" do
@@ -113,7 +113,7 @@ RSpec.describe EolRuby::RubyVersion::Parser do
       it "returns the first ruby version defined" do
         result = described_class.parse_file(file_name: ".tool-versions", content: "  ruby 3.0.0\n ruby 2.5.1")
 
-        expect(result).to eq EolRuby::RubyVersion.new("3.0.0")
+        expect(result).to eq EndOfLife::RubyVersion.new("3.0.0")
       end
 
       it "returns nil if it doesn't have ruby defined" do

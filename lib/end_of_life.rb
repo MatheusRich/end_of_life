@@ -3,12 +3,12 @@
 require "json"
 require "octokit"
 require "warning"
-require_relative "eol_ruby/repository"
-require_relative "eol_ruby/ruby_version"
-require_relative "eol_ruby/terminal_helper"
-require_relative "eol_ruby/version"
+require_relative "end_of_life/repository"
+require_relative "end_of_life/ruby_version"
+require_relative "end_of_life/terminal_helper"
+require_relative "end_of_life/version"
 
-module EolRuby
+module EndOfLife
   extend TerminalHelper
 
   Warning.ignore(/Faraday::Connection#authorization/)
@@ -18,7 +18,7 @@ module EolRuby
 
     def call(argv)
       fetch_repositories
-        .fmap { |repositories| filter_repositories_with_eol_ruby(repositories) }
+        .fmap { |repositories| filter_repositories_with_end_of_life(repositories) }
         .fmap { |repositories| print_diagnose_for(repositories) }
         .or { |error| puts "\n#{error_msg(error)}" }
     end
@@ -35,9 +35,9 @@ module EolRuby
       end
     end
 
-    def filter_repositories_with_eol_ruby(repositories)
+    def filter_repositories_with_end_of_life(repositories)
       with_loading_spinner("Searching for EOL Ruby in repositories...") do
-        repositories.filter { |repo| repo.eol_ruby? }
+        repositories.filter { |repo| repo.end_of_life? }
       end
     end
 
@@ -50,10 +50,10 @@ module EolRuby
       end
 
       puts "Found #{repositories.size} repositories using EOL Ruby (<= #{RubyVersion::EOL}):"
-      puts eol_ruby_table(repositories)
+      puts end_of_life_table(repositories)
     end
 
-    def eol_ruby_table(repositories)
+    def end_of_life_table(repositories)
       headers = ["", "Repository", "Ruby version"]
       rows = repositories.map.with_index(1) do |repo, i|
         [i, repo.url, repo.ruby_version]
