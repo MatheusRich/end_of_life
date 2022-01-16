@@ -39,7 +39,7 @@ module EndOfLife
       @github_client = github_client
     end
 
-    def end_of_life?
+    def eol_ruby?
       ruby_version&.eol?
     end
 

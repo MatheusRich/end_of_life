@@ -26,6 +26,65 @@ RSpec.describe EndOfLife::Repository do
       end
     end
 
+    describe "#eol_ruby?" do
+      it "returns true if version is eol" do
+        client = build_client(
+          repo: "thoughtbot/paperclip",
+          contents: {
+            ".ruby-version" => {content: "1.9.3"},
+            ".tool-versions" => nil,
+            "Gemfile" => nil,
+            "Gemfile.lock" => nil
+          }
+        )
+        repo = EndOfLife::Repository.new(
+          full_name: "thoughtbot/paperclip",
+          url: "https://github.com/thoughtbot/paperclip",
+          github_client: client
+        )
+
+        expect(repo).to be_eol_ruby
+      end
+
+      it "returns false if version is not eol" do
+        client = build_client(
+          repo: "thoughtbot/paperclip",
+          contents: {
+            ".ruby-version" => {content: "9999999"},
+            ".tool-versions" => nil,
+            "Gemfile" => nil,
+            "Gemfile.lock" => nil
+          }
+        )
+        repo = EndOfLife::Repository.new(
+          full_name: "thoughtbot/paperclip",
+          url: "https://github.com/thoughtbot/paperclip",
+          github_client: client
+        )
+
+        expect(repo).not_to be_eol_ruby
+      end
+
+      it "returns nil if version is nil" do
+        client = build_client(
+          repo: "thoughtbot/paperclip",
+          contents: {
+            ".ruby-version" => nil,
+            ".tool-versions" => nil,
+            "Gemfile" => nil,
+            "Gemfile.lock" => nil
+          }
+        )
+        repo = EndOfLife::Repository.new(
+          full_name: "thoughtbot/paperclip",
+          url: "https://github.com/thoughtbot/paperclip",
+          github_client: client
+        )
+
+        expect(repo.eol_ruby?).to be_nil
+      end
+    end
+
     describe "#ruby_version" do
       it "returns the minimum ruby version found in the repository" do
         client = build_client(
