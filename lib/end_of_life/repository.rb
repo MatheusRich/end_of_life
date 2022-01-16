@@ -14,7 +14,8 @@ module EndOfLife
           response.items.map do |repo|
             Repository.new(
               full_name: repo.full_name,
-              url: repo.html_url
+              url: repo.html_url,
+              github_client: github
             )
           end
         rescue => e
@@ -23,7 +24,7 @@ module EndOfLife
       end
 
       def github_client
-        @github_client ||= Maybe(ENV["GITHUB_TOKEN"])
+        Maybe(ENV["GITHUB_TOKEN"])
           .to_result
           .fmap { |token| Octokit::Client.new(access_token: token) }
           .or { Failure("Please set GITHUB_TOKEN environment variable") }
@@ -32,9 +33,10 @@ module EndOfLife
 
     attr :full_name, :url
 
-    def initialize(full_name:, url:)
+    def initialize(full_name:, url:, github_client:)
       @full_name = full_name
       @url = url
+      @github_client = github_client
     end
 
     def end_of_life?
@@ -63,14 +65,8 @@ module EndOfLife
       end
     end
 
-    def github_client
-      self.class.github_client
-    end
-
     def fetch_file(file_path)
-      github_client
-        .fmap { |github| github.contents(full_name, path: file_path) }
-        .value_or(nil)
+      @github_client.contents(full_name, path: file_path)
     rescue Octokit::NotFound
       nil
     end
