@@ -2,7 +2,6 @@
 
 require "json"
 require "octokit"
-require "warning"
 require_relative "end_of_life/repository"
 require_relative "end_of_life/ruby_version"
 require_relative "end_of_life/terminal_helper"
@@ -10,8 +9,6 @@ require_relative "end_of_life/version"
 
 module EndOfLife
   extend TerminalHelper
-
-  Warning.ignore(/Faraday::Connection#authorization/)
 
   class CLI
     include TerminalHelper

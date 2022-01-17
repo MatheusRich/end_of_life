@@ -37,7 +37,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "dry-monads", "~> 1.3"
   spec.add_dependency "tty-spinner", "~> 0.9.0"
   spec.add_dependency "tty-table", "~> 0.12.0"
-  spec.add_dependency "warning", "~> 1.2.1"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
