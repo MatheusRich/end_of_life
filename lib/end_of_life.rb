@@ -37,7 +37,7 @@ module EndOfLife
 
     def filter_repositories_with_end_of_life(repositories)
       with_loading_spinner("Searching for EOL Ruby in repositories...") do
-        repositories.filter { |repo| repo.end_of_life? }
+        repositories.filter { |repo| repo.eol_ruby? }
       end
     end
 
