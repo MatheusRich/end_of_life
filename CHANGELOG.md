@@ -5,6 +5,9 @@
 
 [a Faraday warning]: https://github.com/octokit/octokit.rb/pull/1359
 
-## [0.1.0] - 2022-01-07
+## [0.1.0] - 2022-01-17
 
 - Initial release
+
+[unreleased]: https://github.com/MatheusRich/end_of_life/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/MatheusRich/end_of_life/releases/tag/v0.1.0
