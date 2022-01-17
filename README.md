@@ -1,6 +1,8 @@
-# End Of Life
+# End of Life
 
 This gem lists GitHub repositories using end-of-life Ruby versions.
+
+![End of Life Demo](demo.gif)
 
 ## Installation
 
