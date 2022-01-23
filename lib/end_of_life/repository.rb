@@ -5,14 +5,14 @@ module EndOfLife
 
       def fetch(language:, user:, organizations:, repository:)
         github_client.bind do |github|
+          github.auto_paginate = true
           user ||= github.user.login
-          query = search_query_for(language: language, user: user, repository: repository, organizations: organizations)
 
-          response = github.search_repositories(query, per_page: 100)
-          warn "Incomplete results: we only search 100 repos at a time" if response.incomplete_results
+          query = search_query_for(language: language, user: user, repository: repository, organizations: organizations)
+          items = github.search_repositories(query).items
 
           Success(
-            response.items.map do |repo|
+            items.map do |repo|
               Repository.new(
                 full_name: repo.full_name,
                 url: repo.html_url,
