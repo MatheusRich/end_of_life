@@ -11,6 +11,17 @@ end
 
 require "end_of_life"
 
+require "climate_control"
+require "pry"
+require "vcr"
+require "webmock"
+
+VCR.configure do |config|
+  config.cassette_library_dir = "spec/fixtures/vcr_cassettes"
+  config.hook_into :webmock
+  config.filter_sensitive_data("REDACTED") { ENV["GITHUB_TOKEN"] }
+end
+
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = ".rspec_status"
@@ -27,4 +38,8 @@ RSpec.configure do |config|
   else
     config.filter_run_when_matching :focus
   end
+end
+
+def with_env(...)
+  ClimateControl.modify(...)
 end

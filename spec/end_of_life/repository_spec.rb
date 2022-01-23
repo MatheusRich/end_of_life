@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "climate_control"
 require "ostruct"
 
 RSpec.describe EndOfLife::Repository do
@@ -105,6 +104,41 @@ RSpec.describe EndOfLife::Repository do
         )
 
         expect(repo.eol_ruby?).to be_nil
+      end
+    end
+
+    describe "#fetch" do
+      let(:client) { instance_double(Octokit::Client, :user => user) }
+      let(:user) { OpenStruct.new(:login => "j-random-hacker") }
+
+      before do
+        allow(Octokit::Client).to receive(:new).and_return(client)
+      end
+
+      context "with complete results" do
+        let(:items) { [OpenStruct.new(:full_name => "j-random-hacker/ruby-foo", :language => "ruby")] }
+        let(:response) { OpenStruct.new(:items => items, incomplete_results: false) }
+
+        subject(:repositories) do
+          with_env GITHUB_TOKEN: "FOO" do
+            EndOfLife::Repository.fetch(language: "ruby", user: "j-random-hacker", organizations: nil, repository: nil)
+          end
+        end
+
+        before do
+          allow(client).to receive(:auto_paginate=).with(true)
+          allow(client).to receive(:user).and_return(user)
+          allow(client).to receive(:search_repositories).and_return(response)
+        end
+
+        it "calls the GitHub API once" do
+          repositories
+          expect(client).to have_received(:search_repositories).once
+        end
+
+        it "returns Success with the collection of repositories" do
+          expect(repositories.value_or(nil).count).to eq(1)
+        end
       end
     end
 
@@ -243,10 +277,6 @@ RSpec.describe EndOfLife::Repository do
     end
 
     private
-
-    def with_env(...)
-      ClimateControl.modify(...)
-    end
 
     def build_client(repo:, contents:)
       client = Object.new

@@ -32,11 +32,17 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "octokit", "~> 4.0"
-  spec.add_dependency "pastel", "~> 0.8.0"
   spec.add_dependency "dry-monads", "~> 1.3"
+  spec.add_dependency "octokit", "~> 4.22"
+  spec.add_dependency "pastel", "~> 0.8.0"
   spec.add_dependency "tty-spinner", "~> 0.9.0"
   spec.add_dependency "tty-table", "~> 0.12.0"
+
+  spec.add_development_dependency "pry", "~> 0.14"
+  spec.add_development_dependency "rspec", "~> 3.10"
+  spec.add_development_dependency "rspec-mocks", "~> 3.10"
+  spec.add_development_dependency "vcr", "~> 6.0.0"
+  spec.add_development_dependency "webmock", "~> 3.13"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
