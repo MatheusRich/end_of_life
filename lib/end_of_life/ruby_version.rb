@@ -1,4 +1,4 @@
-require 'rubygems'
+require "rubygems"
 require_relative "ruby_version/parser"
 
 module EndOfLife
