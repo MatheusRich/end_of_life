@@ -94,6 +94,7 @@ module EndOfLife
 
       puts "Found #{repositories.size} repositories using EOL Ruby (<= #{RubyVersion::EOL}):"
       puts end_of_life_table(repositories)
+      exit(-1)
     end
 
     def end_of_life_table(repositories)
