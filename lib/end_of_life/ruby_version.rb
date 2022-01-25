@@ -5,7 +5,7 @@ module EndOfLife
   class RubyVersion
     include Comparable
 
-    DB_PATH = File.join(File.dirname(__FILE__), "../end_of_life.json")
+    DB_PATH = File.join(__dir__, "../end_of_life.json")
 
     EOL = File.read(DB_PATH)
       .then { |json| JSON.parse(json, symbolize_names: true) }
