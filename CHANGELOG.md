@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+- Allow specifying the user used on the repository search
+
+```sh
+$ end_of_life --user=matz # searches on matz's repositories
+```
+
 - Upgrade `octokit` to v4.22, which fixes [a Faraday warning], so we can remove
   the dependency on the `warning` gem.
 

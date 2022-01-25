@@ -5,7 +5,7 @@ module EndOfLife
     class << self
       include Dry::Monads[:result, :maybe]
 
-      def fetch(language:, user: nil)
+      def fetch(language:, user:)
         github_client.fmap do |github|
           user ||= github.user.login
           response = github.search_repositories("user:#{user} language:#{language}", per_page: 100)
