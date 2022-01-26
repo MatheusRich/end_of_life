@@ -36,7 +36,7 @@ module EndOfLife
     end
 
     def check_eol_ruby_on_repositories(options)
-      fetch_repositories(user: options[:user])
+      fetch_repositories(user: options[:user], repository: options[:repository])
         .fmap { |repositories| filter_repositories_with_end_of_life(repositories) }
         .fmap { |repositories| print_diagnose_for(repositories) }
         .or { |error| puts "\n#{error_msg(error)}" }
@@ -49,6 +49,10 @@ module EndOfLife
         options[:parser] = opts
 
         opts.banner = "Usage: end_of_life [options]"
+
+        opts.on("--repo=USER/REPO", "--repository=USER/REPO", "Searches a specific repostory") do |repository|
+          options[:repository] = repository
+        end
 
         opts.on("-u NAME", "--user=NAME", "Sets the user used on the repository search") do |user|
           options[:user] = user
@@ -68,9 +72,9 @@ module EndOfLife
       {command: :print_error, error: e}
     end
 
-    def fetch_repositories(user:)
+    def fetch_repositories(user:, repository:)
       with_loading_spinner("Fetching repositories...") do |spinner|
-        result = Repository.fetch(language: "ruby", user: user)
+        result = Repository.fetch(language: "ruby", user: user, repository: repository)
 
         spinner.error if result.failure?
 

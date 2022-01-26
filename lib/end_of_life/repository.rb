@@ -5,19 +5,23 @@ module EndOfLife
     class << self
       include Dry::Monads[:result, :maybe]
 
-      def fetch(language:, user:)
-        github_client.fmap do |github|
+      def fetch(language:, user:, repository: nil)
+        github_client.bind do |github|
           user ||= github.user.login
-          response = github.search_repositories("user:#{user} language:#{language}", per_page: 100)
+          query = search_query_for(language: language, user: user, repository: repository)
+
+          response = github.search_repositories(query, per_page: 100)
           warn "Incomplete results: we only search 100 repos at a time" if response.incomplete_results
 
-          response.items.map do |repo|
-            Repository.new(
-              full_name: repo.full_name,
-              url: repo.html_url,
-              github_client: github
-            )
-          end
+          Success(
+            response.items.map do |repo|
+              Repository.new(
+                full_name: repo.full_name,
+                url: repo.html_url,
+                github_client: github
+              )
+            end
+          )
         rescue => e
           Failure("Unexpected error: #{e}")
         end
@@ -28,6 +32,17 @@ module EndOfLife
           .to_result
           .fmap { |token| Octokit::Client.new(access_token: token) }
           .or { Failure("Please set GITHUB_TOKEN environment variable") }
+      end
+
+      def search_query_for(language:, user:, repository:)
+        query = "language:#{language}"
+        query += if repository
+          " repo:#{repository}"
+        else
+          " user:#{user}"
+        end
+
+        query
       end
     end
 

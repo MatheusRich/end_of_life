@@ -2,6 +2,12 @@
 
 ### Added
 
+- Allow searching a specific repository.
+
+```sh
+$ end_of_life --repo=MatheusRich/ez_attributes
+```
+
 - Allow specifying the user used on the repository search.
 
 ```sh
