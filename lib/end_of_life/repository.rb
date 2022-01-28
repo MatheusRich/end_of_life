@@ -54,8 +54,8 @@ module EndOfLife
       @github_client = github_client
     end
 
-    def eol_ruby?
-      ruby_version&.eol?
+    def eol_ruby?(at: Date.today)
+      ruby_version&.eol?(at: at)
     end
 
     def ruby_version

@@ -43,6 +43,23 @@ EndOfLife::RubyVersion.latest_eol(at: Date.parse("2024-03-31"))
 # #<EndOfLife::RubyVersion:0x00007f9b1300e7d0
 #  @eol_date=#<Date: 2024-03-31 ((2460401j,0s,0n),+0s,2299161j)>,
 #  @version=Gem::Version.new("3.0.3")>
+
+EndOfLife::RubyVersion.new("3.0.0").eol?
+# => false
+
+EndOfLife::RubyVersion.new("3.0.0").eol?(at: Date.parse("2024-03-31"))
+# => true
+```
+
+- Using the methods above, we can check whether a Repository is using EOL Ruby versions.
+
+```ruby
+# repo with Ruby 3.0 (which is not EOL today)
+repo.eol_ruby?
+# => false
+
+repo.eol_ruby?(at: Date.parse("2024.04.04"))
+# => true
 ```
 
 ### Changed

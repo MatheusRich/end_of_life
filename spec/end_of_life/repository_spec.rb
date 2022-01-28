@@ -65,6 +65,29 @@ RSpec.describe EndOfLife::Repository do
         expect(repo).not_to be_eol_ruby
       end
 
+      it "accepts a custom date", :aggregate_failures do
+        client = build_client(
+          repo: "thoughtbot/paperclip",
+          contents: {
+            ".ruby-version" => {content: "3.0.0"},
+            ".tool-versions" => nil,
+            "Gemfile" => nil,
+            "Gemfile.lock" => nil
+          }
+        )
+        ruby_3_eol_date = Date.parse("2024-03-31")
+        day_before_of_ruby_3_eol_date = ruby_3_eol_date - 1
+
+        repo = EndOfLife::Repository.new(
+          full_name: "thoughtbot/paperclip",
+          url: "https://github.com/thoughtbot/paperclip",
+          github_client: client
+        )
+
+        expect(repo.eol_ruby?(at: ruby_3_eol_date)).to be true
+        expect(repo.eol_ruby?(at: day_before_of_ruby_3_eol_date)).to be false
+      end
+
       it "returns nil if version is nil" do
         client = build_client(
           repo: "thoughtbot/paperclip",
