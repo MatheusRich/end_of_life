@@ -37,13 +37,13 @@ module EndOfLife
 
     def check_eol_ruby_on_repositories(options)
       fetch_repositories(user: options[:user], repository: options[:repository])
-        .fmap { |repositories| filter_repositories_with_end_of_life(repositories) }
-        .fmap { |repositories| print_diagnose_for(repositories) }
+        .fmap { |repositories| filter_repositories_with_end_of_life(repositories, max_eol_date: options[:max_eol_date]) }
+        .fmap { |repositories| print_diagnose_for(repositories, max_eol_date: options[:max_eol_date]) }
         .or { |error| puts "\n#{error_msg(error)}" }
     end
 
     def parse_options(argv)
-      options = {}
+      options = {max_eol_date: Date.today}
 
       OptionParser.new do |opts|
         options[:parser] = opts
@@ -56,6 +56,10 @@ module EndOfLife
 
         opts.on("-u NAME", "--user=NAME", "Sets the user used on the repository search") do |user|
           options[:user] = user
+        end
+
+        opts.on("--max-eol-days-away NUMBER", "Sets the maximum number of days away a version can be from EOL. It defaults to 0.") do |days|
+          options[:max_eol_date] = Date.today + days.to_i.abs
         end
 
         opts.on("-v", "--version", "Displays end_of_life version") do
@@ -82,13 +86,13 @@ module EndOfLife
       end
     end
 
-    def filter_repositories_with_end_of_life(repositories)
+    def filter_repositories_with_end_of_life(repositories, max_eol_date:)
       with_loading_spinner("Searching for EOL Ruby in repositories...") do
-        repositories.filter { |repo| repo.eol_ruby? }
+        repositories.filter { |repo| repo.eol_ruby?(at: max_eol_date) }
       end
     end
 
-    def print_diagnose_for(repositories)
+    def print_diagnose_for(repositories, max_eol_date:)
       puts
 
       if repositories.empty?
@@ -96,7 +100,7 @@ module EndOfLife
         return
       end
 
-      puts "Found #{repositories.size} repositories using EOL Ruby (<= #{RubyVersion::EOL}):"
+      puts "Found #{repositories.size} repositories using EOL Ruby (<= #{RubyVersion.latest_eol(at: max_eol_date)}):"
       puts end_of_life_table(repositories)
       exit(-1)
     end

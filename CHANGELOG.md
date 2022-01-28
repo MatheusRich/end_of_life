@@ -2,9 +2,15 @@
 
 ### Added
 
+- Allow users to specify the maximum number of days away a version can be from EOL. It defaults to 0.
+
+```sh
+$ end_of_life --max-eol-days-away 90
+```
+
 - Add search methods to RubyVersion
 
-It's possible to query the all the eol versions or latest one at any given time.
+It's possible to query all EOL versions, or the latest one at any given time.
 
 ```ruby
 EndOfLife::RubyVersion.eol_versions_at(Date.today)
