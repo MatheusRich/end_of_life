@@ -1,3 +1,4 @@
+require "net/http"
 require "rubygems"
 require_relative "ruby_version/parser"
 
@@ -5,9 +6,9 @@ module EndOfLife
   class RubyVersion
     include Comparable
 
-    DB_PATH = File.join(__dir__, "../end_of_life.json")
-
     class << self
+      include Dry::Monads[:try]
+
       def from_file(file_name:, content:, parser: Parser)
         parser.parse_file(file_name: file_name, content: content)
       end
@@ -22,11 +23,21 @@ module EndOfLife
 
       private
 
+      EOL_API_URL = "https://endoflife.date/api/ruby.json"
+      DB_PATH = File.join(__dir__, "../end_of_life.json")
+
       def all_versions
-        @all_versions ||= File
-          .read(DB_PATH)
+        @all_versions ||= (fetch_end_of_life_api || load_file_fallback)
           .then { |json| JSON.parse(json, symbolize_names: true) }
           .map { |version| new(version[:latest], eol_date: Date.parse(version[:eol])) }
+      end
+
+      def fetch_end_of_life_api
+        Try { Net::HTTP.get URI(EOL_API_URL) }.value_or(nil)
+      end
+
+      def load_file_fallback
+        File.read(DB_PATH)
       end
     end
 

@@ -1,5 +1,3 @@
-require "dry-monads"
-
 module EndOfLife
   class Repository
     class << self
