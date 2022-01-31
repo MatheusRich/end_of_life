@@ -13,6 +13,11 @@ module EndOfLife
         opts.on("--repo=USER/REPO", "--repository=USER/REPO", "Searches a specific repostory") do |repository|
           options[:repository] = repository
         end
+
+        opts.on("--org=ORG,ORG2...", "--organization=ORG,ORG2", Array, "Searches within specific organizations") do |organizations|
+          options[:organizations] = organizations
+        end
+
         opts.on("-u NAME", "--user=NAME", "Sets the user used on the repository search") do |user|
           options[:user] = user
         end

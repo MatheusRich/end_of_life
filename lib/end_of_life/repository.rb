@@ -3,10 +3,10 @@ module EndOfLife
     class << self
       include Dry::Monads[:result, :maybe]
 
-      def fetch(language:, user:, repository: nil)
+      def fetch(language:, user:, organizations:, repository:)
         github_client.bind do |github|
           user ||= github.user.login
-          query = search_query_for(language: language, user: user, repository: repository)
+          query = search_query_for(language: language, user: user, repository: repository, organizations: organizations)
 
           response = github.search_repositories(query, per_page: 100)
           warn "Incomplete results: we only search 100 repos at a time" if response.incomplete_results
@@ -32,10 +32,12 @@ module EndOfLife
           .or { Failure("Please set GITHUB_TOKEN environment variable") }
       end
 
-      def search_query_for(language:, user:, repository:)
+      def search_query_for(language:, user:, repository:, organizations:)
         query = "language:#{language}"
         query += if repository
           " repo:#{repository}"
+        elsif organizations
+          organizations.map { |org| " org:#{org}" }.join
         else
           " user:#{user}"
         end

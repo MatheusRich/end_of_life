@@ -2,6 +2,15 @@
 
 ### Added
 
+- Allow searching repositories inside organizations
+
+```sh
+$ end_of_life --org org1
+
+# It's also possible to search on multiple organizations
+$ end_of_life --org org1,org2
+```
+
 - Fetch EOL Ruby versions from endoflife.date API. This ensures we always use up-to-date data but keep the embedded JSON as a fallback.
 
 - Allow users to specify the maximum number of days away a version can be from EOL. It defaults to 0.
