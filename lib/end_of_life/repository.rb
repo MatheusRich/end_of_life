@@ -27,7 +27,6 @@ module EndOfLife
 
       def github_client
         Maybe(ENV["GITHUB_TOKEN"])
-          .to_result
           .fmap { |token| Octokit::Client.new(access_token: token) }
           .or { Failure("Please set GITHUB_TOKEN environment variable") }
       end
