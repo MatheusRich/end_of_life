@@ -5,16 +5,11 @@ require "ostruct"
 
 RSpec.describe EndOfLife::Repository do
   describe "#fetch" do
-    context "given an account with 200 end of life repositories" do
-      subject(:repositories) do
-        VCR.use_cassette("many_repositories") do
-          EndOfLife::Repository.fetch(language: "ruby", user: nil, organizations: nil, repository: nil)
-        end
+    it "fetches all 200 repositories from an account despite exceeding page size" do
+      repositories = VCR.use_cassette("many_repositories") do
+        EndOfLife::Repository.fetch(language: "ruby", user: nil, organizations: nil, repository: nil)
       end
-
-      it "returns Success with the collection of repositories" do
-        expect(repositories.value_or(nil).count).to eq(200)
-      end
+      expect(repositories.value!.count).to eq(200)
     end
   end
 end
