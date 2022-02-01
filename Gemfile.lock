@@ -134,7 +134,7 @@ DEPENDENCIES
   climate_control (~> 1.0.1)
   end_of_life!
   rake (~> 13.0)
-  rspec (~> 3.0)
+  rspec (~> 3.10)
   rspec-mocks (~> 3.10)
   simplecov (~> 0.21.2)
   standard (~> 1.6)
