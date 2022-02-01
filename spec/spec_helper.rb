@@ -12,7 +12,6 @@ end
 require "end_of_life"
 
 require "climate_control"
-require "pry"
 require "vcr"
 require "webmock"
 

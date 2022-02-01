@@ -38,7 +38,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "tty-spinner", "~> 0.9.0"
   spec.add_dependency "tty-table", "~> 0.12.0"
 
-  spec.add_development_dependency "pry", "~> 0.14"
   spec.add_development_dependency "rspec", "~> 3.10"
   spec.add_development_dependency "rspec-mocks", "~> 3.10"
   spec.add_development_dependency "vcr", "~> 6.0.0"
