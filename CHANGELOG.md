@@ -112,6 +112,8 @@ $ end_of_life --user=matz # searches on matz's repositories
 
 ### Changed
 
+- Remove the 100 repo limit on GitHub API [#13](https://github.com/MatheusRich/end_of_life/pull/13)
+
 - Exit with -1 if EOL repos are present.
 
 - Upgrade `octokit` to v4.22, which fixes [a Faraday warning], so we can remove the dependency on the `warning` gem.
