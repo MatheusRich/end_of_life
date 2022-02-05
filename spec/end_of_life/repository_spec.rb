@@ -112,7 +112,7 @@ RSpec.describe EndOfLife::Repository do
         client = build_client
         allow(Octokit::Client).to receive(:new).and_return(client)
 
-        repositories = with_env GITHUB_TOKEN: "FOO" do
+        with_env GITHUB_TOKEN: "FOO" do
           EndOfLife::Repository.fetch(language: "ruby", user: "thoughtbot", organizations: nil, repository: nil)
         end
 
@@ -121,7 +121,7 @@ RSpec.describe EndOfLife::Repository do
 
       it "returns the search results" do
         client = build_client(
-          search_results: [OpenStruct.new(:full_name => "thoughtbot/paperclip", :language => "ruby")]
+          search_results: [OpenStruct.new(full_name: "thoughtbot/paperclip", language: "ruby")]
         )
         allow(Octokit::Client).to receive(:new).and_return(client)
 
@@ -289,14 +289,14 @@ RSpec.describe EndOfLife::Repository do
           allow(client).to receive(:contents).with(repo, path: path).and_raise(Octokit::NotFound)
         else
           allow(client).to receive(:contents).with(repo, path: path).and_return(
-                             if config[:content]
-                               OpenStruct.new(
-                                 content: encoder.call(config[:content]),
-                                 name: path,
-                                 encoding: config[:encoding]
-                               )
-                             end
-                           )
+            if config[:content]
+              OpenStruct.new(
+                content: encoder.call(config[:content]),
+                name: path,
+                encoding: config[:encoding]
+              )
+            end
+          )
         end
       end
 
