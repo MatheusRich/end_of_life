@@ -78,6 +78,24 @@ RSpec.describe EndOfLife::Options do
       end
     end
 
+    context "with --exclude" do
+      it "sets exclude words" do
+        input = ["--exclude", "word1,word2"]
+
+        options = EndOfLife::Options.from(input)
+
+        expect(options[:excludes]).to eq ["word1", "word2"]
+      end
+
+      it "has a limit of five words" do
+        input = ["--exclude", "word1,word2,word3,word4,word5,word6"]
+
+        options = EndOfLife::Options.from(input)
+
+        expect(options[:excludes]).to eq ["word1", "word2", "word3", "word4", "word5"]
+      end
+    end
+
     context "with no options" do
       it "sets max EOL date to today" do
         input = []

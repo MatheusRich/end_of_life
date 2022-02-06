@@ -2,6 +2,15 @@
 
 ### Added
 
+- Allow excluding repositories from search. Due to a [limitation] on GitHub's API,
+  it's only possible to exclude up to five words.
+
+```sh
+$ end_of_life --exclude=repo1,repo2
+```
+
+[limitation]: https://docs.github.com/en/search-github/getting-started-with-searching-on-github/troubleshooting-search-queries#limitations-on-query-length
+
 - Allow specifying the repo visibility on search:
 
 ```sh

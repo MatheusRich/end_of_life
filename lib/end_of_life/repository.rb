@@ -46,6 +46,12 @@ module EndOfLife
           query += " is:#{options[:visibility]}"
         end
 
+        if options[:excludes]
+          words_to_exclude = options[:excludes].map { |word| "NOT #{word} " }.join
+
+          query += " #{words_to_exclude} in:name"
+        end
+
         query
       end
     end

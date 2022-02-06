@@ -10,6 +10,10 @@ module EndOfLife
 
         opts.banner = "Usage: end_of_life [options]"
 
+        opts.on("--exclude=NAME,NAME2", Array, "Exclude repositories containing a certain word in its name. You can specify up to five words.") do |excludes|
+          options[:excludes] = excludes.first(5)
+        end
+
         opts.on("--public-only", "Searches only public repostories") do
           options[:visibility] = :public
         end
