@@ -2,6 +2,14 @@
 
 ### Added
 
+- Allow specifying the repo visibility on search:
+
+```sh
+$ end_of_life --public-only
+# or
+$ end_of_life --private-only
+```
+
 - Allow searching repositories inside organizations
 
 ```sh

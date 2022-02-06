@@ -10,6 +10,14 @@ module EndOfLife
 
         opts.banner = "Usage: end_of_life [options]"
 
+        opts.on("--public-only", "Searches only public repostories") do
+          options[:visibility] = :public
+        end
+
+        opts.on("--private-only", "Searches only private repostories") do
+          options[:visibility] = :private
+        end
+
         opts.on("--repo=USER/REPO", "--repository=USER/REPO", "Searches a specific repostory") do |repository|
           options[:repository] = repository
         end

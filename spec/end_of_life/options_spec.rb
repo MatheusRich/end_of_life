@@ -58,6 +58,26 @@ RSpec.describe EndOfLife::Options do
       end
     end
 
+    context "with --public-only" do
+      it "sets the search repositories visibility to public" do
+        input = ["--public-only"]
+
+        options = EndOfLife::Options.from(input)
+
+        expect(options[:visibility]).to eq :public
+      end
+    end
+
+    context "with --private-only" do
+      it "sets the search repositories visibility to private" do
+        input = ["--private-only"]
+
+        options = EndOfLife::Options.from(input)
+
+        expect(options[:visibility]).to eq :private
+      end
+    end
+
     context "with no options" do
       it "sets max EOL date to today" do
         input = []

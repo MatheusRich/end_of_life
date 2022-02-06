@@ -37,7 +37,7 @@ module EndOfLife
     end
 
     def check_eol_ruby_on_repositories(options)
-      fetch_repositories(user: options[:user], repository: options[:repository], organizations: options[:organizations])
+      fetch_repositories(options)
         .fmap { |repositories| filter_repositories_with_end_of_life(repositories, max_eol_date: options[:max_eol_date]) }
         .fmap { |repositories| print_diagnose_for(repositories, max_eol_date: options[:max_eol_date]) }
         .or { |error| puts "\n#{error_msg(error)}" }
@@ -47,9 +47,9 @@ module EndOfLife
       Options.from(argv)
     end
 
-    def fetch_repositories(user:, repository:, organizations:)
+    def fetch_repositories(options)
       with_loading_spinner("Fetching repositories...") do |spinner|
-        result = Repository.fetch(language: "ruby", user: user, repository: repository, organizations: organizations)
+        result = Repository.fetch(options)
 
         spinner.error if result.failure?
 
@@ -72,7 +72,7 @@ module EndOfLife
       end
 
       puts "Found #{repositories.size} repositories using EOL Ruby (<= #{RubyVersion.latest_eol(at: max_eol_date)}):"
-      puts end_of_life_table(repositories)
+      # puts end_of_life_table(repositories)
       exit(-1)
     end
 
