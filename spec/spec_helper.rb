@@ -10,7 +10,6 @@ if ENV["COVERAGE"]
 end
 
 require "end_of_life"
-
 require "climate_control"
 require "vcr"
 require "webmock"
@@ -19,6 +18,14 @@ VCR.configure do |config|
   config.cassette_library_dir = "spec/fixtures/vcr_cassettes"
   config.hook_into :webmock
   config.filter_sensitive_data("REDACTED") { ENV["GITHUB_TOKEN"] }
+end
+
+module EndOfLife
+  module TestHelpers
+    def with_env(...)
+      ClimateControl.modify(...)
+    end
+  end
 end
 
 RSpec.configure do |config|
@@ -37,8 +44,6 @@ RSpec.configure do |config|
   else
     config.filter_run_when_matching :focus
   end
-end
 
-def with_env(...)
-  ClimateControl.modify(...)
+  config.include EndOfLife::TestHelpers
 end
