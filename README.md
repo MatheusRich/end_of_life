@@ -12,13 +12,14 @@ gem install end_of_life
 
 ## Usage
 
-1. Set up a [GitHub access token];
+1. Set up a [GitHub access token][] (we recommend using a read-only token);
 
-[GitHub access token]: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token#creating-a-token
+[github access token]: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token#creating-a-token
 
 2. Export the `GITHUB_TOKEN` environment variable or set it when calling `end_of_life`;
 
 3. Use the `end_of_life` command to list the repositories:
+
 ```sh
 $ GITHUB_TOKEN=something end_of_life # if your platform supports symlinks, you can use the `eol` command instead
 [✔] Fetching repositories...
@@ -33,15 +34,32 @@ Found 2 repositories using EOL Ruby (<= 2.5.9):
 └───┴──────────────────────────────────────────────┴──────────────┘
 ```
 
-## How it works?
+### Options
+
+There are some options to help you filter down the results:
+
+```
+Usage: end_of_life [options]
+        --exclude=NAME,NAME2           Exclude repositories containing a certain word in its name. You can specify up to five words.
+        --public-only                  Searches only public repostories
+        --private-only                 Searches only private repostories
+        --repo, --repository=USER/REPO Searches a specific repostory
+        --org, --organization=ORG,ORG2 Searches within specific organizations
+    -u, --user=NAME                    Sets the user used on the repository search
+        --max-eol-days-away NUMBER     Sets the maximum number of days away a version can be from EOL. It defaults to 0.
+    -v, --version                      Displays end_of_life version
+    -h, --help                         Displays this help
+```
+
+## How it works
 
 This gem fetches all your GitHub repositories that contain Ruby code, then
 searches for files that may have a Ruby version. Currently, those files are:
 `.ruby-version`, `Gemfile`, `Gemfile.lock`, and `.tool-version`. We parse these
 files and extract the minimum Ruby version used in the repository.
 
-The EOL Ruby version is defined statically in [this JSON file] provided by
-https://endoflife.date/. We plan to fetch their API endpoint in the future.
+The EOL Ruby version is provided by https://endoflife.date/, with a file
+[fallback].
 
 > **IMPORTANT:** To parse Gemfiles, we need to execute the code inside it. **Be
 > careful** because this may be a security risk. We plan to add a secure parser
@@ -49,7 +67,7 @@ https://endoflife.date/. We plan to fetch their API endpoint in the future.
 
 Some other limitations are listed on the [issues page].
 
-[this json file]: ./lib/end_of_life.json
+[fallback]: ./lib/end_of_life.json
 [issues page]: https://github.com/MatheusRich/end_of_life/issues
 
 ## Development
