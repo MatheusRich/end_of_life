@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.3.0]
+
 ### Added
 
 - Allow excluding repositories from search. Due to a [limitation] on GitHub's API,
@@ -100,8 +102,7 @@ repo.eol_ruby?(at: Date.parse("2024.04.04"))
 
 - `EndOfLife::RubyVersion::EOL` constant was removed in favor of `EndOfLife::RubyVersion.latest_eol` method.
 
-
-----
+---
 
 ## [0.2.0]
 
@@ -141,6 +142,7 @@ $ end_of_life --user=matz # searches on matz's repositories
 
 - Initial release
 
-[unreleased]: https://github.com/MatheusRich/end_of_life/compare/v0.2.0...HEAD
+[unreleased]: https://github.com/MatheusRich/end_of_life/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/MatheusRich/end_of_life/releases/tag/v0.3.0
 [0.2.0]: https://github.com/MatheusRich/end_of_life/releases/tag/v0.2.0
 [0.1.0]: https://github.com/MatheusRich/end_of_life/releases/tag/v0.1.0
