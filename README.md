@@ -25,7 +25,7 @@ $ GITHUB_TOKEN=something end_of_life # if your platform supports symlinks, you c
 [✔] Fetching repositories...
 [✔] Searching for EOL Ruby in repositories...
 
-Found 2 repositories using EOL Ruby (<= 2.5.9):
+Found 2 repositories using EOL Ruby (<= 2.7.8):
 ┌───┬──────────────────────────────────────────────┬──────────────┐
 │   │ Repository                                   │ Ruby version │
 ├───┼──────────────────────────────────────────────┼──────────────┤
@@ -47,6 +47,7 @@ Usage: end_of_life [options]
         --org, --organization=ORG,ORG2 Searches within specific organizations
     -u, --user=NAME                    Sets the user used on the repository search
         --max-eol-days-away NUMBER     Sets the maximum number of days away a version can be from EOL. It defaults to 0.
+        --include-archived             Includes archived repositories on the search
     -v, --version                      Displays end_of_life version
     -h, --help                         Displays this help
 ```
