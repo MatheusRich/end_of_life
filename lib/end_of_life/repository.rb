@@ -12,7 +12,9 @@ module EndOfLife
           items = github.search_repositories(query, {sort: :updated}).items
 
           Success(
-            items.map do |repo|
+            items.filter_map do |repo|
+              next if repo.archived && options[:skip_archived]
+
               Repository.new(
                 full_name: repo.full_name,
                 url: repo.html_url,

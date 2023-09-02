@@ -120,18 +120,37 @@ RSpec.describe EndOfLife::Repository do
       end
 
       it "returns the search results" do
+        paperclip = OpenStruct.new(full_name: "thoughtbot/paperclip", language: "ruby")
+        archived_repo = OpenStruct.new(full_name: "thoughtbot/archived-repo", language: "ruby", archived: true)
         client = build_client(
-          search_results: [OpenStruct.new(full_name: "thoughtbot/paperclip", language: "ruby")]
+          search_results: [paperclip, archived_repo]
         )
         allow(Octokit::Client).to receive(:new).and_return(client)
 
         repositories = with_env GITHUB_TOKEN: "FOO" do
-          EndOfLife::Repository.fetch(language: "ruby", user: "thoughtbot", organizations: nil, repository: nil)
+          EndOfLife::Repository.fetch(language: "ruby", user: "thoughtbot", skip_archived: true)
         end
 
-        results = repositories.value!
-        expect(results.count).to eq(1)
-        expect(results.first.full_name).to eq("thoughtbot/paperclip")
+        results = repositories.value!.map(&:full_name)
+        expect(results).to eq [paperclip.full_name]
+      end
+
+      context "when not skipping archived repositories" do
+        it "returns the search results" do
+          paperclip = OpenStruct.new(full_name: "thoughtbot/paperclip", language: "ruby")
+          archived_repo = OpenStruct.new(full_name: "thoughtbot/archived-repo", language: "ruby", archived: true)
+          client = build_client(
+            search_results: [paperclip, archived_repo]
+          )
+          allow(Octokit::Client).to receive(:new).and_return(client)
+
+          repositories = with_env GITHUB_TOKEN: "FOO" do
+            EndOfLife::Repository.fetch(language: "ruby", user: "thoughtbot", skip_archived: false)
+          end
+
+          results = repositories.value!.map(&:full_name)
+          expect(results).to eq [paperclip.full_name, archived_repo.full_name]
+        end
       end
     end
 

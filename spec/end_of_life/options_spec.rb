@@ -96,13 +96,31 @@ RSpec.describe EndOfLife::Options do
       end
     end
 
-    context "with no options" do
+    context "with --include-archived" do
+      it "includes archived repositories" do
+        input = ["--include-archived"]
+
+        options = EndOfLife::Options.from(input)
+
+        expect(options[:skip_archived]).to be false
+      end
+    end
+
+    context "with no options (i.e., default options)" do
       it "sets max EOL date to today" do
         input = []
 
         options = EndOfLife::Options.from(input)
 
         expect(options[:max_eol_date]).to eq(Date.today)
+      end
+
+      it "skips archived repositories" do
+        input = []
+
+        options = EndOfLife::Options.from(input)
+
+        expect(options[:skip_archived]).to be true
       end
     end
 

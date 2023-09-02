@@ -3,7 +3,7 @@ require "optparse"
 module EndOfLife
   module Options
     def self.from(argv)
-      options = {max_eol_date: Date.today}
+      options = {max_eol_date: Date.today, skip_archived: true}
 
       OptionParser.new do |opts|
         options[:parser] = opts
@@ -36,6 +36,10 @@ module EndOfLife
 
         opts.on("--max-eol-days-away NUMBER", "Sets the maximum number of days away a version can be from EOL. It defaults to 0.") do |days|
           options[:max_eol_date] = Date.today + days.to_i.abs
+        end
+
+        opts.on("--include-archived", "Includes archived repositories on the search") do
+          options[:skip_archived] = false
         end
 
         opts.on("-v", "--version", "Displays end_of_life version") do
