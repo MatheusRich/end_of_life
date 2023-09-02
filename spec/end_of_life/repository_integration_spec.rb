@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "climate_control"
-require "ostruct"
-
 RSpec.describe EndOfLife::Repository do
   describe "#fetch" do
     it "fetches all 200 repositories from an account despite exceeding page size" do
@@ -11,6 +8,7 @@ RSpec.describe EndOfLife::Repository do
           EndOfLife::Repository.fetch(language: "ruby", user: nil, organizations: nil, repository: nil)
         end
       end
+
       expect(repositories.value!.count).to eq(200)
     end
   end
