@@ -9,7 +9,7 @@ module EndOfLife
           options[:user] ||= github.user.login
 
           query = search_query_for(options)
-          items = github.search_repositories(query).items
+          items = github.search_repositories(query, {sort: :updated}).items
 
           Success(
             items.map do |repo|

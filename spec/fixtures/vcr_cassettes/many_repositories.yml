@@ -84,7 +84,7 @@ http_interactions:
   recorded_at: Mon, 31 Jan 2022 09:29:32 GMT
 - request:
     method: get
-    uri: https://api.github.com/search/repositories?per_page=100&q=language:ruby%20user:duncan-bayne-test
+    uri: https://api.github.com/search/repositories?per_page=100&q=language:ruby%20user:duncan-bayne-test&sort=updated
     body:
       encoding: US-ASCII
       string: ''
