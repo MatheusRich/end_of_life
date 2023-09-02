@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "async"
 require "dry-monads"
 require "json"
 require "octokit"
@@ -59,7 +60,11 @@ module EndOfLife
 
     def filter_repositories_with_end_of_life(repositories, max_eol_date:)
       with_loading_spinner("Searching for EOL Ruby in repositories...") do
-        repositories.filter { |repo| repo.eol_ruby?(at: max_eol_date) }
+        Sync do
+          repositories
+            .tap { |repos| repos.map { |repo| Async { repo.ruby_version } }.map(&:wait) }
+            .filter { |repo| repo.eol_ruby?(at: max_eol_date) }
+        end
       end
     end
 
