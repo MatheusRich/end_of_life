@@ -14,8 +14,8 @@ RSpec.describe EndOfLife::RubyVersion do
         "2.3.8",
         "2.2.10",
         "2.1.10",
-        "2.0.0.pre.p648",
-        "1.9.3.pre.p551"
+        "2.0.0p648",
+        "1.9.3p551"
       ]
     end
   end
@@ -28,7 +28,7 @@ RSpec.describe EndOfLife::RubyVersion do
 
         version = EndOfLife::RubyVersion.latest_eol
 
-        expect(version.to_s).to eq "2.0.0.pre.p648"
+        expect(version.to_s).to eq "2.0.0p648"
       end
     end
 
