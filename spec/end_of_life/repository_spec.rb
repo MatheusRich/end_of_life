@@ -283,7 +283,7 @@ RSpec.describe EndOfLife::Repository do
 
       contents.each do |path, config|
         config ||= {}
-        encoder = config[:encoding] == "base64" ? Base64.method(:encode64) : ->(x) { x }
+        encoder = (config[:encoding] == "base64") ? Base64.method(:encode64) : ->(x) { x }
 
         if config[:content] == Octokit::NotFound
           allow(client).to receive(:contents).with(repo, path: path).and_raise(Octokit::NotFound)
