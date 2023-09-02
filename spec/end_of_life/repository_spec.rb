@@ -286,6 +286,51 @@ RSpec.describe EndOfLife::Repository do
 
         expect(client).to have_received(:contents).with("thoughtbot/paperclip", path: ".tool-versions")
       end
+
+      it "fetches files asynchronously" do
+        seconds_of_sleep = 1
+        sleepy_github = build_client(
+          repo: "thoughtbot/paperclip",
+          contents: {
+            ".ruby-version" => {
+              content: lambda {
+                sleep(seconds_of_sleep)
+                nil
+              }
+            },
+            ".tool-versions" => {
+              content: lambda {
+                sleep(seconds_of_sleep)
+                "ruby 2.5.0"
+              }
+            },
+            "Gemfile" => {
+              content: lambda {
+                sleep(seconds_of_sleep)
+                nil
+              }
+            },
+            "Gemfile.lock" => {
+              content: lambda {
+                sleep(seconds_of_sleep)
+                nil
+              }
+            }
+          }
+        )
+        repo = EndOfLife::Repository.new(
+          full_name: "thoughtbot/paperclip",
+          url: "https://github.com/thoughtbot/paperclip",
+          github_client: sleepy_github
+        )
+
+        t0 = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+        repo.ruby_version
+        total_elapsed_time = Process.clock_gettime(Process::CLOCK_MONOTONIC) - t0
+
+        overhead = 0.1
+        expect(total_elapsed_time).to be_within(overhead).of(seconds_of_sleep)
+      end
     end
 
     private
@@ -307,15 +352,21 @@ RSpec.describe EndOfLife::Repository do
         if config[:content] == Octokit::NotFound
           allow(client).to receive(:contents).with(repo, path: path).and_raise(Octokit::NotFound)
         else
-          allow(client).to receive(:contents).with(repo, path: path).and_return(
+          allow(client).to receive(:contents).with(repo, path: path) do
             if config[:content]
+              file_content = if config[:content].is_a?(Proc)
+                config[:content].call
+              else
+                config[:content]
+              end
+
               OpenStruct.new(
-                content: encoder.call(config[:content]),
+                content: encoder.call(file_content) || "",
                 name: path,
                 encoding: config[:encoding]
               )
             end
-          )
+          end
         end
       end
 

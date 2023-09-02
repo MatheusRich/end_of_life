@@ -41,7 +41,7 @@ module EndOfLife
       end
     end
 
-    attr :version, :eol_date
+    attr_reader :version, :eol_date
 
     def initialize(version_string, eol_date: nil)
       @version = Gem::Version.new(version_string)

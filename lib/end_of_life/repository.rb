@@ -58,7 +58,7 @@ module EndOfLife
       end
     end
 
-    attr :full_name, :url
+    attr_reader :full_name, :url
 
     def initialize(full_name:, url:, github_client:)
       @full_name = full_name
@@ -81,15 +81,22 @@ module EndOfLife
     def ruby_versions
       return @ruby_versions if defined?(@ruby_versions)
 
-      @ruby_versions = begin
-        ruby_version_files = [
-          fetch_file(".ruby-version"),
-          fetch_file("Gemfile"),
-          fetch_file("Gemfile.lock"),
-          fetch_file(".tool-versions")
-        ].compact
+      @ruby_versions = fetch_ruby_version_files.filter_map { |file|
+        parse_version_file(file)
+      }
+    end
 
-        ruby_version_files.filter_map { |file| parse_version_file(file) }
+    POSSIBLE_RUBY_VERSION_FILES = [
+      ".ruby-version",
+      "Gemfile.lock",
+      "Gemfile",
+      ".tool-versions"
+    ]
+    def fetch_ruby_version_files
+      Sync do
+        POSSIBLE_RUBY_VERSION_FILES
+          .map { |file_path| Async { fetch_file(file_path) } }
+          .filter_map(&:wait)
       end
     end
 
