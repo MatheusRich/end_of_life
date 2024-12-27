@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
                      "unmaintained, Ruby versions."
   spec.homepage = "https://github.com/MatheusRich/end_of_life"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 3.0.0"
+  spec.required_ruby_version = ">= 3.2.0"
 
   # spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"
 
@@ -34,7 +34,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "async"
   spec.add_dependency "dry-monads", "~> 1.3"
-  spec.add_dependency "octokit", "~> 4.22"
+  spec.add_dependency "octokit", "~> 9.0"
   spec.add_dependency "pastel", "~> 0.8.0"
   spec.add_dependency "tty-spinner", "~> 0.9.0"
   spec.add_dependency "tty-table", "~> 0.12.0"

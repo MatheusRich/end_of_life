@@ -3,6 +3,7 @@
 require "async"
 require "dry-monads"
 require "json"
+require "base64"
 require "octokit"
 require_relative "end_of_life/options"
 require_relative "end_of_life/repository"
