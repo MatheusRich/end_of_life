@@ -1,5 +1,17 @@
 ## [Unreleased]
 
+## [0.4.0] - 2025-05-23
+
+- Skip archived repos (by default)
+
+It's possible to include them with the `--include-archived` flag.
+
+- Sort repositories by most recently updated
+
+These are likely the ones one cares more about.
+
+- Require Ruby >= 3.2.0
+
 ## [0.3.0]
 
 ### Added
