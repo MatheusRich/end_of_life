@@ -41,9 +41,9 @@ There are some options to help you filter down the results:
 ```
 Usage: end_of_life [options]
         --exclude=NAME,NAME2           Exclude repositories containing a certain word in its name. You can specify up to five words.
-        --public-only                  Searches only public repostories
-        --private-only                 Searches only private repostories
-        --repo, --repository=USER/REPO Searches a specific repostory
+        --public-only                  Searches only public repositories
+        --private-only                 Searches only private repositories
+        --repo, --repository=USER/REPO Searches a specific repository
         --org, --organization=ORG,ORG2 Searches within specific organizations
     -u, --user=NAME                    Sets the user used on the repository search
         --max-eol-days-away NUMBER     Sets the maximum number of days away a version can be from EOL. It defaults to 0.

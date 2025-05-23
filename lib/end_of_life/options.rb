@@ -14,15 +14,15 @@ module EndOfLife
           options[:excludes] = excludes.first(5)
         end
 
-        opts.on("--public-only", "Searches only public repostories") do
+        opts.on("--public-only", "Searches only public repositories") do
           options[:visibility] = :public
         end
 
-        opts.on("--private-only", "Searches only private repostories") do
+        opts.on("--private-only", "Searches only private repositories") do
           options[:visibility] = :private
         end
 
-        opts.on("--repo=USER/REPO", "--repository=USER/REPO", "Searches a specific repostory") do |repository|
+        opts.on("--repo=USER/REPO", "--repository=USER/REPO", "Searches a specific repository") do |repository|
           options[:repository] = repository
         end
 
