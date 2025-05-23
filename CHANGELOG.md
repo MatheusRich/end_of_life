@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.4.1] - 2025-05-23
+
 - [BUGFIX] Handle empty/invalid version files
   - if a file like `.ruby-version` was empty, we would parse it it's version as
     `0` which would take precedence over any other file when comparing versions.
@@ -159,7 +161,9 @@ $ end_of_life --user=matz # searches on matz's repositories
 
 - Initial release
 
-[unreleased]: https://github.com/MatheusRich/end_of_life/compare/v0.3.0...HEAD
+[unreleased]: https://github.com/MatheusRich/end_of_life/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/MatheusRich/end_of_life/releases/tag/v0.4.1
+[0.4.0]: https://github.com/MatheusRich/end_of_life/releases/tag/v0.4.0
 [0.3.0]: https://github.com/MatheusRich/end_of_life/releases/tag/v0.3.0
 [0.2.0]: https://github.com/MatheusRich/end_of_life/releases/tag/v0.2.0
 [0.1.0]: https://github.com/MatheusRich/end_of_life/releases/tag/v0.1.0

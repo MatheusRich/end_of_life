@@ -50,7 +50,7 @@ module EndOfLife
       def parse_gemfile_file(file_content)
         with_temp_gemfile(file_content) do |temp_gemfile|
           gemfile_version = temp_gemfile.ruby_version&.gem_version
-          return if gemfile_version.nil?# || gemfile_version.to_s == "0"
+          return if gemfile_version.nil?
 
           RubyVersion.new(gemfile_version)
         end

@@ -145,7 +145,6 @@ RSpec.describe EndOfLife::RubyVersion::Parser do
         expect(result).to be_nil
       end
 
-
       it "returns nil if the file is empty" do
         result = described_class.parse_file(file_name: ".tool-versions", content: "")
 

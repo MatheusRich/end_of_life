@@ -62,7 +62,7 @@ module EndOfLife
         return
       end
 
-      word = repositories.size == 1 ? "repository" : "repositories"
+      word = (repositories.size == 1) ? "repository" : "repositories"
       puts "Found #{repositories.size} #{word} using EOL Ruby (<= #{RubyVersion.latest_eol(at: max_eol_date)}):"
       puts end_of_life_table(repositories)
       exit(-1)
