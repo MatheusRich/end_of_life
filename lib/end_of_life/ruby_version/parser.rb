@@ -7,7 +7,9 @@ module EndOfLife
       extend self
 
       def parse_file(file_name:, content:)
-        if file_name == ".ruby-version"
+        return if content.strip.empty?
+
+        version = if file_name == ".ruby-version"
           parse_ruby_version_file(content)
         elsif file_name == "Gemfile.lock"
           parse_gemfile_lock_file(content)
@@ -18,6 +20,14 @@ module EndOfLife
         else
           raise ArgumentError, "Unsupported file #{file_name}"
         end
+
+        # Gem::Version is pretty forgiving and will accept empty strings
+        # as valid versions. This is a catch-all to ensure we don't return
+        # a version 0, which always takes precedence over any other version
+        # when comparing.
+        return if version&.zero?
+
+        version
       end
 
       private
@@ -38,11 +48,9 @@ module EndOfLife
       end
 
       def parse_gemfile_file(file_content)
-        return if file_content.empty?
-
         with_temp_gemfile(file_content) do |temp_gemfile|
           gemfile_version = temp_gemfile.ruby_version&.gem_version
-          return nil if gemfile_version.nil?
+          return if gemfile_version.nil?# || gemfile_version.to_s == "0"
 
           RubyVersion.new(gemfile_version)
         end

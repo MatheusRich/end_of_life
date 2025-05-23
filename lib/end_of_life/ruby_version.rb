@@ -6,6 +6,8 @@ module EndOfLife
   class RubyVersion
     include Comparable
 
+    ZERO = Gem::Version.new("0")
+
     class << self
       include Dry::Monads[:try]
 
@@ -57,6 +59,8 @@ module EndOfLife
     def <=>(other)
       @version <=> other.version
     end
+
+    def zero? = @version == ZERO
 
     def to_s
       @version.to_s

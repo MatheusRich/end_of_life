@@ -16,6 +16,12 @@ RSpec.describe EndOfLife::RubyVersion::Parser do
 
         expect(result).to eq EndOfLife::RubyVersion.new("2.0.0")
       end
+
+      it "returns nil if the file is empty" do
+        result = described_class.parse_file(file_name: ".ruby-version", content: "")
+
+        expect(result).to be_nil
+      end
     end
 
     context "with Gemfile.lock" do
@@ -61,6 +67,12 @@ RSpec.describe EndOfLife::RubyVersion::Parser do
 
         expect(result).to be_nil
       end
+
+      it "returns nil if the file is empty" do
+        result = described_class.parse_file(file_name: "Gemfile.lock", content: "")
+
+        expect(result).to be_nil
+      end
     end
 
     context "with Gemfile" do
@@ -79,6 +91,17 @@ RSpec.describe EndOfLife::RubyVersion::Parser do
       it "returns nil if it doesn't have ruby version defined" do
         gemfile = <<~GEMFILE
           source "https://rubygems.org"
+        GEMFILE
+
+        result = described_class.parse_file(file_name: "Gemfile", content: gemfile)
+
+        expect(result).to be_nil
+      end
+
+      it "returns nil if it the ruby version is defined in a file" do
+        gemfile = <<~GEMFILE
+          source "https://rubygems.org"
+          ruby file: ".ruby-version"
         GEMFILE
 
         result = described_class.parse_file(file_name: "Gemfile", content: gemfile)
@@ -121,12 +144,19 @@ RSpec.describe EndOfLife::RubyVersion::Parser do
 
         expect(result).to be_nil
       end
+
+
+      it "returns nil if the file is empty" do
+        result = described_class.parse_file(file_name: ".tool-versions", content: "")
+
+        expect(result).to be_nil
+      end
     end
 
     context "with unknown file" do
       it "raises an error" do
         expect {
-          described_class.parse_file(file_name: "foo.bar", content: "")
+          described_class.parse_file(file_name: "foo.bar", content: "foo")
         }.to raise_error(ArgumentError, "Unsupported file foo.bar")
       end
     end

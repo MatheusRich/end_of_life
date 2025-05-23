@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+- [BUGFIX] Handle empty/invalid version files
+  - if a file like `.ruby-version` was empty, we would parse it it's version as
+    `0` which would take precedence over any other file when comparing versions.
+  - We now ignore those files and any file which version parses to `0`.
+
 ## [0.4.0] - 2025-05-23
 
 - Skip archived repos (by default)
