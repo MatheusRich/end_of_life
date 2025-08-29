@@ -1,6 +1,5 @@
 require "net/http"
 require "rubygems"
-require_relative "ruby_version/parser"
 
 module EndOfLife
   class RubyVersion

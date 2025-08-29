@@ -5,12 +5,9 @@ require "dry-monads"
 require "json"
 require "base64"
 require "octokit"
-require_relative "end_of_life/options"
-require_relative "end_of_life/repository"
-require_relative "end_of_life/ruby_version"
-require_relative "end_of_life/terminal_helper"
-require_relative "end_of_life/version"
-require_relative "end_of_life/cli"
+require "zeitwerk"
+
+Zeitwerk::Loader.for_gem.tap { |it| it.inflector.inflect("cli" => "CLI") }.setup
 
 module EndOfLife
   extend TerminalHelper
