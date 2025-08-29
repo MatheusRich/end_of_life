@@ -361,7 +361,7 @@ RSpec.describe EndOfLife::Repository do
 
               OpenStruct.new(
                 content: encoder.call(file_content) || "",
-                name: path,
+                path: path,
                 encoding: config[:encoding]
               )
             end

@@ -81,16 +81,19 @@ module EndOfLife
     def ruby_versions
       return @ruby_versions if defined?(@ruby_versions)
 
-      @ruby_versions = fetch_ruby_version_files.filter_map { |file|
-        parse_version_file(file)
-      }
+      @ruby_versions = VersionDetectors::Ruby.detect_all(fetch_ruby_version_files)
     end
 
     def fetch_ruby_version_files
       Sync do
         VersionDetectors::Ruby.relevant_files
           .map { |file_path| Async { fetch_file(file_path) } }
-          .filter_map(&:wait)
+          .filter_map { |task|
+            file = task.wait
+            next if file.nil?
+
+            InMemoryFile.new(file.path, decode_file(file))
+          }
       end
     end
 
@@ -98,10 +101,6 @@ module EndOfLife
       @github_client.contents(full_name, path: file_path)
     rescue Octokit::NotFound
       nil
-    end
-
-    def parse_version_file(file)
-      RubyVersion.from_file(file_name: file.name, content: decode_file(file))
     end
 
     def decode_file(file)
