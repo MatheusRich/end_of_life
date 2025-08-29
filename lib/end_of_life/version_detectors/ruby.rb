@@ -34,7 +34,7 @@ module EndOfLife
       def parse_ruby_version(file_content)
         string_version = file_content.strip.delete_prefix("ruby-")
 
-        RubyVersion.new(string_version)
+        Product::Release.ruby(string_version)
       end
 
       def parse_gemfile_lock(file_content)
@@ -42,7 +42,7 @@ module EndOfLife
           gemfile_lock_version = Bundler::LockfileParser.new(file_content).ruby_version
           return if gemfile_lock_version.nil?
 
-          RubyVersion.new(gemfile_lock_version.delete_prefix("ruby "))
+          Product::Release.ruby(gemfile_lock_version.delete_prefix("ruby "))
         end
       end
 
@@ -51,7 +51,7 @@ module EndOfLife
           gemfile_version = temp_gemfile.ruby_version&.gem_version
           return if gemfile_version.nil?
 
-          RubyVersion.new(gemfile_version)
+          Product::Release.ruby(gemfile_version)
         end
       end
 
@@ -61,7 +61,7 @@ module EndOfLife
           .filter_map do |line|
             tool, version = line.strip.split
 
-            tool == "ruby" && RubyVersion.new(version)
+            tool == "ruby" && Product::Release.ruby(version)
           end
           .first
       end

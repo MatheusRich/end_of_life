@@ -3,6 +3,8 @@ module EndOfLife
     class Release < Data.define(:product, :version, :eol_date)
       include Comparable
 
+      def self.ruby(version, eol_date: nil) = new(product: "ruby", version:, eol_date:)
+
       def initialize(product:, version:, eol_date: nil)
         super(product:, eol_date:, version: Gem::Version.new(version))
       end
