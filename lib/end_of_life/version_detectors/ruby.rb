@@ -1,3 +1,5 @@
+require "bundler"
+
 module EndOfLife
   module VersionDetectors
     module Ruby
