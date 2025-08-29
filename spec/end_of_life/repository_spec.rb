@@ -75,7 +75,6 @@ RSpec.describe EndOfLife::Repository do
           }
         )
         ruby_3_eol_date = Date.parse("2024-03-31")
-        day_before_of_ruby_3_eol_date = ruby_3_eol_date - 1
 
         repo = EndOfLife::Repository.new(
           full_name: "thoughtbot/paperclip",
@@ -84,7 +83,7 @@ RSpec.describe EndOfLife::Repository do
         )
 
         expect(repo.eol_ruby?(at: ruby_3_eol_date)).to be true
-        expect(repo.eol_ruby?(at: day_before_of_ruby_3_eol_date)).to be false
+        expect(repo.eol_ruby?(at: ruby_3_eol_date.prev_day)).to be false
       end
 
       it "returns nil if version is nil" do

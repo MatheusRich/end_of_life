@@ -52,7 +52,11 @@ module EndOfLife
     end
 
     def eol?(at: Date.today)
-      self <= RubyVersion.latest_eol(at: at)
+      if eol_date
+        eol_date <= at
+      else
+        self <= RubyVersion.latest_eol(at: at)
+      end
     end
 
     def <=>(other)

@@ -100,18 +100,17 @@ RSpec.describe EndOfLife::RubyVersion do
     end
 
     it "returns false if the version is not end of life today" do
-      version = EndOfLife::RubyVersion.new("999999999999")
+      version = EndOfLife::RubyVersion.new("999999999999", eol_date: Date.today + 1)
 
       expect(version).not_to be_eol
     end
 
     it "accepts a custom date" do
-      version = EndOfLife::RubyVersion.new("1.9.3")
-      ruby_2_eol_date = Date.parse("2016-02-24")
-      day_before_of_ruby_2_eol_date = ruby_2_eol_date - 1
+      version = EndOfLife::RubyVersion.new("1.9.3", eol_date: Date.parse("2015-02-23"))
+      day_before_eol_date = version.eol_date.prev_day
 
-      result = version.eol?(at: ruby_2_eol_date)
-      result2 = version.eol?(at: day_before_of_ruby_2_eol_date)
+      result = version.eol?(at: version.eol_date)
+      result2 = version.eol?(at: day_before_eol_date)
 
       expect(result).to be true
       expect(result2).to be false
