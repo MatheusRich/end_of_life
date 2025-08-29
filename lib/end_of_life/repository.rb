@@ -86,15 +86,9 @@ module EndOfLife
       }
     end
 
-    POSSIBLE_RUBY_VERSION_FILES = [
-      ".ruby-version",
-      "Gemfile.lock",
-      "Gemfile",
-      ".tool-versions"
-    ]
     def fetch_ruby_version_files
       Sync do
-        POSSIBLE_RUBY_VERSION_FILES
+        VersionDetectors::Ruby.relevant_files
           .map { |file_path| Async { fetch_file(file_path) } }
           .filter_map(&:wait)
       end
