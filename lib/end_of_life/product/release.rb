@@ -1,5 +1,5 @@
 module EndOfLife
-  module Product
+  class Product
     class Release < Data.define(:product, :version, :eol_date)
       include Comparable
 

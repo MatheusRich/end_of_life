@@ -3,7 +3,7 @@ require "optparse"
 module EndOfLife
   module Options
     def self.from(argv)
-      options = {max_eol_date: Date.today, skip_archived: true}
+      options = {product: Product.new("ruby"), max_eol_date: Date.today, skip_archived: true}
 
       OptionParser.new do |parser|
         options[:parser] = parser
