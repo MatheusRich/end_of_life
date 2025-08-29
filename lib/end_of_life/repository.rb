@@ -81,12 +81,16 @@ module EndOfLife
     def ruby_versions
       return @ruby_versions if defined?(@ruby_versions)
 
-      @ruby_versions = VersionDetectors::Ruby.detect_all(fetch_ruby_version_files)
+      @ruby_versions = VersionDetectors.for_product("ruby").then do |detector|
+        detector.detect_all(
+          fetch_files(detector.relevant_files)
+        )
+      end
     end
 
-    def fetch_ruby_version_files
+    def fetch_files(file_paths)
       Sync do
-        VersionDetectors::Ruby.relevant_files
+        file_paths
           .map { |file_path| Async { fetch_file(file_path) } }
           .filter_map { |task|
             file = task.wait
