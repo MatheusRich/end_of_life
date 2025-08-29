@@ -5,8 +5,8 @@ module EndOfLife
 
     def scan(options)
       fetch_repositories(options)
-        .fmap { |repositories| filter_repositories_with_end_of_life(repositories, max_eol_date: options[:max_eol_date]) }
-        .fmap { |repositories| output_report(repositories, max_eol_date: options[:max_eol_date]) }
+        .fmap { |repositories| filter_repositories_with_end_of_life(repositories, **options.slice(:product, :max_eol_date)) }
+        .fmap { |repositories| output_report(repositories, **options.slice(:product, :max_eol_date)) }
         .or { |error| abort "\n#{error_msg(error)}" }
     end
 
@@ -22,7 +22,7 @@ module EndOfLife
       end
     end
 
-    def filter_repositories_with_end_of_life(repositories, max_eol_date:)
+    def filter_repositories_with_end_of_life(repositories, product:, max_eol_date:)
       with_loading_spinner("Searching for EOL Ruby in repositories...") do
         Sync do
           repositories
@@ -32,8 +32,8 @@ module EndOfLife
       end
     end
 
-    def output_report(repositories, max_eol_date:)
-      report = Report.new(repositories, max_eol_date)
+    def output_report(repositories, product:, max_eol_date:)
+      report = Report.new(product, repositories, max_eol_date)
       puts report
 
       exit(1) if report.failure?

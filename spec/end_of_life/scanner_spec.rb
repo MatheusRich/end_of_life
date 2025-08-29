@@ -9,7 +9,7 @@ RSpec.describe EndOfLife::Scanner do
         )
 
         options = {
-          language: "ruby",
+          product: EndOfLife::Product.new("ruby"),
           user: "test_user",
           max_eol_date: Date.today
         }
@@ -29,7 +29,7 @@ RSpec.describe EndOfLife::Scanner do
         )
 
         options = {
-          language: "ruby",
+          product: EndOfLife::Product.new("ruby"),
           user: "test_user",
           max_eol_date: Date.today
         }
