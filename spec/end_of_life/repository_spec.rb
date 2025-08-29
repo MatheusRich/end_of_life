@@ -287,7 +287,7 @@ RSpec.describe EndOfLife::Repository do
       end
 
       it "fetches files asynchronously" do
-        seconds_of_sleep = 1
+        seconds_of_sleep = 0.5
         sleepy_github = build_client(
           repo: "thoughtbot/paperclip",
           contents: {
