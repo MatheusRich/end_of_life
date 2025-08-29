@@ -8,13 +8,13 @@ RSpec.describe EndOfLife::VersionDetectors::Ruby do
       it "returns ruby version defined" do
         result = described_class.detect(EndOfLife::InMemoryFile.new(".ruby-version", "3.0.0"))
 
-        expect(result).to eq EndOfLife::RubyVersion.new("3.0.0")
+        expect(result).to eq EndOfLife::Product::Release.ruby("3.0.0")
       end
 
       it "removes the 'ruby-' prefix" do
         result = described_class.detect(EndOfLife::InMemoryFile.new(".ruby-version", "ruby-2.0.0\n"))
 
-        expect(result).to eq EndOfLife::RubyVersion.new("2.0.0")
+        expect(result).to eq EndOfLife::Product::Release.ruby("2.0.0")
       end
 
       it "returns nil if the file is empty" do
@@ -45,7 +45,7 @@ RSpec.describe EndOfLife::VersionDetectors::Ruby do
 
         result = described_class.detect(EndOfLife::InMemoryFile.new("Gemfile.lock", gemfile_lock))
 
-        expect(result).to eq EndOfLife::RubyVersion.new("3.0.2p107")
+        expect(result).to eq EndOfLife::Product::Release.ruby("3.0.2p107")
       end
 
       it "returns nil if it doesn't have ruby version defined" do
@@ -85,7 +85,7 @@ RSpec.describe EndOfLife::VersionDetectors::Ruby do
 
         result = described_class.detect(EndOfLife::InMemoryFile.new("Gemfile", gemfile))
 
-        expect(result).to eq EndOfLife::RubyVersion.new("3.0.2")
+        expect(result).to eq EndOfLife::Product::Release.ruby("3.0.2")
       end
 
       it "returns nil if it doesn't have ruby version defined" do
@@ -136,7 +136,7 @@ RSpec.describe EndOfLife::VersionDetectors::Ruby do
       it "returns the first ruby version defined" do
         result = described_class.detect(EndOfLife::InMemoryFile.new(".tool-versions", "  ruby 3.0.0\n ruby 2.5.1"))
 
-        expect(result).to eq EndOfLife::RubyVersion.new("3.0.0")
+        expect(result).to eq EndOfLife::Product::Release.ruby("3.0.0")
       end
 
       it "returns nil if it doesn't have ruby defined" do

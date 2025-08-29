@@ -172,7 +172,7 @@ RSpec.describe EndOfLife::Repository do
 
         result = repo.ruby_version
 
-        expect(result).to eq(EndOfLife::RubyVersion.new("2.5.0"))
+        expect(result).to eq(EndOfLife::Product::Release.ruby("2.5.0"))
       end
 
       it "decodes base64 files" do
@@ -193,7 +193,7 @@ RSpec.describe EndOfLife::Repository do
 
         result = repo.ruby_version
 
-        expect(result).to eq(EndOfLife::RubyVersion.new("2.6.3"))
+        expect(result).to eq(EndOfLife::Product::Release.ruby("2.6.3"))
       end
 
       it "raises if file has unknown encoding" do

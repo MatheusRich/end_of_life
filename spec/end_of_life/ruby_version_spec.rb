@@ -64,7 +64,7 @@ RSpec.describe EndOfLife::RubyVersion do
     it "accepts a string version" do
       version = "2.3.0"
 
-      result = EndOfLife::RubyVersion.new(version)
+      result = EndOfLife::Product::Release.ruby(version)
 
       expect(result.version).to eq(Gem::Version.new(version))
     end
@@ -72,7 +72,7 @@ RSpec.describe EndOfLife::RubyVersion do
     it "accepts an eol date" do
       today = Date.today
 
-      result = EndOfLife::RubyVersion.new("2.3.0", eol_date: today)
+      result = EndOfLife::Product::Release.ruby("2.3.0", eol_date: today)
 
       expect(result.eol_date).to eq(today)
     end
@@ -80,13 +80,13 @@ RSpec.describe EndOfLife::RubyVersion do
     it "accepts a Gem::Version" do
       version = Gem::Version.new("2.3.0")
 
-      result = EndOfLife::RubyVersion.new(version)
+      result = EndOfLife::Product::Release.ruby(version)
 
       expect(result.version).to eq(version)
     end
 
     it "freezes the object" do
-      result = EndOfLife::RubyVersion.new("2.3.0")
+      result = EndOfLife::Product::Release.ruby("2.3.0")
 
       expect(result).to be_frozen
     end
@@ -94,19 +94,19 @@ RSpec.describe EndOfLife::RubyVersion do
 
   describe "#eol?" do
     it "returns true if the version is end of life today" do
-      version = EndOfLife::RubyVersion.new("1.9.3")
+      version = EndOfLife::Product::Release.ruby("1.9.3")
 
       expect(version).to be_eol
     end
 
     it "returns false if the version is not end of life today" do
-      version = EndOfLife::RubyVersion.new("999999999999", eol_date: Date.today + 1)
+      version = EndOfLife::Product::Release.ruby("999999999999", eol_date: Date.today + 1)
 
       expect(version).not_to be_eol
     end
 
     it "accepts a custom date" do
-      version = EndOfLife::RubyVersion.new("1.9.3", eol_date: Date.parse("2015-02-23"))
+      version = EndOfLife::Product::Release.ruby("1.9.3", eol_date: Date.parse("2015-02-23"))
       day_before_eol_date = version.eol_date.prev_day
 
       result = version.eol?(at: version.eol_date)
@@ -119,9 +119,9 @@ RSpec.describe EndOfLife::RubyVersion do
 
   describe "#<=>" do
     it "compares ruby versions" do
-      older_version = EndOfLife::RubyVersion.new("1.9.0")
-      middle_version = EndOfLife::RubyVersion.new("2.0.0")
-      newer_vertion = EndOfLife::RubyVersion.new("2.1.0")
+      older_version = EndOfLife::Product::Release.ruby("1.9.0")
+      middle_version = EndOfLife::Product::Release.ruby("2.0.0")
+      newer_vertion = EndOfLife::Product::Release.ruby("2.1.0")
 
       sorted_versions = [older_version, middle_version, newer_vertion].sort
 
@@ -131,7 +131,7 @@ RSpec.describe EndOfLife::RubyVersion do
 
   describe "#to_s" do
     it "returns the version as a string" do
-      version = EndOfLife::RubyVersion.new("2.3.0")
+      version = EndOfLife::Product::Release.ruby("2.3.0")
 
       expect(version.to_s).to eq("2.3.0")
     end
