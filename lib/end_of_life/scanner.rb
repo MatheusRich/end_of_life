@@ -6,7 +6,7 @@ module EndOfLife
     def scan(options)
       fetch_repositories(options)
         .fmap { |repositories| filter_repositories_with_end_of_life(repositories, max_eol_date: options[:max_eol_date]) }
-        .fmap { |repositories| print_diagnose_for(repositories, max_eol_date: options[:max_eol_date]) }
+        .fmap { |repositories| output_report(repositories, max_eol_date: options[:max_eol_date]) }
         .or { |error| abort "\n#{error_msg(error)}" }
     end
 
@@ -32,27 +32,11 @@ module EndOfLife
       end
     end
 
-    def print_diagnose_for(repositories, max_eol_date:)
-      puts
+    def output_report(repositories, max_eol_date:)
+      report = Report.new(repositories, max_eol_date)
+      puts report
 
-      if repositories.empty?
-        puts "No repositories using EOL Ruby."
-        return
-      end
-
-      word = (repositories.size == 1) ? "repository" : "repositories"
-      puts "Found #{repositories.size} #{word} using EOL Ruby (<= #{RubyVersion.latest_eol(at: max_eol_date)}):"
-      puts end_of_life_table(repositories)
-      exit(-1)
-    end
-
-    def end_of_life_table(repositories)
-      headers = ["", "Repository", "Ruby version"]
-      rows = repositories.map.with_index(1) do |repo, i|
-        [i, repo.url, repo.ruby_version]
-      end
-
-      table(headers, rows)
+      exit(1) if report.failure?
     end
   end
 end
