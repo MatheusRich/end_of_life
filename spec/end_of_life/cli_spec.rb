@@ -23,8 +23,8 @@ RSpec.describe EndOfLife::CLI do
         cli = EndOfLife::CLI.new
 
         expect { cli.call(["--unknown-option"]) }
-          .to exit_with_code(-1)
-          .and output(/invalid option: --unknown-option/).to_stdout
+          .to exit_with_code(1)
+          .and output(/invalid option: --unknown-option/).to_stderr
       end
     end
 

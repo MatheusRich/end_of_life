@@ -16,8 +16,7 @@ module EndOfLife
       when :version
         puts "end_of_life v#{EndOfLife::VERSION}"
       when :print_error
-        puts error_msg(options[:error])
-        exit(-1)
+        abort error_msg(options[:error])
       else
         check_eol_ruby_on_repositories(options)
       end
@@ -27,7 +26,7 @@ module EndOfLife
       fetch_repositories(options)
         .fmap { |repositories| filter_repositories_with_end_of_life(repositories, max_eol_date: options[:max_eol_date]) }
         .fmap { |repositories| print_diagnose_for(repositories, max_eol_date: options[:max_eol_date]) }
-        .or { |error| puts "\n#{error_msg(error)}" }
+        .or { |error| abort "\n#{error_msg(error)}" }
     end
 
     def parse_options(argv)
