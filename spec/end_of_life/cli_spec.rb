@@ -35,18 +35,5 @@ RSpec.describe EndOfLife::CLI do
           .and output(/invalid option: --unknown-option/).to_stderr
       end
     end
-
-    private
-
-    def exit_with_code(code)
-      raise_error(SystemExit) { |error| expect(error.status).to eq(code) }
-    end
-
-    def abort_with(message)
-      raise_error(SystemExit) do |error|
-        expect(error.status).to eq(1)
-        expect(error.message).to match(message)
-      end.and output(message).to_stderr
-    end
   end
 end
