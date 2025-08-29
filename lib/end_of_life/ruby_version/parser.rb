@@ -2,7 +2,7 @@ require "bundler"
 require "tempfile"
 
 module EndOfLife
-  class RubyVersion
+  module RubyVersion
     module Parser
       extend self
 
