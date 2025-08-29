@@ -2,6 +2,14 @@
 
 RSpec.describe EndOfLife::CLI do
   describe "#call" do
+    context "without options" do
+      it "defaults to scanning" do
+        cli = EndOfLife::CLI.new
+
+        expect { cli.call([]) }.to abort_with(/Please set GITHUB_TOKEN environment variable/)
+      end
+    end
+
     context "with version option" do
       it "prints the version" do
         cli = EndOfLife::CLI.new
@@ -32,6 +40,13 @@ RSpec.describe EndOfLife::CLI do
 
     def exit_with_code(code)
       raise_error(SystemExit) { |error| expect(error.status).to eq(code) }
+    end
+
+    def abort_with(message)
+      raise_error(SystemExit) do |error|
+        expect(error.status).to eq(1)
+        expect(error.message).to match(message)
+      end.and output(message).to_stderr
     end
   end
 end
