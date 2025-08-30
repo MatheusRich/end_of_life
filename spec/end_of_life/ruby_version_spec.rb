@@ -43,23 +43,6 @@ RSpec.describe EndOfLife::RubyVersion do
     end
   end
 
-  describe ".from_file" do
-    it "delegates it to the given parser" do
-      parser = spy(:parser)
-
-      EndOfLife::RubyVersion.from_file(
-        file_name: "Gemfile.lock",
-        content: "some content",
-        parser: parser
-      )
-
-      expect(parser).to have_received(:parse_file).with(
-        file_name: "Gemfile.lock",
-        content: "some content"
-      )
-    end
-  end
-
   describe ".initialize" do
     it "accepts a string version" do
       version = "2.3.0"

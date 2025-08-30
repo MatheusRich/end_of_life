@@ -6,10 +6,6 @@ module EndOfLife
     extend self
     include Dry::Monads[:try]
 
-    def from_file(file_name:, content:, parser: Parser)
-      parser.parse_file(file_name: file_name, content: content)
-    end
-
     def eol_versions_at(date)
       all_versions.filter { |version| version.eol_date <= date }
     end
