@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe EndOfLife::Scanner do
+  include Dry::Monads[:result, :maybe]
+
   describe ".scan" do
     context "when no repositories are found with EOL Ruby" do
       it "displays the correct message" do

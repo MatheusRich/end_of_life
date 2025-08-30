@@ -9,7 +9,7 @@ module EndOfLife
     private
 
     def get(path)
-      response = Net::HTTP.get(URI("#{BASE_URL}#{path}.json"))
+      response = Net::HTTP.get(URI("#{BASE_URL}#{path}"))
 
       JSON.parse(response, symbolize_names: true)
     end

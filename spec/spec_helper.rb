@@ -28,6 +28,12 @@ module EndOfLife
       ClimateControl.modify(...)
     end
 
+    def travel_to(date)
+      date = Date.parse(date)
+
+      allow(Date).to receive(:today).and_return(date)
+    end
+
     def exit_with_code(code)
       raise_error(SystemExit) { |error| expect(error.status).to eq(code) }
     end
@@ -56,6 +62,12 @@ RSpec.configure do |config|
     config.before(:example, :focus) { |example| raise "Focused spec found at #{example.location}" }
   else
     config.filter_run_when_matching :focus
+  end
+
+  config.around(:each, :vcr) do |example|
+    VCR.use_cassette(example.metadata[:vcr]) do
+      example.run
+    end
   end
 
   config.include EndOfLife::TestHelpers

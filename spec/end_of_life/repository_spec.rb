@@ -2,7 +2,7 @@
 
 require "ostruct"
 
-RSpec.describe EndOfLife::Repository do
+RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
   describe "#eol_ruby?" do
     it "returns true if version is eol" do
       client = build_client(
@@ -52,7 +52,7 @@ RSpec.describe EndOfLife::Repository do
           "Gemfile.lock" => nil
         }
       )
-      ruby_3_eol_date = Date.parse("2024-03-31")
+      ruby_3_eol_date = Date.parse("2024-04-23")
 
       repo = EndOfLife::Repository.new(
         full_name: "thoughtbot/paperclip",

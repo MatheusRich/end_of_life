@@ -6,19 +6,21 @@ module EndOfLife
       def self.ruby(version, eol_date: nil) = new(product: "ruby", version:, eol_date:)
 
       def initialize(product:, version:, eol_date: nil)
+        product = Product.new(product.to_s)
+        eol_date = Date.parse(eol_date.to_s) if eol_date
         super(product:, eol_date:, version: Gem::Version.new(version))
       end
-
-      ZERO = Gem::Version.new("0")
-      def zero? = version == ZERO
 
       def eol?(at: Date.today)
         if eol_date
           eol_date <= at
         else
-          self <= RubyVersion.latest_eol(at: at)
+          self <= product.latest_eol(at: at)
         end
       end
+
+      ZERO = Gem::Version.new("0")
+      def zero? = version == ZERO
 
       def <=>(other) = version <=> other.version
       def to_s = version.to_s
