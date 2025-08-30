@@ -18,8 +18,8 @@ module EndOfLife
       eol_versions_at(at).max
     end
 
-    def new(version_string, eol_date: nil)
-      Product::Release.new(product: :ruby, version: version_string, eol_date: eol_date)
+    def new(version, eol_date: nil)
+      Product::Release.new(product: :ruby, version:, eol_date:)
     end
 
     private
