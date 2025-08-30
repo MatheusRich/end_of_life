@@ -7,7 +7,9 @@ require "base64"
 require "octokit"
 require "zeitwerk"
 
-Zeitwerk::Loader.for_gem.tap { |it| it.inflector.inflect("cli" => "CLI") }.setup
+Zeitwerk::Loader.for_gem.tap { |it|
+  it.inflector.inflect("cli" => "CLI", "api" => "API")
+}.setup
 
 module EndOfLife
   extend TerminalHelper

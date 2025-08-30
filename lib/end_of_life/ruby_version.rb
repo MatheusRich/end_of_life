@@ -7,7 +7,7 @@ module EndOfLife
     include Dry::Monads[:try]
 
     def eol_versions_at(date)
-      all_versions.filter { |version| version.eol_date <= date }
+      all_releases.filter { |version| version.eol_date <= date }
     end
 
     def latest_eol(at: Date.today)
@@ -20,21 +20,18 @@ module EndOfLife
 
     private
 
-    EOL_API_URL = "https://endoflife.date/api/ruby.json"
     DB_PATH = File.join(__dir__, "../end_of_life.json")
 
-    def all_versions
-      @all_versions ||= fetch_end_of_life_api.value_or(load_file_fallback)
-        .then { |json| JSON.parse(json, symbolize_names: true) }
-        .map { |version| new(version[:latest], eol_date: Date.parse(version[:eol])) }
+    def all_releases
+      @all_releases ||= fetch_end_of_life_api.value_or(load_file_fallback)
+        .dig(:result, :releases)
+        .map { |version| new(version[:latest][:name], eol_date: Date.parse(version[:eolFrom])) }
     end
 
-    def fetch_end_of_life_api
-      Try { Net::HTTP.get URI(EOL_API_URL) }
-    end
+    def fetch_end_of_life_api = Try { API.fetch_product("ruby") }
 
     def load_file_fallback
-      File.read(DB_PATH)
+      JSON.parse(File.read(DB_PATH), symbolize_names: true)
     end
   end
 end
