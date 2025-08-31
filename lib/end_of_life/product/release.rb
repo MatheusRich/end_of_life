@@ -23,6 +23,7 @@ module EndOfLife
       def zero? = version == ZERO
 
       def <=>(other) = version <=> other.version
+
       def to_s = version.to_s
     end
   end

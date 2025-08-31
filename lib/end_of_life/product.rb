@@ -12,6 +12,7 @@ module EndOfLife
     end
 
     def label = name.capitalize
+
     def to_s = label
 
     private

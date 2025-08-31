@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
 RSpec.describe EndOfLife::Product::Release do
-
   describe ".initialize" do
     it "accepts a string version" do
       version = "2.3.0"

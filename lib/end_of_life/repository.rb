@@ -2,7 +2,7 @@ module EndOfLife
   class Repository
     class << self
       def search(options) = Search.new(options).result
-      alias fetch search
+      alias_method :fetch, :search
     end
 
     attr_reader :full_name, :url

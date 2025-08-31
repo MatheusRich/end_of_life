@@ -12,6 +12,7 @@ module EndOfLife
     end
 
     def eol_versions_at(...) = RUBY.eol_releases_at(...)
-    def latest_eol(...)      = RUBY.latest_eol(...)
+
+    def latest_eol(...) = RUBY.latest_eol(...)
   end
 end
