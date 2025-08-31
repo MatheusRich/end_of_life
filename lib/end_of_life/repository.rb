@@ -11,24 +11,25 @@ module EndOfLife
       @full_name = full_name
       @url = url
       @github_client = github_client
+      @product_releases = {}
+    end
+
+    def using_eol?(product, at: Date.today)
+      min_release_of(product)&.eol?(at: at)
     end
 
     def eol_ruby?(at: Date.today)
       ruby_version&.eol?(at: at)
     end
 
-    def ruby_version
-      return @ruby_version if defined?(@ruby_version)
+    def min_release_of(product) = releases_for(product).min
 
-      @ruby_version = ruby_versions.min
-    end
+    def ruby_version = min_release_of("ruby")
 
     private
 
-    def ruby_versions
-      return @ruby_versions if defined?(@ruby_versions)
-
-      @ruby_versions = VersionDetectors.for_product("ruby").then do |detector|
+    def releases_for(product)
+      @product_releases[product] ||= VersionDetectors.for_product(product).then do |detector|
         detector.detect_all(
           fetch_files(detector.relevant_files)
         )

@@ -5,7 +5,7 @@ module EndOfLife
 
     def scan(options)
       fetch_repositories(options)
-        .fmap { |repositories| filter_repositories_with_end_of_life(repositories, **options.slice(:product, :max_eol_date)) }
+        .fmap { |repositories| filter_repositories_with_eol_products(repositories, **options.slice(:product, :max_eol_date)) }
         .fmap { |repositories| output_report(repositories, **options.slice(:product, :max_eol_date)) }
         .or { |error| abort "\n#{error_msg(error)}" }
     end
@@ -22,12 +22,12 @@ module EndOfLife
       end
     end
 
-    def filter_repositories_with_end_of_life(repositories, product:, max_eol_date:)
-      with_loading_spinner("Searching for EOL Ruby in repositories...") do
+    def filter_repositories_with_eol_products(repositories, product:, max_eol_date:)
+      with_loading_spinner("Searching for EOL #{product} in your repositories...") do
         Sync do
           repositories
-            .tap { |repos| repos.map { |repo| Async { repo.ruby_version } }.map(&:wait) }
-            .filter { |repo| repo.eol_ruby?(at: max_eol_date) }
+            .map { |repo| Async { [repo, repo.using_eol?(product, at: max_eol_date)] } }.map(&:wait)
+            .filter_map { |repo, contains_eol| contains_eol ? repo : nil }
         end
       end
     end

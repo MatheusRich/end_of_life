@@ -12,7 +12,7 @@ module EndOfLife
         report.puts "No repositories using EOL #{product}."
       else
         word = (repositories.size == 1) ? "repository" : "repositories"
-        report.puts "Found #{repositories.size} #{word} using EOL #{product} (<= #{RubyVersion.latest_eol(at: max_eol_date)}):"
+        report.puts "Found #{repositories.size} #{word} using EOL #{product} (<= #{product.latest_eol(at: max_eol_date)}):"
         report.puts end_of_life_table(repositories)
       end
 
@@ -26,7 +26,7 @@ module EndOfLife
     def end_of_life_table(repositories)
       headers = ["", "Repository", "#{product} version"]
       rows = repositories.map.with_index(1) do |repo, i|
-        [i, repo.url, repo.ruby_version]
+        [i, repo.url, repo.min_release_of(product)]
       end
 
       table(headers, rows)
