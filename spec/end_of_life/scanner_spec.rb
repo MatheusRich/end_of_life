@@ -36,9 +36,8 @@ RSpec.describe EndOfLife::Scanner do
           max_eol_date: Date.today
         }
 
-        expect(EndOfLife::Scanner).to receive(:abort).with(/#{error_message}/)
-
-        EndOfLife::Scanner.scan(options)
+        expect { EndOfLife::Scanner.scan(options) }
+          .to abort_with(/#{error_message}/)
       end
     end
   end
