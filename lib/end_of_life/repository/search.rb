@@ -14,7 +14,7 @@ module EndOfLife
           github.auto_paginate = true
           options[:user] ||= github.user.login
 
-          query = search_query_for(options)
+          query = Query.new(options).to_s
           items = github.search_repositories(query, {sort: :updated}).items
 
           Success(
@@ -39,30 +39,6 @@ module EndOfLife
         Maybe(ENV["GITHUB_TOKEN"])
           .fmap { |token| Octokit::Client.new(access_token: token) }
           .or { Failure("Please set GITHUB_TOKEN environment variable") }
-      end
-
-      def search_query_for(options)
-        query = "language:ruby"
-
-        query += if options[:repository]
-          " repo:#{options[:repository]}"
-        elsif options[:organizations]
-          options[:organizations].map { |org| " org:#{org}" }.join
-        else
-          " user:#{options[:user]}"
-        end
-
-        if options[:visibility]
-          query += " is:#{options[:visibility]}"
-        end
-
-        if options[:excludes]
-          words_to_exclude = options[:excludes].map { |word| "NOT #{word} " }.join
-
-          query += " #{words_to_exclude} in:name"
-        end
-
-        query
       end
     end
   end
