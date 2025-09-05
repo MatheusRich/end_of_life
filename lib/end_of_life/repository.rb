@@ -18,13 +18,7 @@ module EndOfLife
       min_release_of(product)&.eol?(at: at)
     end
 
-    def eol_ruby?(at: Date.today)
-      ruby_version&.eol?(at: at)
-    end
-
     def min_release_of(product) = releases_for(product).min
-
-    def ruby_version = min_release_of("ruby")
 
     private
 

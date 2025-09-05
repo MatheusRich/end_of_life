@@ -15,7 +15,7 @@ module EndOfLife
         if eol_date
           eol_date <= at
         else
-          self <= product.latest_eol(at: at)
+          self <= product.latest_eol_release(at: at)
         end
       end
 

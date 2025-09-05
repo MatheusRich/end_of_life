@@ -12,7 +12,7 @@ module EndOfLife
         report.puts "No repositories using EOL #{product}."
       else
         word = (repositories.size == 1) ? "repository" : "repositories"
-        report.puts "Found #{repositories.size} #{word} using EOL #{product} (<= #{product.latest_eol(at: max_eol_date)}):"
+        report.puts "Found #{repositories.size} #{word} using EOL #{product} (<= #{product.latest_eol_release(at: max_eol_date)}):"
         report.puts end_of_life_table(repositories)
       end
 

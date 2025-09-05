@@ -3,7 +3,7 @@
 require "ostruct"
 
 RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
-  describe "#eol_ruby?" do
+  describe "#using_eol?" do
     it "returns true if version is eol" do
       client = build_client(
         repo: "thoughtbot/paperclip",
@@ -20,7 +20,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
         github_client: client
       )
 
-      expect(repo).to be_eol_ruby
+      expect(repo).to be_using_eol("ruby")
     end
 
     it "returns false if version is not eol" do
@@ -39,7 +39,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
         github_client: client
       )
 
-      expect(repo).not_to be_eol_ruby
+      expect(repo).not_to be_using_eol("ruby")
     end
 
     it "accepts a custom date", :aggregate_failures do
@@ -60,8 +60,8 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
         github_client: client
       )
 
-      expect(repo.eol_ruby?(at: ruby_3_eol_date)).to be true
-      expect(repo.eol_ruby?(at: ruby_3_eol_date.prev_day)).to be false
+      expect(repo.using_eol?("ruby", at: ruby_3_eol_date)).to be true
+      expect(repo.using_eol?("ruby", at: ruby_3_eol_date.prev_day)).to be false
     end
 
     it "returns nil if version is nil" do
@@ -80,7 +80,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
         github_client: client
       )
 
-      expect(repo.eol_ruby?).to be_nil
+      expect(repo.using_eol?("ruby")).to be_nil
     end
   end
 
@@ -152,8 +152,8 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
     end
   end
 
-  describe "#ruby_version" do
-    it "returns the minimum ruby version found in the repository" do
+  describe "#min_release_of" do
+    it "returns the minimum release of a product found in the repository" do
       client = build_client(
         repo: "thoughtbot/paperclip",
         contents: {
@@ -169,7 +169,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
         github_client: client
       )
 
-      result = repo.ruby_version
+      result = repo.min_release_of("ruby")
 
       expect(result).to eq(EndOfLife::Product::Release.ruby("2.5.0"))
     end
@@ -190,7 +190,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
         github_client: client
       )
 
-      result = repo.ruby_version
+      result = repo.min_release_of("ruby")
 
       expect(result).to eq(EndOfLife::Product::Release.ruby("2.6.3"))
     end
@@ -211,7 +211,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
         github_client: client
       )
 
-      expect { repo.ruby_version }.to raise_error(ArgumentError, 'Unsupported encoding: "unknown_encoding"')
+      expect { repo.min_release_of("ruby") }.to raise_error(ArgumentError, 'Unsupported encoding: "unknown_encoding"')
     end
 
     it "returns nil if file doen't exist" do
@@ -230,7 +230,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
         github_client: client
       )
 
-      expect(repo.ruby_version).to be_nil
+      expect(repo.min_release_of("ruby")).to be_nil
     end
 
     it "searches for version in .ruby-version" do
@@ -241,7 +241,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
         github_client: client
       )
 
-      repo.ruby_version
+      repo.min_release_of("ruby")
 
       expect(client).to have_received(:contents).with("thoughtbot/paperclip", path: ".ruby-version")
     end
@@ -254,7 +254,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
         github_client: client
       )
 
-      repo.ruby_version
+      repo.min_release_of("ruby")
 
       expect(client).to have_received(:contents).with("thoughtbot/paperclip", path: "Gemfile")
     end
@@ -267,7 +267,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
         github_client: client
       )
 
-      repo.ruby_version
+      repo.min_release_of("ruby")
 
       expect(client).to have_received(:contents).with("thoughtbot/paperclip", path: "Gemfile.lock")
     end
@@ -280,7 +280,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
         github_client: client
       )
 
-      repo.ruby_version
+      repo.min_release_of("ruby")
 
       expect(client).to have_received(:contents).with("thoughtbot/paperclip", path: ".tool-versions")
     end
@@ -323,7 +323,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
       )
 
       t0 = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-      repo.ruby_version
+      repo.min_release_of("ruby")
       total_elapsed_time = Process.clock_gettime(Process::CLOCK_MONOTONIC) - t0
 
       overhead = 0.1

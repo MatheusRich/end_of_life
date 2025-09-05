@@ -1,18 +1,17 @@
 module EndOfLife
   class Product
     attr_reader :name
-    def initialize(name) = @name = name
+    def initialize(name) = @name = name.downcase
 
     def eol_releases_at(date)
       all_releases.filter { |release| release.eol_date <= date }
     end
 
-    def latest_eol(at: Date.today)
+    def latest_eol_release(at: Date.today)
       eol_releases_at(at).max
     end
 
     def label = name.capitalize
-
     def to_s = label
 
     private
