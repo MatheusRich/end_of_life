@@ -1,61 +1,8 @@
 module EndOfLife
   class Repository
     class << self
-      include Dry::Monads[:result, :maybe]
-
-      def fetch(options)
-        github_client.bind do |github|
-          github.auto_paginate = true
-          options[:user] ||= github.user.login
-
-          query = search_query_for(options)
-          items = github.search_repositories(query, {sort: :updated}).items
-
-          Success(
-            items.filter_map do |repo|
-              next if repo.archived && options[:skip_archived]
-
-              Repository.new(
-                full_name: repo.full_name,
-                url: repo.html_url,
-                github_client: github
-              )
-            end
-          )
-        rescue => e
-          Failure("Unexpected error: #{e}")
-        end
-      end
-
-      def github_client
-        Maybe(ENV["GITHUB_TOKEN"])
-          .fmap { |token| Octokit::Client.new(access_token: token) }
-          .or { Failure("Please set GITHUB_TOKEN environment variable") }
-      end
-
-      def search_query_for(options)
-        query = "language:ruby"
-
-        query += if options[:repository]
-          " repo:#{options[:repository]}"
-        elsif options[:organizations]
-          options[:organizations].map { |org| " org:#{org}" }.join
-        else
-          " user:#{options[:user]}"
-        end
-
-        if options[:visibility]
-          query += " is:#{options[:visibility]}"
-        end
-
-        if options[:excludes]
-          words_to_exclude = options[:excludes].map { |word| "NOT #{word} " }.join
-
-          query += " #{words_to_exclude} in:name"
-        end
-
-        query
-      end
+      def search(options) = Search.new(options).result
+      alias_method :fetch, :search
     end
 
     attr_reader :full_name, :url
@@ -64,39 +11,41 @@ module EndOfLife
       @full_name = full_name
       @url = url
       @github_client = github_client
+      @product_releases = {}
+    end
+
+    def using_eol?(product, at: Date.today)
+      min_release_of(product)&.eol?(at: at)
     end
 
     def eol_ruby?(at: Date.today)
       ruby_version&.eol?(at: at)
     end
 
-    def ruby_version
-      return @ruby_version if defined?(@ruby_version)
+    def min_release_of(product) = releases_for(product).min
 
-      @ruby_version = ruby_versions.min
-    end
+    def ruby_version = min_release_of("ruby")
 
     private
 
-    def ruby_versions
-      return @ruby_versions if defined?(@ruby_versions)
-
-      @ruby_versions = fetch_ruby_version_files.filter_map { |file|
-        parse_version_file(file)
-      }
+    def releases_for(product)
+      @product_releases[product] ||= VersionDetectors.for_product(product).then do |detector|
+        detector.detect_all(
+          fetch_files(detector.relevant_files)
+        )
+      end
     end
 
-    POSSIBLE_RUBY_VERSION_FILES = [
-      ".ruby-version",
-      "Gemfile.lock",
-      "Gemfile",
-      ".tool-versions"
-    ]
-    def fetch_ruby_version_files
+    def fetch_files(file_paths)
       Sync do
-        POSSIBLE_RUBY_VERSION_FILES
+        file_paths
           .map { |file_path| Async { fetch_file(file_path) } }
-          .filter_map(&:wait)
+          .filter_map { |task|
+            file = task.wait
+            next if file.nil?
+
+            InMemoryFile.new(file.path, decode_file(file))
+          }
       end
     end
 
@@ -104,10 +53,6 @@ module EndOfLife
       @github_client.contents(full_name, path: file_path)
     rescue Octokit::NotFound
       nil
-    end
-
-    def parse_version_file(file)
-      RubyVersion.from_file(file_name: file.name, content: decode_file(file))
     end
 
     def decode_file(file)

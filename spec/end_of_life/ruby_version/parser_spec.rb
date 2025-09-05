@@ -2,23 +2,23 @@
 
 require "spec_helper"
 
-RSpec.describe EndOfLife::RubyVersion::Parser do
-  describe ".parse_file" do
+RSpec.describe EndOfLife::VersionDetectors::Ruby do
+  describe ".detect" do
     context "with .ruby-version" do
       it "returns ruby version defined" do
-        result = described_class.parse_file(file_name: ".ruby-version", content: "3.0.0")
+        result = described_class.detect(EndOfLife::InMemoryFile.new(".ruby-version", "3.0.0"))
 
-        expect(result).to eq EndOfLife::RubyVersion.new("3.0.0")
+        expect(result).to eq EndOfLife::Product::Release.ruby("3.0.0")
       end
 
       it "removes the 'ruby-' prefix" do
-        result = described_class.parse_file(file_name: ".ruby-version", content: "ruby-2.0.0\n")
+        result = described_class.detect(EndOfLife::InMemoryFile.new(".ruby-version", "ruby-2.0.0\n"))
 
-        expect(result).to eq EndOfLife::RubyVersion.new("2.0.0")
+        expect(result).to eq EndOfLife::Product::Release.ruby("2.0.0")
       end
 
       it "returns nil if the file is empty" do
-        result = described_class.parse_file(file_name: ".ruby-version", content: "")
+        result = described_class.detect(EndOfLife::InMemoryFile.new(".ruby-version", ""))
 
         expect(result).to be_nil
       end
@@ -43,9 +43,9 @@ RSpec.describe EndOfLife::RubyVersion::Parser do
             2.3.4
         GEMFILE_LOCK
 
-        result = described_class.parse_file(file_name: "Gemfile.lock", content: gemfile_lock)
+        result = described_class.detect(EndOfLife::InMemoryFile.new("Gemfile.lock", gemfile_lock))
 
-        expect(result).to eq EndOfLife::RubyVersion.new("3.0.2p107")
+        expect(result).to eq EndOfLife::Product::Release.ruby("3.0.2p107")
       end
 
       it "returns nil if it doesn't have ruby version defined" do
@@ -63,13 +63,13 @@ RSpec.describe EndOfLife::RubyVersion::Parser do
             2.3.4
         GEMFILE_LOCK
 
-        result = described_class.parse_file(file_name: "Gemfile.lock", content: gemfile_lock)
+        result = described_class.detect(EndOfLife::InMemoryFile.new("Gemfile.lock", gemfile_lock))
 
         expect(result).to be_nil
       end
 
       it "returns nil if the file is empty" do
-        result = described_class.parse_file(file_name: "Gemfile.lock", content: "")
+        result = described_class.detect(EndOfLife::InMemoryFile.new("Gemfile.lock", ""))
 
         expect(result).to be_nil
       end
@@ -83,9 +83,9 @@ RSpec.describe EndOfLife::RubyVersion::Parser do
           source "https://rubygems.org"
         GEMFILE
 
-        result = described_class.parse_file(file_name: "Gemfile", content: gemfile)
+        result = described_class.detect(EndOfLife::InMemoryFile.new("Gemfile", gemfile))
 
-        expect(result).to eq EndOfLife::RubyVersion.new("3.0.2")
+        expect(result).to eq EndOfLife::Product::Release.ruby("3.0.2")
       end
 
       it "returns nil if it doesn't have ruby version defined" do
@@ -93,7 +93,7 @@ RSpec.describe EndOfLife::RubyVersion::Parser do
           source "https://rubygems.org"
         GEMFILE
 
-        result = described_class.parse_file(file_name: "Gemfile", content: gemfile)
+        result = described_class.detect(EndOfLife::InMemoryFile.new("Gemfile", gemfile))
 
         expect(result).to be_nil
       end
@@ -104,7 +104,7 @@ RSpec.describe EndOfLife::RubyVersion::Parser do
           ruby file: ".ruby-version"
         GEMFILE
 
-        result = described_class.parse_file(file_name: "Gemfile", content: gemfile)
+        result = described_class.detect(EndOfLife::InMemoryFile.new("Gemfile", gemfile))
 
         expect(result).to be_nil
       end
@@ -118,7 +118,7 @@ RSpec.describe EndOfLife::RubyVersion::Parser do
           gemspec # this will fail, since no gemspec is defined
         GEMFILE
 
-        result = described_class.parse_file(file_name: "Gemfile", content: gemfile)
+        result = described_class.detect(EndOfLife::InMemoryFile.new("Gemfile", gemfile))
 
         expect(result).to be_nil
       end
@@ -126,7 +126,7 @@ RSpec.describe EndOfLife::RubyVersion::Parser do
       it "returns nil if the file is empty" do
         gemfile = ""
 
-        result = described_class.parse_file(file_name: "Gemfile", content: gemfile)
+        result = described_class.detect(EndOfLife::InMemoryFile.new("Gemfile", gemfile))
 
         expect(result).to be_nil
       end
@@ -134,29 +134,29 @@ RSpec.describe EndOfLife::RubyVersion::Parser do
 
     context "with .tool-versions" do
       it "returns the first ruby version defined" do
-        result = described_class.parse_file(file_name: ".tool-versions", content: "  ruby 3.0.0\n ruby 2.5.1")
+        result = described_class.detect(EndOfLife::InMemoryFile.new(".tool-versions", "  ruby 3.0.0\n ruby 2.5.1"))
 
-        expect(result).to eq EndOfLife::RubyVersion.new("3.0.0")
+        expect(result).to eq EndOfLife::Product::Release.ruby("3.0.0")
       end
 
       it "returns nil if it doesn't have ruby defined" do
-        result = described_class.parse_file(file_name: ".tool-versions", content: "python 3.0.0\n")
+        result = described_class.detect(EndOfLife::InMemoryFile.new(".tool-versions", "python 3.0.0\n"))
 
         expect(result).to be_nil
       end
 
       it "returns nil if the file is empty" do
-        result = described_class.parse_file(file_name: ".tool-versions", content: "")
+        result = described_class.detect(EndOfLife::InMemoryFile.new(".tool-versions", ""))
 
         expect(result).to be_nil
       end
     end
 
     context "with unknown file" do
-      it "raises an error" do
-        expect {
-          described_class.parse_file(file_name: "foo.bar", content: "foo")
-        }.to raise_error(ArgumentError, "Unsupported file foo.bar")
+      it "returns nil" do
+        result = described_class.detect(EndOfLife::InMemoryFile.new("foo.bar", "foo"))
+
+        expect(result).to be_nil
       end
     end
   end

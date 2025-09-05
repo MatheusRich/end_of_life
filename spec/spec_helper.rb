@@ -20,10 +20,29 @@ VCR.configure do |config|
   config.filter_sensitive_data("REDACTED") { ENV["GITHUB_TOKEN"] }
 end
 
+RSpec::Matchers.define_negated_matcher :raise_no_error, :raise_error
+
 module EndOfLife
   module TestHelpers
     def with_env(...)
       ClimateControl.modify(...)
+    end
+
+    def travel_to(date)
+      date = Date.parse(date)
+
+      allow(Date).to receive(:today).and_return(date)
+    end
+
+    def exit_with_code(code)
+      raise_error(SystemExit) { |error| expect(error.status).to eq(code) }
+    end
+
+    def abort_with(message)
+      raise_error(SystemExit) do |error|
+        expect(error.status).to eq(1)
+        expect(error.message).to match(message)
+      end.and output(message).to_stderr
     end
   end
 end
@@ -43,6 +62,12 @@ RSpec.configure do |config|
     config.before(:example, :focus) { |example| raise "Focused spec found at #{example.location}" }
   else
     config.filter_run_when_matching :focus
+  end
+
+  config.around(:each, :vcr) do |example|
+    VCR.use_cassette(example.metadata[:vcr]) do
+      example.run
+    end
   end
 
   config.include EndOfLife::TestHelpers

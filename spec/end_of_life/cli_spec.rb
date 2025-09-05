@@ -2,6 +2,14 @@
 
 RSpec.describe EndOfLife::CLI do
   describe "#call" do
+    context "without options" do
+      it "defaults to scanning" do
+        cli = EndOfLife::CLI.new
+
+        expect { cli.call([]) }.to abort_with(/Please set GITHUB_TOKEN environment variable/)
+      end
+    end
+
     context "with version option" do
       it "prints the version" do
         cli = EndOfLife::CLI.new
@@ -23,15 +31,9 @@ RSpec.describe EndOfLife::CLI do
         cli = EndOfLife::CLI.new
 
         expect { cli.call(["--unknown-option"]) }
-          .to exit_with_code(-1)
-          .and output(/invalid option: --unknown-option/).to_stdout
+          .to exit_with_code(1)
+          .and output(/invalid option: --unknown-option/).to_stderr
       end
-    end
-
-    private
-
-    def exit_with_code(code)
-      raise_error(SystemExit) { |error| expect(error.status).to eq(code) }
     end
   end
 end

@@ -3,50 +3,50 @@ require "optparse"
 module EndOfLife
   module Options
     def self.from(argv)
-      options = {max_eol_date: Date.today, skip_archived: true}
+      options = {product: Product.new("ruby"), max_eol_date: Date.today, skip_archived: true}
 
-      OptionParser.new do |opts|
-        options[:parser] = opts
+      OptionParser.new do |parser|
+        options[:parser] = parser
 
-        opts.banner = "Usage: end_of_life [options]"
+        parser.banner = "Usage: end_of_life [options]"
 
-        opts.on("--exclude=NAME,NAME2", Array, "Exclude repositories containing a certain word in its name. You can specify up to five words.") do |excludes|
+        parser.on("--exclude=NAME,NAME2", Array, "Exclude repositories containing a certain word in its name. You can specify up to five words.") do |excludes|
           options[:excludes] = excludes.first(5)
         end
 
-        opts.on("--public-only", "Searches only public repositories") do
+        parser.on("--public-only", "Searches only public repositories") do
           options[:visibility] = :public
         end
 
-        opts.on("--private-only", "Searches only private repositories") do
+        parser.on("--private-only", "Searches only private repositories") do
           options[:visibility] = :private
         end
 
-        opts.on("--repo=USER/REPO", "--repository=USER/REPO", "Searches a specific repository") do |repository|
+        parser.on("--repo=USER/REPO", "--repository=USER/REPO", "Searches a specific repository") do |repository|
           options[:repository] = repository
         end
 
-        opts.on("--org=ORG,ORG2...", "--organization=ORG,ORG2", Array, "Searches within specific organizations") do |organizations|
+        parser.on("--org=ORG,ORG2...", "--organization=ORG,ORG2", Array, "Searches within specific organizations") do |organizations|
           options[:organizations] = organizations
         end
 
-        opts.on("-u NAME", "--user=NAME", "Sets the user used on the repository search") do |user|
+        parser.on("-u NAME", "--user=NAME", "Sets the user used on the repository search") do |user|
           options[:user] = user
         end
 
-        opts.on("--max-eol-days-away NUMBER", "Sets the maximum number of days away a version can be from EOL. It defaults to 0.") do |days|
+        parser.on("--max-eol-days-away NUMBER", "Sets the maximum number of days away a version can be from EOL. It defaults to 0.") do |days|
           options[:max_eol_date] = Date.today + days.to_i.abs
         end
 
-        opts.on("--include-archived", "Includes archived repositories on the search") do
+        parser.on("--include-archived", "Includes archived repositories on the search") do
           options[:skip_archived] = false
         end
 
-        opts.on("-v", "--version", "Displays end_of_life version") do
+        parser.on("-v", "--version", "Displays end_of_life version") do
           options[:command] = :version
         end
 
-        opts.on("-h", "--help", "Displays this help") do
+        parser.on("-h", "--help", "Displays this help") do
           options[:command] = :help
         end
       end.parse!(argv)
