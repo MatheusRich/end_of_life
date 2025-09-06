@@ -3,7 +3,7 @@ require "tty-spinner"
 require "tty-table"
 
 module EndOfLife
-  module TerminalHelper
+  module Helpers::Terminal
     def error_msg(message, label: "[ERROR]")
       label = paint.red("#{label} ")
 

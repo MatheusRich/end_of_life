@@ -1,6 +1,6 @@
 module EndOfLife
   class CLI
-    include TerminalHelper
+    include Helpers::Terminal
 
     def call(argv)
       parse_options(argv)

@@ -12,5 +12,5 @@ Zeitwerk::Loader.for_gem.tap { |it|
 }.setup
 
 module EndOfLife
-  extend TerminalHelper
+  extend Helpers::Terminal
 end

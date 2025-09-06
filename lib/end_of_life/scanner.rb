@@ -1,6 +1,6 @@
 module EndOfLife
   module Scanner
-    include TerminalHelper
+    include Helpers::Terminal
     extend self
 
     def scan(options)

@@ -2,7 +2,7 @@ require "stringio"
 
 module EndOfLife
   class Report < Data.define(:product, :repositories, :max_eol_date)
-    include TerminalHelper
+    include Helpers::Terminal
 
     def to_s
       report = StringIO.new
