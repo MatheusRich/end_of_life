@@ -3,10 +3,23 @@
 RSpec.describe EndOfLife::CLI do
   describe "#call" do
     context "without options" do
-      it "defaults to scanning" do
+      it "defaults to scanning Ruby" do
         cli = EndOfLife::CLI.new
 
-        expect { cli.call([]) }.to abort_with(/Please set GITHUB_TOKEN environment variable/)
+        expect {
+          expect { cli.call([]) }.to output(/Searching repositories with Ruby.../).to_stdout
+        }.to abort_with(/Please set GITHUB_TOKEN environment variable/)
+      end
+    end
+
+    context "with product option" do
+      context "with an unknown product" do
+        it "exits with error message" do
+          cli = EndOfLife::CLI.new
+
+          expect { cli.call(["--product=unknown_product"]) }
+            .to abort_with(/invalid argument: --product=unknown_product/)
+        end
       end
     end
 

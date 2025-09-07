@@ -89,7 +89,9 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
       with_env GITHUB_TOKEN: "something" do
         client = build_client
         allow(Octokit::Client).to receive(:new).and_return(client)
-        result = EndOfLife::Repository.search({})
+        result = EndOfLife::Repository.search({
+          product: EndOfLife::Product.find("ruby")
+        })
 
         expect(result).to be_success
       end
@@ -98,7 +100,9 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
     context "when GITHUB_TOKEN env is not set", :aggregate_failures do
       it "returns a failure monad" do
         with_env GITHUB_TOKEN: nil do
-          result = EndOfLife::Repository.search({})
+          result = EndOfLife::Repository.search({
+            product: EndOfLife::Product.find("ruby")
+          })
 
           expect(result).to be_failure
           expect(result.failure).to eq "Please set GITHUB_TOKEN environment variable"
@@ -111,7 +115,12 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
       allow(Octokit::Client).to receive(:new).and_return(client)
 
       with_env GITHUB_TOKEN: "FOO" do
-        EndOfLife::Repository.fetch(language: "ruby", user: "thoughtbot", organizations: nil, repository: nil)
+        EndOfLife::Repository.fetch(
+          product: EndOfLife::Product.find("ruby"),
+          user: "thoughtbot",
+          organizations: nil,
+          repository: nil
+        )
       end
 
       expect(client).to have_received(:search_repositories).once
@@ -126,7 +135,11 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
       allow(Octokit::Client).to receive(:new).and_return(client)
 
       repositories = with_env GITHUB_TOKEN: "FOO" do
-        EndOfLife::Repository.fetch(language: "ruby", user: "thoughtbot", skip_archived: true)
+        EndOfLife::Repository.fetch(
+          product: EndOfLife::Product.find("ruby"),
+          user: "thoughtbot",
+          skip_archived: true
+        )
       end
 
       results = repositories.value!.map(&:full_name)
@@ -143,7 +156,11 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
         allow(Octokit::Client).to receive(:new).and_return(client)
 
         repositories = with_env GITHUB_TOKEN: "FOO" do
-          EndOfLife::Repository.fetch(language: "ruby", user: "thoughtbot", skip_archived: false)
+          EndOfLife::Repository.fetch(
+            product: EndOfLife::Product.find("ruby"),
+            user: "thoughtbot",
+            skip_archived: false
+          )
         end
 
         results = repositories.value!.map(&:full_name)
