@@ -16,4 +16,5 @@ module EndOfLife
   extend Helpers::Terminal
 
   scans_for :ruby, search_query: "language:ruby"
+  scans_for :rails, search_query: "language:ruby"
 end

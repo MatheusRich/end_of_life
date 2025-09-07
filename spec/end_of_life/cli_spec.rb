@@ -13,6 +13,14 @@ RSpec.describe EndOfLife::CLI do
     end
 
     context "with product option" do
+      it "scans for the specified product" do
+        cli = EndOfLife::CLI.new
+
+        expect {
+          expect { cli.call(["--product=rails"]) }.to output(/Searching repositories with Rails.../).to_stdout
+        }.to abort_with(/Please set GITHUB_TOKEN environment variable/)
+      end
+
       context "with an unknown product" do
         it "exits with error message" do
           cli = EndOfLife::CLI.new
