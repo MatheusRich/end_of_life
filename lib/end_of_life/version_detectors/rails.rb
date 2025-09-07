@@ -16,7 +16,7 @@ module EndOfLife
         exact_version = rails_dep
           .requirement
           .requirements
-          .filter { |op, _| op == "=" }
+          .filter { |op, _| op == "=" } # standard:disable Style/HashSlice
           .max_by { |_, version| version } or next
 
         Product::Release.new(product: "rails", version: exact_version.last)

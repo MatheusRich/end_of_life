@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
 RSpec.describe EndOfLife::VersionDetectors::Rails do
   describe "Gemfile.lock detection" do
     it "detects Rails version from Gemfile.lock" do
-      file = EndOfLife::InMemoryFile.new("Gemfile.lock",<<~GEMFILE)
+      file = EndOfLife::InMemoryFile.new("Gemfile.lock", <<~GEMFILE)
         GEM
           remote: https://rubygems.org/
           specs:
@@ -25,7 +25,7 @@ RSpec.describe EndOfLife::VersionDetectors::Rails do
 
     context "when there is no rails gem" do
       it "returns nil" do
-        file = EndOfLife::InMemoryFile.new("Gemfile.lock",<<~GEMFILE)
+        file = EndOfLife::InMemoryFile.new("Gemfile.lock", <<~GEMFILE)
           GEM
             remote: https://rubygems.org/
             specs:
@@ -52,7 +52,7 @@ RSpec.describe EndOfLife::VersionDetectors::Rails do
   describe "Gemfile detection" do
     context "when version is specified explicitly" do
       it "returns the max exact version specified" do
-        file = EndOfLife::InMemoryFile.new("Gemfile",<<~GEMFILE)
+        file = EndOfLife::InMemoryFile.new("Gemfile", <<~GEMFILE)
           gem "rails", "5.0", "7.0", "6.0", "~> 8.0", ">= 4.0"
         GEMFILE
 
@@ -64,7 +64,7 @@ RSpec.describe EndOfLife::VersionDetectors::Rails do
 
     context "when the gem doesn't have an exact version specified" do
       it "returns nil" do
-        file = EndOfLife::InMemoryFile.new("Gemfile",<<~GEMFILE)
+        file = EndOfLife::InMemoryFile.new("Gemfile", <<~GEMFILE)
           gem "rails", ">= 13.0.6", "~> 7.0"
         GEMFILE
 
@@ -76,7 +76,7 @@ RSpec.describe EndOfLife::VersionDetectors::Rails do
 
     context "when the gem doesn't have a version specified" do
       it "returns nil" do
-        file = EndOfLife::InMemoryFile.new("Gemfile",<<~GEMFILE)
+        file = EndOfLife::InMemoryFile.new("Gemfile", <<~GEMFILE)
           gem "rake"
         GEMFILE
 
@@ -88,7 +88,7 @@ RSpec.describe EndOfLife::VersionDetectors::Rails do
 
     context "when there is no rails gem" do
       it "returns nil" do
-        file = EndOfLife::InMemoryFile.new("Gemfile",<<~GEMFILE)
+        file = EndOfLife::InMemoryFile.new("Gemfile", <<~GEMFILE)
           gem "rake", "13.0.6"
         GEMFILE
 
