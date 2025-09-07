@@ -12,6 +12,8 @@ module EndOfLife
 
             tool, version, * = line.split
 
+            next if version == "latest"
+
             [tool, Gem::Version.new(version)]
           }
           .to_h
