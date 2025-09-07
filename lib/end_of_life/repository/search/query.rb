@@ -3,7 +3,7 @@ module EndOfLife
     class Search
       Query = Data.define(:options) do
         def to_s
-          query = "language:ruby"
+          query = options[:product].search_query
 
           query += if options[:repository]
             " repo:#{options[:repository]}"

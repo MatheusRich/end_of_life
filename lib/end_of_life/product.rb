@@ -1,7 +1,14 @@
 module EndOfLife
   class Product
-    attr_reader :name
-    def initialize(name) = @name = name.downcase
+    def self.find(name) = EndOfLife.find_product(name)
+
+    attr_reader :name, :search_query, :version_detector
+
+    def initialize(name, search_query, version_detector)
+      @name = name.to_s.downcase
+      @search_query = search_query
+      @version_detector = version_detector
+    end
 
     def eol_releases_at(date)
       all_releases.filter { |release| release.eol_date <= date }

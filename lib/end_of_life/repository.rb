@@ -23,11 +23,9 @@ module EndOfLife
     private
 
     def releases_for(product)
-      @product_releases[product] ||= VersionDetectors.for_product(product).then do |detector|
-        detector.detect_all(
-          fetch_files(detector.relevant_files)
-        )
-      end
+      @product_releases[product] ||= product.version_detector.detect_all(
+        fetch_files(product.version_detector.relevant_files)
+      )
     end
 
     def fetch_files(file_paths)

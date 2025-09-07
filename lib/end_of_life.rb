@@ -12,5 +12,8 @@ Zeitwerk::Loader.for_gem.tap { |it|
 }.setup
 
 module EndOfLife
+  extend Product::Registry
   extend Helpers::Terminal
+
+  scans_for :ruby, search_query: "language:ruby"
 end

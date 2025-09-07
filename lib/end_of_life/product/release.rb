@@ -6,7 +6,7 @@ module EndOfLife
       def self.ruby(version, eol_date: nil) = new(product: "ruby", version:, eol_date:)
 
       def initialize(product:, version:, eol_date: nil)
-        product = Product.new(product.to_s)
+        product = Product.find(product.to_s)
         eol_date = Date.parse(eol_date.to_s) if eol_date
         super(product:, eol_date:, version: Gem::Version.new(version))
       end

@@ -4,14 +4,14 @@ RSpec.describe EndOfLife::Scanner do
   include Dry::Monads[:result, :maybe]
 
   describe ".scan" do
-    context "when no repositories are found with EOL Ruby" do
+    context "when no repositories are found with EOL product" do
       it "displays the correct message" do
         allow(EndOfLife::Repository).to receive(:fetch).and_return(
           Dry::Monads::Success([])
         )
 
         options = {
-          product: EndOfLife::Product.new("ruby"),
+          product: EndOfLife::Product.find("ruby"),
           user: "test_user",
           max_eol_date: Date.today
         }
@@ -31,7 +31,7 @@ RSpec.describe EndOfLife::Scanner do
         )
 
         options = {
-          product: EndOfLife::Product.new("ruby"),
+          product: EndOfLife::Product.find("ruby"),
           user: "test_user",
           max_eol_date: Date.today
         }

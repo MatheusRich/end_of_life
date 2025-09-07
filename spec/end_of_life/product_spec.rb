@@ -5,7 +5,7 @@ RSpec.describe EndOfLife::Product, vcr: "products-ruby" do
     it "returns all eol releases at a given date" do
       date = Date.parse("2021-03-31")
 
-      releases = EndOfLife::Product.new("ruby").eol_releases_at(date)
+      releases = EndOfLife::Product.find("ruby").eol_releases_at(date)
       version_strings = releases.map(&:to_s)
 
       expect(version_strings).to match_array [
@@ -26,7 +26,7 @@ RSpec.describe EndOfLife::Product, vcr: "products-ruby" do
         ruby_2_eol_date = "2016-02-24"
         travel_to ruby_2_eol_date
 
-        version = EndOfLife::Product.new("ruby").latest_eol_release
+        version = EndOfLife::Product.find("ruby").latest_eol_release
 
         expect(version.to_s).to eq "2.0.0p648"
       end
@@ -36,7 +36,7 @@ RSpec.describe EndOfLife::Product, vcr: "products-ruby" do
       it "returns the latest eol version at a given date" do
         date = Date.parse("2021-03-31")
 
-        version = EndOfLife::Product.new("ruby").latest_eol_release(at: date)
+        version = EndOfLife::Product.find("ruby").latest_eol_release(at: date)
 
         expect(version.to_s).to eq "2.5.9"
       end
