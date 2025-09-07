@@ -84,7 +84,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
     end
   end
 
-  describe "#fetch" do
+  describe "#search" do
     it "returns a success monad on successful API call" do
       with_env GITHUB_TOKEN: "something" do
         client = build_client
@@ -115,7 +115,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
       allow(Octokit::Client).to receive(:new).and_return(client)
 
       with_env GITHUB_TOKEN: "FOO" do
-        EndOfLife::Repository.fetch(
+        EndOfLife::Repository.search(
           product: EndOfLife::Product.find("ruby"),
           user: "thoughtbot",
           organizations: nil,
@@ -135,7 +135,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
       allow(Octokit::Client).to receive(:new).and_return(client)
 
       repositories = with_env GITHUB_TOKEN: "FOO" do
-        EndOfLife::Repository.fetch(
+        EndOfLife::Repository.search(
           product: EndOfLife::Product.find("ruby"),
           user: "thoughtbot",
           skip_archived: true
@@ -156,7 +156,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
         allow(Octokit::Client).to receive(:new).and_return(client)
 
         repositories = with_env GITHUB_TOKEN: "FOO" do
-          EndOfLife::Repository.fetch(
+          EndOfLife::Repository.search(
             product: EndOfLife::Product.find("ruby"),
             user: "thoughtbot",
             skip_archived: false

@@ -6,7 +6,7 @@ RSpec.describe EndOfLife::Scanner do
   describe ".scan" do
     context "when no repositories are found with EOL product" do
       it "displays the correct message" do
-        allow(EndOfLife::Repository).to receive(:fetch).and_return(
+        allow(EndOfLife::Repository).to receive(:search).and_return(
           Dry::Monads::Success([])
         )
 
@@ -23,10 +23,10 @@ RSpec.describe EndOfLife::Scanner do
       end
     end
 
-    context "when Repository.fetch fails" do
+    context "when Repository.search fails" do
       it "aborts with error message" do
         error_message = "API rate limit exceeded"
-        allow(EndOfLife::Repository).to receive(:fetch).and_return(
+        allow(EndOfLife::Repository).to receive(:search).and_return(
           Dry::Monads::Failure(error_message)
         )
 

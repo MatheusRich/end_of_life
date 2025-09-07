@@ -14,7 +14,7 @@ module EndOfLife
 
     def fetch_repositories(options)
       with_loading_spinner("Searching repositories with #{options[:product].label}...") do |spinner|
-        result = Repository.fetch(options)
+        result = Repository.search(options)
         spinner.error if result.failure?
 
         result

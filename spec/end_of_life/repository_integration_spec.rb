@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 RSpec.describe EndOfLife::Repository do
-  describe "#fetch" do
+  describe "#search" do
     it "fetches all 200 repositories from an account despite exceeding page size" do
       repositories = VCR.use_cassette("many_repositories") do
         with_env GITHUB_TOKEN: "REDACTED" do
-          EndOfLife::Repository.fetch(
+          EndOfLife::Repository.search(
             product: EndOfLife::Product.find("ruby"),
             user: nil,
             organizations: nil,
