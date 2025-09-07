@@ -7,7 +7,7 @@ module EndOfLife
 
       const_get(detector_class)
     rescue NameError
-      raise ArgumentError, "Unknown product: #{product}"
+      raise ArgumentError, "Undefined version detector for product: #{product}"
     end
 
     private
