@@ -1,6 +1,7 @@
 # End of Life
 
-This gem lists GitHub repositories using end-of-life Ruby versions.
+This gem lists GitHub repositories using end-of-life versions of various
+products.
 
 ![End of Life Demo](demo.gif)
 
@@ -14,18 +15,20 @@ gem install end_of_life
 
 1. Set up a [GitHub access token][] (we recommend using a read-only token);
 
-[github access token]: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token#creating-a-token
+[github access token]:
+    https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token#creating-a-token
 
-2. Export the `GITHUB_TOKEN` environment variable or set it when calling `end_of_life`;
+2. Export the `GITHUB_TOKEN` environment variable or set it when calling
+   `end_of_life`;
 
 3. Use the `end_of_life` command to list the repositories:
 
 ```sh
 $ GITHUB_TOKEN=something end_of_life # if your platform supports symlinks, you can use the `eol` command instead
-[✔] Fetching repositories...
+[✔] Searching repositories with Ruby...
 [✔] Searching for EOL Ruby in repositories...
 
-Found 2 repositories using EOL Ruby (<= 2.7.8):
+Found 2 repositories using EOL Ruby (<= 3.1.7):
 ┌───┬──────────────────────────────────────────────┬──────────────┐
 │   │ Repository                                   │ Ruby version │
 ├───┼──────────────────────────────────────────────┼──────────────┤
@@ -40,6 +43,7 @@ There are some options to help you filter down the results:
 
 ```
 Usage: end_of_life [options]
+    -p, --product NAME                 Sets the product to scan for (default: ruby). Supported products are: ruby, rails.
         --exclude=NAME,NAME2           Exclude repositories containing a certain word in its name. You can specify up to five words.
         --public-only                  Searches only public repositories
         --private-only                 Searches only private repositories
@@ -54,17 +58,19 @@ Usage: end_of_life [options]
 
 ## How it works
 
-This gem fetches all your GitHub repositories that contain Ruby code, then
-searches for files that may have a Ruby version. Currently, those files are:
-`.ruby-version`, `Gemfile`, `Gemfile.lock`, and `.tool-version`. We parse these
-files and extract the minimum Ruby version used in the repository.
+This gem fetches all your GitHub repositories that contain code for the
+specified product, then searches for files that may contain version information.
+For Ruby, those files are: `.ruby-version`, `Gemfile`, `Gemfile.lock`, and
+`.tool-version`. End of Life parses these files and extracts the minimum version
+used in the repository.
 
-The EOL Ruby version is provided by https://endoflife.date/, with a file
+The EOL version information is provided by https://endoflife.date/, with a file
 [fallback].
 
-> **IMPORTANT:** To parse Gemfiles, we need to execute the code inside it. **Be
-> careful** because this may be a security risk. We plan to add a secure parser
-> for Gemfiles in the future.
+> [!ATTENTION]
+> To parse Gemfiles, we need to execute the code inside them.
+> **Be careful** because this may be a security risk. We plan to add secure
+> parsers for these files in the future.
 
 Some other limitations are listed on the [issues page].
 
@@ -86,7 +92,10 @@ git commits and the created tag, and push the `.gem` file to
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at
-https://github.com/MatheusRich/end_of_life.
+https://github.com/MatheusRich/end_of_life. If you want to add a new product,
+[check out this commit for reference].
+
+[check out this commit for reference]: ba9a92a690e0d61ea09e508c1cd76b8309fb89df
 
 ## License
 
