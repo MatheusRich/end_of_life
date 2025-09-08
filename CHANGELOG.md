@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+- 🎉 Add support for scanning EOL Rails versions!
+  - Use the `--product=rails` option to scan for Rails instead of Ruby.
+  - End of Life looks for an exact Rails version on the `Gemfile` file or `Gemfile.lock`.
+
 ## [0.4.1] - 2025-05-23
 
 - [BUGFIX] Handle empty/invalid version files
