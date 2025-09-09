@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.5.0] - 2025-09-07
+
 - 🎉 Add support for scanning EOL Rails versions!
   - Use the `--product=rails` option to scan for Rails instead of Ruby.
   - End of Life looks for an exact Rails version on the `Gemfile` file or `Gemfile.lock`.
@@ -165,7 +167,8 @@ $ end_of_life --user=matz # searches on matz's repositories
 
 - Initial release
 
-[unreleased]: https://github.com/MatheusRich/end_of_life/compare/v0.4.1...HEAD
+[unreleased]: https://github.com/MatheusRich/end_of_life/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/MatheusRich/end_of_life/releases/tag/v0.5.0
 [0.4.1]: https://github.com/MatheusRich/end_of_life/releases/tag/v0.4.1
 [0.4.0]: https://github.com/MatheusRich/end_of_life/releases/tag/v0.4.0
 [0.3.0]: https://github.com/MatheusRich/end_of_life/releases/tag/v0.3.0
