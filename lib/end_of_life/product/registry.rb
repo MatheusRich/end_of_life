@@ -15,7 +15,7 @@ module EndOfLife
     private
 
     def product_registry
-      @@product_registry ||= {}
+      @product_registry ||= {}
     end
 
     def version_detector_for(product) = VersionDetectors.for_product(product)
