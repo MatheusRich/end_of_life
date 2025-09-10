@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [0.5.1] - 2025-09-10
+
+- [BUGFIX] Handle when Gemfile pulls version from a file and the file is missing
+- [BUGFIX] Handle running end_of_life outside of a bundler project
+
 ## [0.5.0] - 2025-09-07
 
 - 🎉 Add support for scanning EOL Rails versions!
