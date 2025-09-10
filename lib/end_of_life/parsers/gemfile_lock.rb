@@ -8,6 +8,8 @@ module EndOfLife
         silence_bundler do
           Bundler::LockfileParser.new(file_content)
         end
+      rescue Bundler::BundlerError # outside a bundler project
+        nil
       end
     end
   end

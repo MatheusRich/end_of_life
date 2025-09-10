@@ -12,7 +12,7 @@ module EndOfLife
       end
 
       detects_from "Gemfile.lock" do |file_content|
-        gemfile_lock_version = Parsers::GemfileLock.parse(file_content).ruby_version or next
+        gemfile_lock_version = Parsers::GemfileLock.parse(file_content)&.ruby_version or next
 
         Product::Release.ruby(gemfile_lock_version.delete_prefix("ruby "))
       end
