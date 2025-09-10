@@ -22,7 +22,7 @@ module EndOfLife
           tempfile.rewind
 
           yield(tempfile)
-        rescue Bundler::BundlerError
+        rescue Bundler::BundlerError, Errno::ENOENT # Bundler tries to read the version file, and in some versions it raises this error
           nil # NOTE: maybe a Null object would be cleaner
         end
       end
