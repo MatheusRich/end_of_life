@@ -67,7 +67,7 @@ used in the repository.
 The EOL version information is provided by https://endoflife.date/, with a file
 [fallback].
 
-> [!ATTENTION]
+> [!CAUTION]
 > To parse Gemfiles, we need to execute the code inside them.
 > **Be careful** because this may be a security risk. We plan to add secure
 > parsers for these files in the future.
@@ -96,6 +96,18 @@ https://github.com/MatheusRich/end_of_life. If you want to add a new product,
 [check out this commit for reference].
 
 [check out this commit for reference]: ba9a92a690e0d61ea09e508c1cd76b8309fb89df
+
+## About thoughtbot
+
+![thoughtbot](https://thoughtbot.com/thoughtbot-logo-for-readmes.svg)
+
+The development of this project is funded by thoughtbot, inc.
+
+We love open source software! See [our other projects][community]. We are
+[available for hire][hire].
+
+[community]: https://thoughtbot.com/community?utm_source=github
+[hire]: https://thoughtbot.com/hire-us?utm_source=github
 
 ## License
 
