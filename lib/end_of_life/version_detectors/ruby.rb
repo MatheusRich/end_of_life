@@ -30,6 +30,13 @@ module EndOfLife
 
         Product::Release.ruby(ruby_version)
       end
+
+      detects_from "mise.toml" do |file_content|
+        tools = Parsers::MiseToml.parse(file_content) or next
+        ruby_version = tools["ruby"] or next
+
+        Product::Release.ruby(ruby_version)
+      end
     end
   end
 end

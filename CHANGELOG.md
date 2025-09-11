@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- Add support for detecting Ruby versions from mise.toml
+
 ## [0.5.1] - 2025-09-10
 
 - [BUGFIX] Handle when Gemfile pulls version from a file and the file is missing

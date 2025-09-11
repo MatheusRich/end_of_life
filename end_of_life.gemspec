@@ -37,6 +37,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "async"
   spec.add_dependency "bundler", ">= 2.3.0", "< 3"
   spec.add_dependency "dry-monads", "~> 1.3"
+  spec.add_dependency "perfect_toml", "~> 0.9.0"
   spec.add_dependency "octokit", "~> 9.0"
   spec.add_dependency "pastel", "~> 0.8.0"
   spec.add_dependency "tty-spinner", "~> 0.9.0"

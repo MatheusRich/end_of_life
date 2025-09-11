@@ -152,6 +152,32 @@ RSpec.describe EndOfLife::VersionDetectors::Ruby do
       end
     end
 
+    context "with mise.toml" do
+      it "returns the ruby version defined" do
+        mise_toml = <<~TOML
+          [tools]
+          ruby = "3.1.2"
+        TOML
+
+        result = described_class.detect(EndOfLife::InMemoryFile.new("mise.toml", mise_toml))
+
+        expect(result).to eq EndOfLife::Product::Release.ruby("3.1.2")
+      end
+
+      context "when ruby is not defined" do
+        it "returns nil" do
+          mise_toml = <<~TOML
+            [tools]
+            python = "3.9.1"
+          TOML
+
+          result = described_class.detect(EndOfLife::InMemoryFile.new("mise.toml", mise_toml))
+
+          expect(result).to be_nil
+        end
+      end
+    end
+
     context "with unknown file" do
       it "returns nil" do
         result = described_class.detect(EndOfLife::InMemoryFile.new("foo.bar", "foo"))

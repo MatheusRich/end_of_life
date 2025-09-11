@@ -11,7 +11,8 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
           ".ruby-version" => {content: "1.9.3"},
           ".tool-versions" => nil,
           "Gemfile" => nil,
-          "Gemfile.lock" => nil
+          "Gemfile.lock" => nil,
+          "mise.toml" => nil
         }
       )
       repo = EndOfLife::Repository.new(
@@ -30,7 +31,8 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
           ".ruby-version" => {content: "9999999"},
           ".tool-versions" => nil,
           "Gemfile" => nil,
-          "Gemfile.lock" => nil
+          "Gemfile.lock" => nil,
+          "mise.toml" => nil
         }
       )
       repo = EndOfLife::Repository.new(
@@ -49,7 +51,8 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
           ".ruby-version" => {content: "3.0.0"},
           ".tool-versions" => nil,
           "Gemfile" => nil,
-          "Gemfile.lock" => nil
+          "Gemfile.lock" => nil,
+          "mise.toml" => nil
         }
       )
       ruby_3_eol_date = Date.parse("2024-04-23")
@@ -71,7 +74,8 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
           ".ruby-version" => nil,
           ".tool-versions" => nil,
           "Gemfile" => nil,
-          "Gemfile.lock" => nil
+          "Gemfile.lock" => nil,
+          "mise.toml" => nil
         }
       )
       repo = EndOfLife::Repository.new(
@@ -177,7 +181,8 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
           ".ruby-version" => {content: "2.6.3"},
           ".tool-versions" => {content: "ruby 2.5.0"},
           "Gemfile" => nil,
-          "Gemfile.lock" => nil
+          "Gemfile.lock" => nil,
+          "mise.toml" => nil
         }
       )
       repo = EndOfLife::Repository.new(
@@ -198,7 +203,8 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
           ".ruby-version" => {content: "2.6.3", encoding: "base64"},
           ".tool-versions" => nil,
           "Gemfile" => nil,
-          "Gemfile.lock" => nil
+          "Gemfile.lock" => nil,
+          "mise.toml" => nil
         }
       )
       repo = EndOfLife::Repository.new(
@@ -219,7 +225,8 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
           ".ruby-version" => {content: "2.6.3", encoding: "unknown_encoding"},
           ".tool-versions" => nil,
           "Gemfile" => nil,
-          "Gemfile.lock" => nil
+          "Gemfile.lock" => nil,
+          "mise.toml" => nil
         }
       )
       repo = EndOfLife::Repository.new(
@@ -238,7 +245,8 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
           ".ruby-version" => {content: Octokit::NotFound},
           ".tool-versions" => {content: Octokit::NotFound},
           "Gemfile" => {content: Octokit::NotFound},
-          "Gemfile.lock" => {content: Octokit::NotFound}
+          "Gemfile.lock" => {content: Octokit::NotFound},
+          "mise.toml" => {content: Octokit::NotFound}
         }
       )
       repo = EndOfLife::Repository.new(
@@ -330,7 +338,11 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
               sleep(seconds_of_sleep)
               nil
             }
-          }
+          },
+          "mise.toml" => {content: lambda {
+            sleep(seconds_of_sleep)
+            nil
+          }}
         }
       )
       repo = EndOfLife::Repository.new(
