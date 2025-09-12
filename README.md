@@ -43,7 +43,7 @@ There are some options to help you filter down the results:
 
 ```
 Usage: end_of_life [options]
-    -p, --product NAME                 Sets the product to scan for (default: ruby). Supported products are: ruby, rails.
+    -p, --product NAME                 Sets the product to scan for (default: ruby). Supported products are: ruby, rails, nodejs.
         --exclude=NAME,NAME2           Exclude repositories containing a certain word in its name. You can specify up to five words.
         --public-only                  Searches only public repositories
         --private-only                 Searches only private repositories
@@ -95,7 +95,7 @@ Bug reports and pull requests are welcome on GitHub at
 https://github.com/MatheusRich/end_of_life. If you want to add a new product,
 [check out this commit for reference].
 
-[check out this commit for reference]: ba9a92a690e0d61ea09e508c1cd76b8309fb89df
+[check out this commit for reference]: https://github.com/MatheusRich/end_of_life/commit/bfb6f9ceb5afb338fa5553a1266aa2c063e61200
 
 ## About thoughtbot
 
