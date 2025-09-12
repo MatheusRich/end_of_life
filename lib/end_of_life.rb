@@ -17,4 +17,5 @@ module EndOfLife
 
   scans_for :ruby
   scans_for :rails
+  scans_for :nodejs
 end
