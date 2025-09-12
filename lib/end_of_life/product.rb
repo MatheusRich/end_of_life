@@ -11,7 +11,7 @@ module EndOfLife
     end
 
     def eol_releases_at(date)
-      all_releases.filter { |release| release.eol_date <= date }
+      all_releases.filter { |release| release.eol_date.nil? || release.eol_date <= date }
     end
 
     def latest_eol_release(at: Date.today)
