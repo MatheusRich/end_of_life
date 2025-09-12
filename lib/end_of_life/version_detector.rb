@@ -4,8 +4,8 @@ module EndOfLife
       @file_detectors ||= {}
     end
 
-    def detects_from(file, &block)
-      file_detectors[file] = block
+    def detects_from(*files, &block)
+      files.each { |file| file_detectors[file] = block }
     end
 
     def relevant_files = file_detectors.keys
