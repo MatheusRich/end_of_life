@@ -134,7 +134,7 @@ RSpec.describe EndOfLife::VersionDetectors::Ruby do
 
     context "with .tool-versions" do
       it "returns the last ruby version defined" do
-        result = described_class.detect(EndOfLife::InMemoryFile.new(".tool-versions", "  ruby 3.0.0\n ruby 2.5.1"))
+        result = described_class.detect(EndOfLife::InMemoryFile.new(".tool-versions", "#comment\n  ruby 3.0.0#comment2\n ruby 2.5.1"))
 
         expect(result).to eq EndOfLife::Product::Release.ruby("2.5.1")
       end

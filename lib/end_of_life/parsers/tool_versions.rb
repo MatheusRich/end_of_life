@@ -10,6 +10,7 @@ module EndOfLife
             line = line.strip
             next if line.start_with?("#") || line.empty?
 
+            line = line.split("#").first.strip # inline comments
             tool, version, * = line.split
 
             next if version == "latest"
