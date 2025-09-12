@@ -2,11 +2,10 @@ module EndOfLife
   class Product
     def self.find(name) = EndOfLife.find_product(name)
 
-    attr_reader :name, :search_query, :version_detector
+    attr_reader :name, :version_detector
 
-    def initialize(name, search_query, version_detector)
+    def initialize(name, version_detector)
       @name = name.to_s.downcase
-      @search_query = search_query
       @version_detector = version_detector
     end
 
@@ -16,6 +15,10 @@ module EndOfLife
 
     def latest_eol_release(at: Date.today)
       eol_releases_at(at).max
+    end
+
+    def search_query
+      version_detector.relevant_files.map { |f| %(filename:"#{f}") }.join(" ")
     end
 
     def label = name.capitalize

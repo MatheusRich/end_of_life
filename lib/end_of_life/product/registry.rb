@@ -1,9 +1,8 @@
 module EndOfLife
   module Product::Registry
-    def scans_for(product_name, search_query:)
+    def scans_for(product_name)
       product_registry[product_name.to_sym.downcase] = Product.new(
         product_name,
-        search_query,
         version_detector_for(product_name)
       )
     end

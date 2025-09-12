@@ -127,7 +127,8 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
         )
       end
 
-      expect(client).to have_received(:search_repositories).once
+      expect(client).to have_received(:search_code).once
+      expect(client).not_to have_received(:search_repositories)
     end
 
     it "returns the search results" do
@@ -365,10 +366,14 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
   def build_client(repo: nil, contents: [], search_results: [])
     client = Object.new
 
+    code_search_response = OpenStruct.new(
+      items: search_results.map { |r| OpenStruct.new(repository: OpenStruct.new(full_name: r.full_name)) }
+    )
     response = OpenStruct.new(
       items: search_results,
       incomplete_results: false
     )
+    allow(client).to receive(:search_code).and_return(code_search_response)
     allow(client).to receive(:search_repositories).and_return(response)
     allow(client).to receive(:auto_paginate=).with(true)
     allow(client).to receive(:user).and_return(OpenStruct.new(login: "test_user"))

@@ -14,11 +14,22 @@ module EndOfLife
           github.auto_paginate = true
           options[:user] ||= github.user.login
 
+          # GitHub doesn't have a way to get repos that contain specific files.
+          # The language filter sort of works, but it might miss some repos that
+          # use a language, but it's not the main one.
+          #
+          # We have to use the code search endpoint to find files matching the
+          # product we're interested in and then extract the repositories from
+          # the results.
           query = Query.new(options).to_s
-          items = github.search_repositories(query, {sort: :updated}).items
+          repo_names = github.search_code(query).items.map { |item| item.repository.full_name }.uniq
+          return Success([]) if repo_names.empty?
+
+          repos_query = repo_names.map { |name| "repo:#{name}" }.join(" ")
+          repos = github.search_repositories(repos_query, {sort: :updated}).items
 
           Success(
-            items.filter_map do |repo|
+            repos.filter_map do |repo|
               next if repo.archived && options[:skip_archived]
 
               Repository.new(

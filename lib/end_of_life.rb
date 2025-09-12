@@ -15,6 +15,6 @@ module EndOfLife
   extend Product::Registry
   extend Helpers::Terminal
 
-  scans_for :ruby, search_query: "language:ruby"
-  scans_for :rails, search_query: "language:ruby"
+  scans_for :ruby
+  scans_for :rails
 end
