@@ -3,7 +3,9 @@ require "optparse"
 module EndOfLife
   class CLI
     module Options
-      def self.from(argv)
+      extend self
+
+      def from(argv)
         options = {product: Product.find("ruby"), max_eol_date: Date.today, skip_archived: true}
         OptionParser.new do |parser|
           options[:parser] = parser
@@ -56,9 +58,22 @@ module EndOfLife
           end
         end.parse!(argv)
 
+        options[:command] ||= command_from(ARGV.shift)
+
         options
       rescue OptionParser::ParseError => e
         {command: :print_error, error: e}
+      end
+
+      private
+
+      def command_from(arg)
+        case arg
+        in "scan" | nil
+          arg&.to_sym || :scan
+        else
+          :help
+        end
       end
     end
   end

@@ -15,13 +15,13 @@ module EndOfLife
 
     def execute_command(options)
       case options[:command]
-      when :help
+      in :help
         puts options[:parser]
-      when :version
+      in :version
         puts "end_of_life v#{EndOfLife::VERSION}"
-      when :print_error
+      in :print_error
         abort error_msg(options[:error])
-      else
+      in :scan
         Scanner.scan(options)
       end
     end
