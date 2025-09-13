@@ -35,7 +35,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "async"
-  spec.add_dependency "bundler", ">= 2.3.0", "< 3"
+  spec.add_dependency "bundler", ">= 2.7.2", "< 3"
   spec.add_dependency "dry-monads", "~> 1.3"
   spec.add_dependency "perfect_toml", "~> 0.9.0"
   spec.add_dependency "octokit", "~> 9.0"
