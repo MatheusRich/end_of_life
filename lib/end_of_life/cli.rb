@@ -1,7 +1,5 @@
 module EndOfLife
   class CLI
-    include Helpers::Terminal
-
     def call(argv)
       parse_options(argv)
         .then { |options| execute_command(options) }
@@ -19,8 +17,8 @@ module EndOfLife
         puts options[:parser]
       in :version
         puts "end_of_life v#{EndOfLife::VERSION}"
-      in :print_error
-        abort error_msg(options[:error])
+      in :abort
+        abort options[:error]
       in :scan
         Scanner.scan(options)
       end

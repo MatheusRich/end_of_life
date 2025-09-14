@@ -43,7 +43,7 @@ RSpec.describe EndOfLife::CLI do
       it "prints the help banner" do
         cli = EndOfLife::CLI.new
 
-        expect { cli.call(["-h"]) }.to output(/Usage: end_of_life \[options\]/).to_stdout
+        expect { cli.call(["-h"]) }.to output(/Usage: end_of_life \[COMMAND\] \[OPTIONS\]/).to_stdout
       end
     end
 
@@ -54,6 +54,16 @@ RSpec.describe EndOfLife::CLI do
         expect { cli.call(["--unknown-option"]) }
           .to exit_with_code(1)
           .and output(/invalid option: --unknown-option/).to_stderr
+      end
+    end
+
+    context "with invalid command" do
+      it "aborts and prints help" do
+        cli = EndOfLife::CLI.new
+
+        expect { cli.call(["foobar"]) }
+          .to exit_with_code(1)
+          .and output(/Usage: end_of_life \[COMMAND\] \[OPTIONS\]/).to_stderr
       end
     end
   end

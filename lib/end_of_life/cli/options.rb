@@ -3,6 +3,9 @@ require "optparse"
 module EndOfLife
   class CLI
     module Options
+      InvalidCommand = Class.new(StandardError)
+
+      include Helpers::Terminal
       extend self
 
       def from(argv)
@@ -10,7 +13,7 @@ module EndOfLife
         OptionParser.new do |parser|
           options[:parser] = parser
 
-          parser.banner = "Usage: end_of_life scan [options]"
+          parser.banner = "Usage: end_of_life [COMMAND] [OPTIONS]"
 
           product_names = EndOfLife.products.map(&:name)
           parser.on("-p NAME", "--product NAME", /#{product_names.join("|")}/i, "Sets the product to scan for (default: ruby). Supported products are: #{product_names.join(", ")}.") do |name|
@@ -62,7 +65,10 @@ module EndOfLife
 
         options
       rescue OptionParser::ParseError => e
-        {command: :print_error, error: e}
+        {command: :abort, error: error_msg(e)}
+      rescue InvalidCommand => e
+        error = "#{e.message}\n\n#{options[:parser]}"
+        {command: :abort, error: error}
       end
 
       private
@@ -72,7 +78,7 @@ module EndOfLife
         in "scan" | nil
           arg&.to_sym || :scan
         else
-          :help
+          raise InvalidCommand, "Invalid command: #{arg}"
         end
       end
     end
