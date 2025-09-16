@@ -76,7 +76,7 @@ RSpec.describe EndOfLife::Product::Release do
     it "returns the release as a string" do
       release = EndOfLife::Product::Release.ruby("2.3.0")
 
-      expect(release.to_s).to eq("2.3.0")
+      expect(release.to_s).to eq("ruby@2.3.0")
     end
   end
 end

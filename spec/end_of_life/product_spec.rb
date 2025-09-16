@@ -9,13 +9,13 @@ RSpec.describe EndOfLife::Product, vcr: "products-ruby" do
       version_strings = releases.map(&:to_s)
 
       expect(version_strings).to match_array [
-        "2.5.9",
-        "2.4.10",
-        "2.3.8",
-        "2.2.10",
-        "2.1.10",
-        "2.0.0p648",
-        "1.9.3p551"
+        "ruby@2.5.9",
+        "ruby@2.4.10",
+        "ruby@2.3.8",
+        "ruby@2.2.10",
+        "ruby@2.1.10",
+        "ruby@2.0.0p648",
+        "ruby@1.9.3p551"
       ]
     end
   end
@@ -28,7 +28,7 @@ RSpec.describe EndOfLife::Product, vcr: "products-ruby" do
 
         version = EndOfLife::Product.find("ruby").latest_eol_release
 
-        expect(version.to_s).to eq "2.0.0p648"
+        expect(version.to_s).to eq "ruby@2.0.0p648"
       end
     end
 
@@ -38,7 +38,7 @@ RSpec.describe EndOfLife::Product, vcr: "products-ruby" do
 
         version = EndOfLife::Product.find("ruby").latest_eol_release(at: date)
 
-        expect(version.to_s).to eq "2.5.9"
+        expect(version.to_s).to eq "ruby@2.5.9"
       end
     end
   end

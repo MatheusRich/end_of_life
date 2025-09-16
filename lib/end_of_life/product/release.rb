@@ -24,7 +24,7 @@ module EndOfLife
 
       def <=>(other) = version <=> other.version
 
-      def to_s = version.to_s
+      def to_s = "#{product.name}@#{version}"
     end
   end
 end
