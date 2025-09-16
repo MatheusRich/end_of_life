@@ -1,6 +1,17 @@
 ## [Unreleased]
 
 - Add support for detecting Ruby versions from mise.toml
+- Add `check` command to check if specific product releases are EOL
+
+```sh
+$ end_of_life check ruby@3.0 nodejs@18
+┌─────────────────┬───────────┬────────────┐
+│ Product Release │ Status    │ EOL Date   │
+├─────────────────┼───────────┼────────────┤
+│ nodejs@18.20.8  │ EOL       │ 2025-04-30 │
+│ ruby@3.4.5      │ Supported │ 2028-03-31 │
+└─────────────────┴───────────┴────────────┘
+```
 
 ## [0.5.1] - 2025-09-10
 

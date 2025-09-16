@@ -44,6 +44,14 @@ module EndOfLife
         expect(error.message).to match(message)
       end.and output(message).to_stderr
     end
+
+    def with_standard_streams(stdout:, stderr:)
+      original_streams = [$stdout, $stderr]
+      $stdout, $stderr = stdout, stderr
+      yield
+    ensure
+      $stdout, $stderr = *original_streams
+    end
   end
 end
 

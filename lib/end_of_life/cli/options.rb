@@ -61,7 +61,7 @@ module EndOfLife
           end
         end.parse!(argv)
 
-        options[:command] ||= command_from(ARGV.shift)
+        options[:command] ||= command_from(argv.shift)
 
         options
       rescue OptionParser::ParseError => e
@@ -75,7 +75,7 @@ module EndOfLife
 
       def command_from(arg)
         case arg
-        in "scan" | nil
+        in "scan" | "check" | nil
           arg&.to_sym || :scan
         else
           raise InvalidCommand, "Invalid command: #{arg}"

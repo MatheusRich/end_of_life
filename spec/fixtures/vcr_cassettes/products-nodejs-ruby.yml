@@ -1,0 +1,168 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://endoflife.date/api/v1/products/ruby
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - endoflife.date
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Accept-Ranges:
+      - bytes
+      Access-Control-Allow-Methods:
+      - GET
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Max-Age:
+      - '86400'
+      Age:
+      - '1073'
+      Cache-Control:
+      - public,max-age=0,must-revalidate
+      Cache-Status:
+      - '"Netlify Edge"; hit'
+      Content-Length:
+      - '4437'
+      Content-Type:
+      - application/json
+      Date:
+      - Tue, 16 Sep 2025 03:36:41 GMT
+      Etag:
+      - '"f47f6fc342a3ecc2f220d3909124e06b-ssl-df"'
+      Permissions-Policy:
+      - accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(),
+        cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(),
+        execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(),
+        geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(),
+        midi=(), navigation-override=(), payment=(), picture-in-picture=(), publickey-credentials-get=(),
+        screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=(),
+        clipboard-read=(), clipboard-write=(), gamepad=(), speaker-selection=(), conversion-measurement=(),
+        focus-without-user-activation=(), hid=(), idle-detection=(), interest-cohort=(),
+        serial=(), sync-script=(), trust-token-redemption=(), unload=(), window-placement=(),
+        vertical-scroll=()
+      Referrer-Policy:
+      - strict-origin
+      Server:
+      - Netlify
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Vary:
+      - Accept-Encoding
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+      X-Nf-Request-Id:
+      - 01K589H5B5BA7KPV79CHHF6NTQ
+      X-Xss-Protection:
+      - 1; mode=block
+    body:
+      encoding: ASCII-8BIT
+      string: '{"schema_version":"1.2.0","generated_at":"2025-09-16T00:33:45+00:00","last_modified":"2025-08-10T13:34:36+00:00","result":{"name":"ruby","aliases":[],"label":"Ruby","category":"lang","tags":["lang"],"versionCommand":"ruby
+        --version","identifiers":[{"type":"repology","id":"ruby"},{"type":"purl","id":"pkg:docker/library/ruby"},{"type":"purl","id":"pkg:generic/ruby"}],"labels":{"eoas":null,"discontinued":null,"eol":"Support
+        Status","eoes":null},"links":{"icon":"https://cdn.jsdelivr.net/npm/simple-icons/icons/ruby.svg","html":"https://endoflife.date/ruby","releasePolicy":"https://www.ruby-lang.org/en/downloads/branches/"},"releases":[{"name":"3.4","codename":null,"label":"3.4","releaseDate":"2024-12-24","isLts":false,"ltsFrom":null,"isEol":false,"eolFrom":"2028-03-31","isMaintained":true,"latest":{"name":"3.4.5","date":"2025-07-15","link":"https://github.com/ruby/ruby/releases/tag/v3_4_5"},"custom":null},{"name":"3.3","codename":null,"label":"3.3","releaseDate":"2023-12-25","isLts":false,"ltsFrom":null,"isEol":false,"eolFrom":"2027-03-31","isMaintained":true,"latest":{"name":"3.3.9","date":"2025-07-24","link":"https://github.com/ruby/ruby/releases/tag/v3_3_9"},"custom":null},{"name":"3.2","codename":null,"label":"3.2","releaseDate":"2022-12-25","isLts":false,"ltsFrom":null,"isEol":false,"eolFrom":"2026-03-31","isMaintained":true,"latest":{"name":"3.2.9","date":"2025-07-24","link":"https://github.com/ruby/ruby/releases/tag/v3_2_9"},"custom":null},{"name":"3.1","codename":null,"label":"3.1","releaseDate":"2021-12-25","isLts":false,"ltsFrom":null,"isEol":true,"eolFrom":"2025-03-31","isMaintained":false,"latest":{"name":"3.1.7","date":"2025-03-26","link":"https://github.com/ruby/ruby/releases/tag/v3_1_7"},"custom":null},{"name":"3.0","codename":null,"label":"3.0","releaseDate":"2020-12-25","isLts":false,"ltsFrom":null,"isEol":true,"eolFrom":"2024-04-23","isMaintained":false,"latest":{"name":"3.0.7","date":"2024-04-23","link":"https://github.com/ruby/ruby/releases/tag/v3_0_7"},"custom":null},{"name":"2.7","codename":null,"label":"2.7","releaseDate":"2019-12-25","isLts":false,"ltsFrom":null,"isEol":true,"eolFrom":"2023-03-31","isMaintained":false,"latest":{"name":"2.7.8","date":"2023-03-30","link":"https://github.com/ruby/ruby/releases/tag/v2_7_8"},"custom":null},{"name":"2.6","codename":null,"label":"2.6","releaseDate":"2018-12-25","isLts":false,"ltsFrom":null,"isEol":true,"eolFrom":"2022-03-31","isMaintained":false,"latest":{"name":"2.6.10","date":"2022-04-12","link":"https://github.com/ruby/ruby/releases/tag/v2_6_10"},"custom":null},{"name":"2.5","codename":null,"label":"2.5","releaseDate":"2017-12-25","isLts":false,"ltsFrom":null,"isEol":true,"eolFrom":"2021-03-31","isMaintained":false,"latest":{"name":"2.5.9","date":"2021-04-05","link":"https://github.com/ruby/ruby/releases/tag/v2_5_9"},"custom":null},{"name":"2.4","codename":null,"label":"2.4","releaseDate":"2016-12-23","isLts":false,"ltsFrom":null,"isEol":true,"eolFrom":"2020-03-31","isMaintained":false,"latest":{"name":"2.4.10","date":"2020-03-31","link":"https://github.com/ruby/ruby/releases/tag/v2_4_10"},"custom":null},{"name":"2.3","codename":null,"label":"2.3","releaseDate":"2015-12-24","isLts":false,"ltsFrom":null,"isEol":true,"eolFrom":"2019-03-31","isMaintained":false,"latest":{"name":"2.3.8","date":"2018-10-17","link":"https://github.com/ruby/ruby/releases/tag/v2_3_8"},"custom":null},{"name":"2.2","codename":null,"label":"2.2","releaseDate":"2014-12-25","isLts":false,"ltsFrom":null,"isEol":true,"eolFrom":"2018-03-31","isMaintained":false,"latest":{"name":"2.2.10","date":"2018-03-28","link":"https://github.com/ruby/ruby/releases/tag/v2_2_10"},"custom":null},{"name":"2.1","codename":null,"label":"2.1","releaseDate":"2013-12-25","isLts":false,"ltsFrom":null,"isEol":true,"eolFrom":"2017-03-31","isMaintained":false,"latest":{"name":"2.1.10","date":"2016-03-31","link":"https://github.com/ruby/ruby/releases/tag/v2_1_10"},"custom":null},{"name":"2.0.0","codename":null,"label":"2.0.0","releaseDate":"2013-02-24","isLts":false,"ltsFrom":null,"isEol":true,"eolFrom":"2016-02-24","isMaintained":false,"latest":{"name":"2.0.0p648","date":"2015-12-16","link":null},"custom":null},{"name":"1.9.3","codename":null,"label":"1.9.3","releaseDate":"2011-10-30","isLts":false,"ltsFrom":null,"isEol":true,"eolFrom":"2015-02-23","isMaintained":false,"latest":{"name":"1.9.3p551","date":"2014-11-13","link":null},"custom":null}]}}
+
+        '
+  recorded_at: Tue, 16 Sep 2025 03:36:41 GMT
+- request:
+    method: get
+    uri: https://endoflife.date/api/v1/products/nodejs
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - endoflife.date
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Accept-Ranges:
+      - bytes
+      Access-Control-Allow-Methods:
+      - GET
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Max-Age:
+      - '86400'
+      Age:
+      - '0'
+      Cache-Control:
+      - public,max-age=0,must-revalidate
+      Cache-Status:
+      - '"Netlify Edge"; fwd=miss'
+      Content-Type:
+      - application/json
+      Date:
+      - Tue, 16 Sep 2025 03:36:44 GMT
+      Etag:
+      - '"5033836c6fcc9475f83f3c3a4a3c2942-ssl-df"'
+      Permissions-Policy:
+      - accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(),
+        cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(),
+        execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(),
+        geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(),
+        midi=(), navigation-override=(), payment=(), picture-in-picture=(), publickey-credentials-get=(),
+        screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=(),
+        clipboard-read=(), clipboard-write=(), gamepad=(), speaker-selection=(), conversion-measurement=(),
+        focus-without-user-activation=(), hid=(), idle-detection=(), interest-cohort=(),
+        serial=(), sync-script=(), trust-token-redemption=(), unload=(), window-placement=(),
+        vertical-scroll=()
+      Referrer-Policy:
+      - strict-origin
+      Server:
+      - Netlify
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Vary:
+      - Accept-Encoding
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+      X-Nf-Request-Id:
+      - 01K589H8CF2Q7DKMDCWKM5SFN0
+      X-Xss-Protection:
+      - 1; mode=block
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"schema_version":"1.2.0","generated_at":"2025-09-16T00:33:45+00:00","last_modified":"2025-09-13T14:53:49+00:00","result":{"name":"nodejs","aliases":["node"],"label":"Node.js","category":"framework","tags":["framework","herodevs","javascript-runtime"],"versionCommand":"node
+        --version","identifiers":[{"type":"purl","id":"pkg:generic/node"},{"type":"purl","id":"pkg:docker/circleci/node"},{"type":"purl","id":"pkg:docker/library/node"},{"type":"purl","id":"pkg:docker/cimg/node"},{"type":"purl","id":"pkg:docker/bitnami/node"},{"type":"repology","id":"nodejs"}],"labels":{"eoas":"Active
+        Support","discontinued":null,"eol":"Security Support","eoes":"Commercial Support"},"links":{"icon":"https://cdn.jsdelivr.net/npm/simple-icons/icons/nodedotjs.svg","html":"https://endoflife.date/nodejs","releasePolicy":"https://nodejs.org/en/about/previous-releases"},"releases":[{"name":"24","codename":null,"label":"24
+        (Upcoming LTS)","releaseDate":"2025-05-06","isLts":false,"ltsFrom":"2025-10-28","isEoas":false,"eoasFrom":"2026-10-20","isEol":false,"eolFrom":"2028-04-30","isEoes":null,"eoesFrom":null,"isMaintained":true,"latest":{"name":"24.8.0","date":"2025-09-10","link":"https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_V24.md#24.8.0"},"custom":null},{"name":"23","codename":null,"label":"23","releaseDate":"2024-10-16","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":"2025-04-01","isEol":true,"eolFrom":"2025-06-01","isEoes":null,"eoesFrom":null,"isMaintained":false,"latest":{"name":"23.11.1","date":"2025-05-14","link":"https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_V23.md#23.11.1"},"custom":null},{"name":"22","codename":null,"label":"22
+        (LTS)","releaseDate":"2024-04-24","isLts":true,"ltsFrom":"2024-10-29","isEoas":false,"eoasFrom":"2025-10-21","isEol":false,"eolFrom":"2027-04-30","isEoes":null,"eoesFrom":null,"isMaintained":true,"latest":{"name":"22.19.0","date":"2025-08-28","link":"https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_V22.md#22.19.0"},"custom":null},{"name":"21","codename":null,"label":"21","releaseDate":"2023-10-17","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":"2024-04-01","isEol":true,"eolFrom":"2024-06-01","isEoes":null,"eoesFrom":null,"isMaintained":false,"latest":{"name":"21.7.3","date":"2024-04-10","link":"https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_V21.md#21.7.3"},"custom":null},{"name":"20","codename":null,"label":"20
+        (LTS)","releaseDate":"2023-04-18","isLts":true,"ltsFrom":"2023-10-24","isEoas":true,"eoasFrom":"2024-10-22","isEol":false,"eolFrom":"2026-04-30","isEoes":null,"eoesFrom":null,"isMaintained":true,"latest":{"name":"20.19.5","date":"2025-09-03","link":"https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_V20.md#20.19.5"},"custom":null},{"name":"19","codename":null,"label":"19","releaseDate":"2022-10-18","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":"2023-04-01","isEol":true,"eolFrom":"2023-06-01","isEoes":null,"eoesFrom":null,"isMaintained":false,"latest":{"name":"19.9.0","date":"2023-04-10","link":"https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_V19.md#19.9.0"},"custom":null},{"name":"18","codename":null,"label":"18
+        (LTS)","releaseDate":"2022-04-19","isLts":true,"ltsFrom":"2022-10-25","isEoas":true,"eoasFrom":"2023-10-18","isEol":true,"eolFrom":"2025-04-30","isEoes":false,"eoesFrom":null,"isMaintained":true,"latest":{"name":"18.20.8","date":"2025-03-27","link":"https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_V18.md#18.20.8"},"custom":null},{"name":"17","codename":null,"label":"17","releaseDate":"2021-10-19","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":"2022-04-01","isEol":true,"eolFrom":"2022-06-01","isEoes":null,"eoesFrom":null,"isMaintained":false,"latest":{"name":"17.9.1","date":"2022-06-01","link":"https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_V17.md#17.9.1"},"custom":null},{"name":"16","codename":null,"label":"16
+        (LTS)","releaseDate":"2021-04-20","isLts":true,"ltsFrom":"2021-10-26","isEoas":true,"eoasFrom":"2022-10-18","isEol":true,"eolFrom":"2023-09-11","isEoes":false,"eoesFrom":null,"isMaintained":true,"latest":{"name":"16.20.2","date":"2023-08-09","link":"https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_V16.md#16.20.2"},"custom":null},{"name":"15","codename":null,"label":"15","releaseDate":"2020-10-20","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":"2021-04-01","isEol":true,"eolFrom":"2021-06-01","isEoes":null,"eoesFrom":null,"isMaintained":false,"latest":{"name":"15.14.0","date":"2021-04-06","link":"https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_V15.md#15.14.0"},"custom":null},{"name":"14","codename":null,"label":"14
+        (LTS)","releaseDate":"2020-04-21","isLts":true,"ltsFrom":"2020-10-27","isEoas":true,"eoasFrom":"2021-10-19","isEol":true,"eolFrom":"2023-04-30","isEoes":false,"eoesFrom":null,"isMaintained":true,"latest":{"name":"14.21.3","date":"2023-02-16","link":"https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_V14.md#14.21.3"},"custom":null},{"name":"13","codename":null,"label":"13","releaseDate":"2019-10-22","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":"2020-04-01","isEol":true,"eolFrom":"2020-06-01","isEoes":null,"eoesFrom":null,"isMaintained":false,"latest":{"name":"13.14.0","date":"2020-04-29","link":"https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_V13.md#13.14.0"},"custom":null},{"name":"12","codename":null,"label":"12
+        (LTS)","releaseDate":"2019-04-23","isLts":true,"ltsFrom":"2019-10-21","isEoas":true,"eoasFrom":"2020-10-20","isEol":true,"eolFrom":"2022-04-30","isEoes":false,"eoesFrom":null,"isMaintained":true,"latest":{"name":"12.22.12","date":"2022-04-05","link":"https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_V12.md#12.22.12"},"custom":null},{"name":"11","codename":null,"label":"11","releaseDate":"2018-10-23","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":"2019-04-01","isEol":true,"eolFrom":"2019-06-30","isEoes":null,"eoesFrom":null,"isMaintained":false,"latest":{"name":"11.15.0","date":"2019-04-30","link":"https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_V11.md#11.15.0"},"custom":null},{"name":"10","codename":null,"label":"10
+        (LTS)","releaseDate":"2018-04-24","isLts":true,"ltsFrom":"2018-10-30","isEoas":true,"eoasFrom":"2020-05-19","isEol":true,"eolFrom":"2021-04-30","isEoes":null,"eoesFrom":null,"isMaintained":false,"latest":{"name":"10.24.1","date":"2021-04-06","link":"https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_V10.md#10.24.1"},"custom":null},{"name":"9","codename":null,"label":"9","releaseDate":"2017-10-31","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":"2018-06-30","isEol":true,"eolFrom":"2018-06-30","isEoes":null,"eoesFrom":null,"isMaintained":false,"latest":{"name":"9.11.2","date":"2018-06-12","link":"https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_V9.md#9.11.2"},"custom":null},{"name":"8","codename":null,"label":"8
+        (LTS)","releaseDate":"2017-05-30","isLts":true,"ltsFrom":"2017-10-31","isEoas":true,"eoasFrom":"2019-01-01","isEol":true,"eolFrom":"2019-12-31","isEoes":null,"eoesFrom":null,"isMaintained":false,"latest":{"name":"8.17.0","date":"2019-12-17","link":"https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_V8.md#8.17.0"},"custom":null},{"name":"7","codename":null,"label":"7","releaseDate":"2016-10-25","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":"2017-06-30","isEol":true,"eolFrom":"2017-06-30","isEoes":null,"eoesFrom":null,"isMaintained":false,"latest":{"name":"7.10.1","date":"2017-07-11","link":"https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_V7.md#7.10.1"},"custom":null},{"name":"6","codename":null,"label":"6
+        (LTS)","releaseDate":"2016-04-26","isLts":true,"ltsFrom":"2016-10-18","isEoas":true,"eoasFrom":"2018-04-30","isEol":true,"eolFrom":"2019-04-30","isEoes":null,"eoesFrom":null,"isMaintained":false,"latest":{"name":"6.17.1","date":"2019-04-03","link":"https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_V6.md#6.17.1"},"custom":null},{"name":"5","codename":null,"label":"5","releaseDate":"2015-10-30","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":"2016-06-30","isEol":true,"eolFrom":"2016-06-30","isEoes":null,"eoesFrom":null,"isMaintained":false,"latest":{"name":"5.12.0","date":"2016-06-23","link":"https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_V5.md#5.12.0"},"custom":null},{"name":"4","codename":null,"label":"4
+        (LTS)","releaseDate":"2015-09-09","isLts":true,"ltsFrom":"2015-10-01","isEoas":true,"eoasFrom":"2017-04-01","isEol":true,"eolFrom":"2018-04-30","isEoes":null,"eoesFrom":null,"isMaintained":false,"latest":{"name":"4.9.1","date":"2018-03-29","link":"https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_V4.md#4.9.1"},"custom":null},{"name":"3","codename":null,"label":"3","releaseDate":"2015-08-04","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":null,"isEol":true,"eolFrom":null,"isEoes":null,"eoesFrom":null,"isMaintained":false,"latest":{"name":"3.3.1","date":"2015-09-15","link":"https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_IOJS.md#3.3.1"},"custom":null},{"name":"2","codename":null,"label":"2","releaseDate":"2015-05-04","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":null,"isEol":true,"eolFrom":null,"isEoes":null,"eoesFrom":null,"isMaintained":false,"latest":{"name":"2.5.0","date":"2015-07-28","link":"https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_IOJS.md#2.5.0"},"custom":null},{"name":"1","codename":null,"label":"1","releaseDate":"2015-01-20","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":null,"isEol":true,"eolFrom":null,"isEoes":null,"eoesFrom":null,"isMaintained":false,"latest":{"name":"1.8.4","date":"2015-07-09","link":"https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_IOJS.md#1.8.4"},"custom":null}]}}
+
+        '
+  recorded_at: Tue, 16 Sep 2025 03:36:44 GMT
+recorded_with: VCR 6.3.1
