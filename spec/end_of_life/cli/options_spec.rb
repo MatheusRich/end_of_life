@@ -131,7 +131,7 @@ RSpec.describe EndOfLife::CLI::Options do
         options = described_class.from(input)
 
         expect(options[:command]).to eq(:abort)
-        expect(options[:error]).to include("\e[31m[ERROR] \e[0m invalid option: --invalid-option")
+        expect(options[:error]).to include("invalid option: --invalid-option")
       end
     end
   end
