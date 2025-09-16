@@ -17,19 +17,17 @@ module EndOfLife
       eol_releases_at(at).max
     end
 
+    def all_releases
+      @all_releases ||= API.fetch_product(name)
+        .dig(:result, :releases)
+        .map { |json| Release.new(name, json[:latest][:name], json[:eolFrom]) }
+    end
+
     def search_query
       version_detector.relevant_files.map { |f| %(filename:"#{f}") }.join(" ")
     end
 
     def label = name.capitalize
     def to_s = label
-
-    private
-
-    def all_releases
-      @all_releases ||= API.fetch_product(name)
-        .dig(:result, :releases)
-        .map { |json| Release.new(name, json[:latest][:name], json[:eolFrom]) }
-    end
   end
 end
