@@ -16,6 +16,9 @@ jobs:
     strategy:
       matrix:
         ruby: ['3.2', '3.3', '3.4', 'head']
+    env:
+      FORCE_COLOR: "1"
+      NO_COLOR: "0"
     steps:
     - uses: actions/checkout@v2
     - name: Set up Ruby
