@@ -7,7 +7,7 @@ module EndOfLife
     def run(argv, options)
       argument_error!("Missing product release") if argv.empty?
 
-      rows = argv.map { |product_version| build_row(product_version, options) }
+      rows = argv.map { |release_string| build_row(release_string, options) }
 
       report(rows)
     rescue ArgumentError => e
@@ -18,10 +18,10 @@ module EndOfLife
 
     private
 
-    def build_row(product_version, options)
-      product_release = Product::Release.parse!(product_version)
+    def build_row(release_string, options)
+      product_release = Product::Release.parse!(release_string)
       cycle_release = product_release.latest_cycle_release or argument_error!(
-        "Unknown product release: #{product_version}"
+        "Unknown product release: #{release_string}"
       )
 
       status = if cycle_release.supported?(at: options[:max_eol_date])
