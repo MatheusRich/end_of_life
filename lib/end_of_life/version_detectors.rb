@@ -6,8 +6,6 @@ module EndOfLife
       detector_class = "#{self}::#{camelize(product.to_s)}"
 
       const_get(detector_class)
-    rescue NameError
-      raise ArgumentError, "Undefined version detector for product: #{product}"
     end
 
     private
