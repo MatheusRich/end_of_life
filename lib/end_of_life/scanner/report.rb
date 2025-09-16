@@ -3,6 +3,7 @@ require "stringio"
 module EndOfLife
   module Scanner
     class Report < Data.define(:product, :repositories, :max_eol_date)
+      include Helpers::Text
       include Helpers::Terminal
 
       def to_s
@@ -12,8 +13,7 @@ module EndOfLife
         if repositories.empty?
           report.puts "No repositories using EOL #{product}."
         else
-          word = (repositories.size == 1) ? "repository" : "repositories"
-          report.puts "Found #{repositories.size} #{word} using EOL #{product} (<= #{product.latest_eol_release(at: max_eol_date)}):"
+          report.puts "Found #{pluralize(repositories.size, "repository", "repositories")} using EOL #{product} (<= #{product.latest_eol_release(at: max_eol_date)}):"
           report.puts end_of_life_table(repositories)
         end
 
