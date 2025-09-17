@@ -91,7 +91,7 @@ module EndOfLife
 
     def call(argv)
       find_command(argv).run(argv)
-    rescue ArgumentError, ArgumentParser::Error => e
+    rescue ArgumentError, ArgumentParser::ParseError => e
       abort_with(e.message.capitalize)
     end
 

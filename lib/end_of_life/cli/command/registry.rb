@@ -8,7 +8,7 @@ module EndOfLife
 
         def run(argv)
           action.call(argv, parser)
-        rescue OptionParser::ParseError, ArgumentParser::Error => e
+        rescue OptionParser::ParseError, ArgumentParser::ParseError => e
           abort "#{error_msg(e.message.capitalize)}\n\n#{parser}"
         end
       end
