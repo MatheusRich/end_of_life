@@ -18,13 +18,9 @@ module EndOfLife
 
     private
 
-    def argument_parser = ArgumentParser.build do
-      rest :releases, pattern: EndOfLife.products_pattern(suffix: "@"), min: 1
-    end
-
     def build_row(release_string, options)
       product_release = Product::Release.parse!(release_string)
-      cycle_release = product_release.latest_cycle_release or raise(
+      cycle_release = product_release.latest_release_in_cycle or raise(
         ArgumentError,
         "Unknown product release: #{release_string}"
       )

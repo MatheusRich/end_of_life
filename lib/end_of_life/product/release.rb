@@ -32,7 +32,7 @@ module EndOfLife
 
       def supported?(...) = !eol?(...)
 
-      def latest_cycle_release
+      def latest_release_in_cycle
         product.all_releases.filter { |r| r.version.to_s.start_with?(cycle_version.to_s) }.max
       end
 
