@@ -29,8 +29,8 @@ module EndOfLife
       @paint ||= Pastel.new(enabled: TTY::Color.support?)
     end
 
-    def new_spinner(message, options = {success_mark: paint.green("✔"), error_mark: paint.red("✖")})
-      TTY::Spinner.new("[:spinner] #{message}", options)
+    def new_spinner(message)
+      TTY::Spinner.new("[:spinner] #{message}", success_mark: paint.green("✔"), error_mark: paint.red("✖"))
     end
   end
 end
