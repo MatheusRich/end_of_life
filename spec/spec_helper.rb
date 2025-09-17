@@ -45,7 +45,7 @@ module EndOfLife
       end.and output(message).to_stderr
     end
 
-    def with_standard_streams(stdout:, stderr:)
+    def replace_standard_streams(stdout: StringIO.new, stderr: StringIO.new)
       original_streams = [$stdout, $stderr]
       $stdout, $stderr = stdout, stderr
       yield

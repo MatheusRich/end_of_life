@@ -14,7 +14,7 @@ RSpec.describe "end_of_life check", vcr: "products-ruby" do
       def ioctl(*) = 0
     end
 
-    with_standard_streams(stdout: io_thing.new, stderr: io_thing.new) { example.run }
+    replace_standard_streams(stdout: io_thing.new, stderr: io_thing.new) { example.run }
   end
 
   it "shows if the given product version is EOL", :aggregate_failures do
