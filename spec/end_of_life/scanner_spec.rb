@@ -11,13 +11,12 @@ RSpec.describe EndOfLife::Scanner do
         )
 
         options = {
-          product: EndOfLife::Product.find("ruby"),
           user: "test_user",
           max_eol_date: Date.today
         }
 
         expect {
-          EndOfLife::Scanner.scan(options)
+          EndOfLife::Scanner.scan(EndOfLife::Product.find("ruby"), options)
         }.to output(/No repositories using EOL Ruby\./).to_stdout
           .and raise_no_error
       end
@@ -31,12 +30,11 @@ RSpec.describe EndOfLife::Scanner do
         )
 
         options = {
-          product: EndOfLife::Product.find("ruby"),
           user: "test_user",
           max_eol_date: Date.today
         }
 
-        expect { EndOfLife::Scanner.scan(options) }
+        expect { EndOfLife::Scanner.scan(EndOfLife::Product.find("ruby"), options) }
           .to abort_with(/#{error_message}/)
       end
     end

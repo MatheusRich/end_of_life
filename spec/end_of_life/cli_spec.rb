@@ -2,32 +2,37 @@
 
 RSpec.describe EndOfLife::CLI do
   describe "#call" do
-    context "without options" do
-      it "defaults to scanning Ruby" do
-        cli = EndOfLife::CLI.new
-
-        expect {
-          expect { cli.call([]) }.to output(/Searching repositories with Ruby.../).to_stdout
-        }.to abort_with(/Please set GITHUB_TOKEN environment variable/)
-      end
-    end
-
-    context "with product option" do
+    context "with product argument" do
       it "scans for the specified product" do
-        cli = EndOfLife::CLI.new
+        with_env GITHUB_TOKEN: "foo" do
+          fake_github = instance_spy(Octokit::Client)
+          allow(fake_github).to receive(:search_code).and_return(double(total_count: 0, items: []))
+          allow(Octokit::Client).to receive(:new).and_return(fake_github)
+          cli = EndOfLife::CLI.new
 
-        expect {
-          expect { cli.call(["--product=rails"]) }.to output(/Searching repositories with Rails.../).to_stdout
-        }.to abort_with(/Please set GITHUB_TOKEN environment variable/)
+          cli.call(["scan", "ruby"])
+
+          expect(fake_github).to have_received(:search_code).with(/#{EndOfLife::Product.find("ruby").search_query}/)
+        end
       end
 
       context "with an unknown product" do
         it "exits with error message" do
           cli = EndOfLife::CLI.new
 
-          expect { cli.call(["--product=unknown_product"]) }
-            .to abort_with(/invalid argument: --product=unknown_product/)
+          expect { cli.call(["scan", "unknown_product"]) }
+            .to abort_with(/Invalid argument: unknown_product/)
         end
+      end
+    end
+
+    context "without options" do
+      it "aborts and prints help" do
+        cli = EndOfLife::CLI.new
+
+        expect { cli.call(["scan"]) }
+          .to exit_with_code(1)
+          .and output(/Usage: end_of_life scan PRODUCT \[OPTIONS\]/).to_stderr
       end
     end
 
@@ -43,7 +48,7 @@ RSpec.describe EndOfLife::CLI do
       it "prints the help banner" do
         cli = EndOfLife::CLI.new
 
-        expect { cli.call(["-h"]) }.to output(/Usage: end_of_life \[COMMAND\] \[OPTIONS\]/).to_stdout
+        expect { cli.call(["-h"]) }.to output(/Usage: end_of_life COMMAND \[OPTIONS\]/).to_stdout
       end
     end
 
@@ -51,9 +56,9 @@ RSpec.describe EndOfLife::CLI do
       it "exits with error message" do
         cli = EndOfLife::CLI.new
 
-        expect { cli.call(["--unknown-option"]) }
+        expect { cli.call(["scan", "--unknown-option"]) }
           .to exit_with_code(1)
-          .and output(/invalid option: --unknown-option/).to_stderr
+          .and output(/Invalid option: --unknown-option/).to_stderr
       end
     end
 
@@ -63,7 +68,7 @@ RSpec.describe EndOfLife::CLI do
 
         expect { cli.call(["foobar"]) }
           .to exit_with_code(1)
-          .and output(/Usage: end_of_life \[COMMAND\] \[OPTIONS\]/).to_stderr
+          .and output(/Usage: end_of_life COMMAND \[OPTIONS\]/).to_stderr
       end
     end
   end

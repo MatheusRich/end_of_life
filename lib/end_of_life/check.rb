@@ -6,14 +6,8 @@ module EndOfLife
     include Helpers::Time
     extend self
 
-    def run(argv, options)
-      arguments = argument_parser.parse!(argv)
-
-      rows = arguments[:releases].map { |release_string| build_row(release_string, options) }
-
-      report(rows)
-    rescue ArgumentError, ArgumentParser::Error => e
-      abort "#{error_msg(e.message.capitalize)}\n\n#{options[:parser]}"
+    def run(releases, options)
+      report_for releases.map { |release_string| build_row(release_string, options) }
     end
 
     private
@@ -44,7 +38,7 @@ module EndOfLife
     end
 
     HEADERS = ["Product Release", "Status", "EOL Date"].freeze
-    def report(rows)
+    def report_for(rows)
       puts table(HEADERS, rows)
       exit 1 if rows.any? { |_, status, _| status != "Supported" }
     end
