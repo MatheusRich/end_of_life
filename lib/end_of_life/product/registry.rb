@@ -11,6 +11,7 @@ module EndOfLife
     def find_product(name) = product_registry.fetch(name.to_sym.downcase)
 
     def products = product_registry.values
+    def products_pattern(suffix: nil) = /\A(?:#{products.map(&:name).join("|")})#{suffix}/i
 
     private
 

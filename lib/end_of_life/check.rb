@@ -1,3 +1,5 @@
+require "argument_parser"
+
 module EndOfLife
   module Check
     include Helpers::Terminal
@@ -5,22 +7,25 @@ module EndOfLife
     extend self
 
     def run(argv, options)
-      argument_error!("Missing product release") if argv.empty?
+      arguments = argument_parser.parse!(argv)
 
-      rows = argv.map { |release_string| build_row(release_string, options) }
+      rows = arguments[:releases].map { |release_string| build_row(release_string, options) }
 
       report(rows)
-    rescue ArgumentError => e
-      abort "#{error_msg(e.message)}\n\n#{options[:parser]}"
-    rescue KeyError => e
-      abort "#{error_msg("Unknown product: #{e.key}")}\n\n#{options[:parser]}"
+    rescue ArgumentError, ArgumentParser::Error => e
+      abort "#{error_msg(e.message.capitalize)}\n\n#{options[:parser]}"
     end
 
     private
 
+    def argument_parser = ArgumentParser.build do
+      rest :releases, pattern: EndOfLife.products_pattern(suffix: "@"), min: 1
+    end
+
     def build_row(release_string, options)
       product_release = Product::Release.parse!(release_string)
-      cycle_release = product_release.latest_cycle_release or argument_error!(
+      cycle_release = product_release.latest_cycle_release or raise(
+        ArgumentError,
         "Unknown product release: #{release_string}"
       )
 
@@ -41,8 +46,6 @@ module EndOfLife
 
       [cycle_release.to_s, status, eol_date]
     end
-
-    def argument_error!(msg) = raise ArgumentError, msg
 
     HEADERS = ["Product Release", "Status", "EOL Date"].freeze
     def report(rows)

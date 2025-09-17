@@ -34,6 +34,7 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
+  spec.add_dependency "argument_parser", "~> 0.1.0"
   spec.add_dependency "async"
   spec.add_dependency "base64"
   spec.add_dependency "bundler", ">= 2.7.2", "< 3"

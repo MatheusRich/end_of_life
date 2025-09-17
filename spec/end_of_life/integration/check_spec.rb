@@ -111,7 +111,7 @@ RSpec.describe "end_of_life check", vcr: "products-ruby" do
         cli.call(argv)
       }.to exit_with_code(1)
 
-      expect($stderr.string).to include("Invalid product release format: ruby")
+      expect($stderr.string).to include("Invalid argument: ruby")
       expect($stdout.string).to be_empty
     end
   end
@@ -124,7 +124,7 @@ RSpec.describe "end_of_life check", vcr: "products-ruby" do
         cli.call(argv)
       }.to exit_with_code(1)
 
-      expect($stderr.string).to include("Unknown product: unknown")
+      expect($stderr.string).to include("Invalid argument: unknown@1.0")
       expect($stdout.string).to be_empty
     end
   end
@@ -137,7 +137,7 @@ RSpec.describe "end_of_life check", vcr: "products-ruby" do
         cli.call(argv)
       }.to exit_with_code(1)
 
-      expect($stderr.string).to include("Missing product release")
+      expect($stderr.string).to include("Expected at least 1 argument")
       expect($stderr.string).to include("Usage:")
       expect($stdout.string).to be_empty
     end

@@ -19,6 +19,7 @@ PATH
   remote: .
   specs:
     end_of_life (1.0.0.alpha)
+      argument_parser (~> 0.1.0)
       async
       base64
       bundler (>= 2.7.2, < 3)
@@ -36,6 +37,7 @@ GEM
   specs:
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
+    argument_parser (0.1.1)
     ast (2.4.3)
     async (2.32.0)
       console (~> 1.29)

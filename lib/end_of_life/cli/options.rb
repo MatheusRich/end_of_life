@@ -10,13 +10,14 @@ module EndOfLife
 
       def from(argv)
         options = {product: Product.find("ruby"), max_eol_date: Date.today, skip_archived: true}
+
         OptionParser.new do |parser|
           options[:parser] = parser
 
           parser.banner = "Usage: end_of_life [COMMAND] [OPTIONS]"
 
           product_names = EndOfLife.products.map(&:name)
-          parser.on("-p NAME", "--product NAME", /#{product_names.join("|")}/i, "Sets the product to scan for (default: ruby). Supported products are: #{product_names.join(", ")}.") do |name|
+          parser.on("-p NAME", "--product NAME", EndOfLife.products_pattern, "Sets the product to scan for (default: ruby). Supported products are: #{product_names.join(", ")}.") do |name|
             options[:product] = Product.find(name)
           end
 
