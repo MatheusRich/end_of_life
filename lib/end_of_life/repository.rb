@@ -1,3 +1,6 @@
+require "base64"
+require "octokit"
+
 module EndOfLife
   class Repository
     class << self

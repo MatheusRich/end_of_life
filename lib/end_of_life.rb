@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-require "async"
-require "dry-monads"
-require "json"
-require "base64"
-require "octokit"
 require "zeitwerk"
 
 Zeitwerk::Loader.for_gem.tap { |it|

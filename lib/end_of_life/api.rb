@@ -1,3 +1,6 @@
+require "json"
+require "net/http"
+
 module EndOfLife
   module API
     extend self

@@ -1,4 +1,5 @@
 require "argument_parser"
+require "date"
 
 module EndOfLife
   class CLI

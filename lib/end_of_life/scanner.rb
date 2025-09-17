@@ -1,3 +1,6 @@
+require "async"
+require "dry-monads"
+
 module EndOfLife
   module Scanner
     include Helpers::Terminal
