@@ -88,6 +88,7 @@ GEM
     octokit (9.2.0)
       faraday (>= 1, < 3)
       sawyer (~> 0.9)
+    ostruct (0.6.3)
     parallel (1.27.0)
     parser (3.3.9.0)
       ast (~> 2.4.1)
@@ -179,6 +180,7 @@ PLATFORMS
 DEPENDENCIES
   climate_control (~> 1.0)
   end_of_life!
+  ostruct
   rake (~> 13.0)
   rspec (~> 3.10)
   rspec-mocks (~> 3.10)

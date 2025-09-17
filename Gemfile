@@ -6,6 +6,7 @@ source "https://rubygems.org"
 gemspec
 
 gem "climate_control", "~> 1.0"
+gem "ostruct"
 gem "rake", "~> 13.0"
 gem "rspec", "~> 3.10"
 gem "rspec-mocks", "~> 3.10"
