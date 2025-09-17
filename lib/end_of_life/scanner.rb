@@ -22,7 +22,7 @@ module EndOfLife
     end
 
     def filter_repositories_with_eol_products(repositories, product:, max_eol_date:)
-      with_loading_spinner("Searching for EOL #{product} in your repositories...") do
+      with_loading_spinner("Scanning #{repositories.size} repositories for EOL #{product.label}...") do
         Sync do
           repositories
             .map { |repo| Async { [repo, repo.using_eol?(product, at: max_eol_date)] } }.map(&:wait)
