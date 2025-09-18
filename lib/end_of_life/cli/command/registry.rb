@@ -23,7 +23,7 @@ module EndOfLife
         end
 
         def command(name, summary, &action)
-          option_parser = OptionParser.new('', 35, ' ' * 2) do |opt_parser|
+          option_parser = OptionParser.new("", 35, " " * 2) do |opt_parser|
             opt_parser.on_tail("-h", "--help", "Show this help message") do
               puts "#{summary}\n\n#{opt_parser}"
               exit

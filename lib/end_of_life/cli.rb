@@ -69,7 +69,7 @@ module EndOfLife
     end
 
     command :help, "Show this help message" do |args, _|
-      io = args.include?('--error') ? $stderr : $stdout
+      io = args.include?("--error") ? $stderr : $stdout
 
       io.puts <<~HELP
         Usage: end_of_life COMMAND [OPTIONS]
@@ -117,7 +117,7 @@ module EndOfLife
 
     def abort_with(message)
       warn error_msg(message)
-      command(:help).run(['--error'])
+      command(:help).run(["--error"])
       exit 1
     end
   end
