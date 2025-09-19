@@ -1,17 +1,23 @@
 # End of Life
 
-This gem lists GitHub repositories using end-of-life versions of various
-products.
+This tool lists GitHub repositories using end-of-life software.
+
+We currently support Ruby, Rails, and Node.js. If you want to add support for
+more products, please check out the [Contributing](#contributing) section.
 
 ![End of Life Demo](demo.gif)
 
 ## Installation
+
+If you have Ruby installed, you can install End of Life as a gem with:
 
 ```sh
 gem install end_of_life
 ```
 
 ## Usage
+
+### Scanning your repositories
 
 1. Set up a [GitHub access token][] (we recommend using a read-only token);
 
@@ -21,12 +27,12 @@ gem install end_of_life
 2. Export the `GITHUB_TOKEN` environment variable or set it when calling
    `end_of_life`;
 
-3. Use the `end_of_life` command to list the repositories:
+3. Use the `end_of_life scan` command to list the repositories:
 
 ```sh
-$ GITHUB_TOKEN=something end_of_life # if your platform supports symlinks, you can use the `eol` command instead
-[✔] Searching repositories with Ruby...
-[✔] Searching for EOL Ruby in repositories...
+$ GITHUB_TOKEN=something end_of_life scan ruby
+[✔] Searching repositories that might use Ruby...
+[✔] Scanning 27 repositories for EOL Ruby...
 
 Found 2 repositories using EOL Ruby (<= 3.1.7):
 ┌───┬──────────────────────────────────────────────┬──────────────┐
@@ -37,35 +43,86 @@ Found 2 repositories using EOL Ruby (<= 3.1.7):
 └───┴──────────────────────────────────────────────┴──────────────┘
 ```
 
-### Options
+> [!TIP]
+> You can use the shorthand `eol` instead of `end_of_life` if your platform
+> supports symlinks.
+
+#### Options for `scan`
 
 There are some options to help you filter down the results:
 
+```sh
+Usage: end_of_life scan PRODUCT [OPTIONS]
+      --exclude=NAME,NAME2            Exclude repositories containing a certain word in their name. You can specify up to five words.
+      --public-only                   Searches only public repositories
+      --private-only                  Searches only private repositories
+      --repo, --repository=USER/REPO  Searches a specific repository
+      --org, --organization=ORG,ORG2  Searches within specific organizations
+  -u, --user=NAME                     Sets the user used on the repository search
+      --max-eol-days-away NUMBER      Sets the maximum number of days away a version can be from EOL.
+      --include-archived              Includes archived repositories on the search
+  -h, --help                          Show this help message
 ```
-Usage: end_of_life [options]
-    -p, --product NAME                 Sets the product to scan for (default: ruby). Supported products are: ruby, rails, nodejs.
-        --exclude=NAME,NAME2           Exclude repositories containing a certain word in its name. You can specify up to five words.
-        --public-only                  Searches only public repositories
-        --private-only                 Searches only private repositories
-        --repo, --repository=USER/REPO Searches a specific repository
-        --org, --organization=ORG,ORG2 Searches within specific organizations
-    -u, --user=NAME                    Sets the user used on the repository search
-        --max-eol-days-away NUMBER     Sets the maximum number of days away a version can be from EOL. It defaults to 0.
-        --include-archived             Includes archived repositories on the search
-    -v, --version                      Displays end_of_life version
-    -h, --help                         Displays this help
+
+### Checking if a specific product version is EOL
+
+> [!IMPORTANT]
+> You don't need a GitHub token to use this command.
+
+You can also check if a specific product version is end-of-life with the
+`end_of_life check` command:
+
+```sh
+$ end_of_life check ruby@2.5.8 # exits with status code 1 on EOL
+┌─────────────────┬────────┬──────────────────────────┐
+│ Product Release │ Status │ EOL Date                 │
+├─────────────────┼────────┼──────────────────────────┤
+│ ruby@2.5.9      │ EOL    │ 2021-03-31 (4 years ago) │
+└─────────────────┴────────┴──────────────────────────┘
+```
+
+You can pass multiple products to check at once:
+
+```sh
+$ end_of_life check ruby@2.5.8 nodejs@18
+┌─────────────────┬────────┬───────────────────────────┐
+│ Product Release │ Status │ EOL Date                  │
+├─────────────────┼────────┼───────────────────────────┤
+│ ruby@2.5.9      │ EOL    │ 2021-03-31 (4 years ago)  │
+│ nodejs@18.20.8  │ EOL    │ 2025-04-30 (4 months ago) │
+└─────────────────┴────────┴───────────────────────────┘
+```
+
+#### Options for `check`
+
+```sh
+Usage: end_of_life check PRODUCT@VERSION PRODUCT2@VERSION... [OPTIONS]
+      --max-eol-days-away NUMBER      Sets the maximum number of days away a version can be from EOL.
+  -h, --help                          Show this help message
+```
+
+> [!TIP]
+> You can use check with the `--max-eol-days-away` option on your CI to be
+> alerted when your current version is close to its end-of-life date:
+
+```sh
+$ end_of_life check ruby@$(ruby -v | awk '{print $2}') --max-eol-days-away=365
+┌─────────────────┬──────────┬──────────────────────────┐
+│ Product Release │ Status   │ EOL Date                 │
+├─────────────────┼──────────┼──────────────────────────┤
+│ ruby@3.2.9      │ Near EOL │ 2026-03-31 (in 6 months) │
+└─────────────────┴──────────┴──────────────────────────┘
 ```
 
 ## How it works
 
 This gem fetches all your GitHub repositories that contain code for the
 specified product, then searches for files that may contain version information.
-For Ruby, those files are: `.ruby-version`, `Gemfile`, `Gemfile.lock`, and
-`.tool-version`. End of Life parses these files and extracts the minimum version
-used in the repository.
+For Ruby, those files include `.ruby-version`, `Gemfile`, `Gemfile.lock`,
+`mise.toml`, and `.tool-version`. End of Life parses these files and extracts
+the minimum version used in each repository.
 
-The EOL version information is provided by https://endoflife.date/, with a file
-[fallback].
+The EOL version information is provided by https://endoflife.date/.
 
 > [!CAUTION]
 > To parse Gemfiles, we need to execute the code inside them.
@@ -74,7 +131,6 @@ The EOL version information is provided by https://endoflife.date/, with a file
 
 Some other limitations are listed on the [issues page].
 
-[fallback]: ./lib/end_of_life.json
 [issues page]: https://github.com/MatheusRich/end_of_life/issues
 
 ## Development
