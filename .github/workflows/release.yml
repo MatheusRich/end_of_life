@@ -1,0 +1,43 @@
+name: Build Binaries
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-macos-intel:
+    runs-on: macos-13
+    env:
+      RUBY_FOR_TEBAKO: "3.4.2"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select XCode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: 15.0.1
+
+      - name: Brew install
+        run: |
+          brew install bison flex binutils libffi double-conversion boost jemalloc fmt glog gnu-sed bash zlib ncurses
+          echo "$(brew --prefix bison)/bin" >> $GITHUB_PATH
+
+      - name: Install gem
+        run: gem install tebako
+
+      - name: Package
+        run: |
+          mkdir -p tebako
+          tebako press \
+            --entry-point="end_of_life" \
+            --Ruby="${RUBY_FOR_TEBAKO}" \
+            --root=. \
+            --output="tebako/end_of_life" \
