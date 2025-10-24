@@ -53,40 +53,44 @@ RSpec.describe "end_of_life check", vcr: "products-ruby" do
 
   context "with multiple products", vcr: "products-nodejs-ruby" do
     it "shows the report for all of them in a single table", :aggregate_failures do
-      argv = "check nodejs@18 ruby@3".split
+      travel_to "2025-09-30" do
+        argv = "check nodejs@18 ruby@3".split
 
-      expect {
-        cli.call(argv)
-      }.to exit_with_code(1)
+        expect {
+          cli.call(argv)
+        }.to exit_with_code(1)
 
-      expect($stdout.string).to eq <<~OUTPUT
-        ┌─────────────────┬───────────┬───────────────────────────┐
-        │ Product Release │ Status    │ EOL Date                  │
-        ├─────────────────┼───────────┼───────────────────────────┤
-        │ nodejs@18.20.8  │ EOL       │ 2025-04-30 (4 months ago) │
-        │ ruby@3.4.5      │ Supported │ 2028-03-31 (in 2 years)   │
-        └─────────────────┴───────────┴───────────────────────────┘
-      OUTPUT
-      expect($stderr.string).to be_empty
+        expect($stdout.string).to eq <<~OUTPUT
+          ┌─────────────────┬───────────┬───────────────────────────┐
+          │ Product Release │ Status    │ EOL Date                  │
+          ├─────────────────┼───────────┼───────────────────────────┤
+          │ nodejs@18.20.8  │ EOL       │ 2025-04-30 (4 months ago) │
+          │ ruby@3.4.5      │ Supported │ 2028-03-31 (in 2 years)   │
+          └─────────────────┴───────────┴───────────────────────────┘
+        OUTPUT
+        expect($stderr.string).to be_empty
+      end
     end
   end
 
   context "with --max-eol-days-away option" do
     it "shows if the given product version is near EOL" do
-      argv = "check ruby@3.2 --max-eol-days-away 365".split
+      travel_to "2025-09-30" do
+        argv = "check ruby@3.2 --max-eol-days-away 365".split
 
-      expect {
-        cli.call(argv)
-      }.to exit_with_code(1)
+        expect {
+          cli.call(argv)
+        }.to exit_with_code(1)
 
-      expect($stdout.string).to eq <<~OUTPUT
-        ┌─────────────────┬──────────┬──────────────────────────┐
-        │ Product Release │ Status   │ EOL Date                 │
-        ├─────────────────┼──────────┼──────────────────────────┤
-        │ ruby@3.2.9      │ Near EOL │ 2026-03-31 (in 6 months) │
-        └─────────────────┴──────────┴──────────────────────────┘
-      OUTPUT
-      expect($stderr.string).to be_empty
+        expect($stdout.string).to eq <<~OUTPUT
+          ┌─────────────────┬──────────┬──────────────────────────┐
+          │ Product Release │ Status   │ EOL Date                 │
+          ├─────────────────┼──────────┼──────────────────────────┤
+          │ ruby@3.2.9      │ Near EOL │ 2026-03-31 (in 6 months) │
+          └─────────────────┴──────────┴──────────────────────────┘
+        OUTPUT
+        expect($stderr.string).to be_empty
+      end
     end
   end
 
