@@ -5,15 +5,28 @@ This tool lists GitHub repositories using end-of-life software.
 We currently support Ruby, Rails, and Node.js. If you want to add support for
 more products, please check out the [Contributing](#contributing) section.
 
-![End of Life Demo](demo.gif)
-
 ## Installation
+
+## As a gem
 
 If you have Ruby installed, you can install End of Life as a gem with:
 
 ```sh
 gem install end_of_life
 ```
+
+## Homebrew
+
+If you're MacOS (>= 15 Sequoia) and use Homebrew, you can install it with:
+
+```sh
+brew tap MatheusRich/end_of_life
+brew install end_of_life
+```
+
+> [!IMPORTANT]
+> Please open an issue if you want to see installation support for other
+> platforms or if you encounter any issues.
 
 ## Usage
 
