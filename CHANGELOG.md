@@ -3,7 +3,7 @@
 ## [1.0.0.alpha] - 2025-10-24
 
 - Revamp CLI
-  - Now the main command is `end_of_life check <product>` instead of `end_of_life --product=<product>`
+  - Now the main command is `end_of_life scan <product>` instead of `end_of_life scan --product=<product>`
 - 🎉 Add support for scanning EOL Node.js versions!
 - Add support for detecting versions from `mise.toml`.
 - Add `check` command to check if specific product releases are EOL:
