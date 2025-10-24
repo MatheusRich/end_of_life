@@ -1,4 +1,4 @@
-<!-- ## [Unreleased] -->
+## [Unreleased]
 
 ## [1.0.0.alpha] - 2025-10-24
 
@@ -190,7 +190,8 @@ $ end_of_life --user=matz # searches on matz's repositories
 
 - Initial release
 
-[unreleased]: https://github.com/MatheusRich/end_of_life/compare/v0.5.0...HEAD
+[unreleased]: https://github.com/MatheusRich/end_of_life/compare/v1.0.0.alpha...HEAD
+[1.0.0.alpha]: https://github.com/MatheusRich/end_of_life/releases/tag/v1.0.0.alpha
 [0.5.0]: https://github.com/MatheusRich/end_of_life/releases/tag/v0.5.0
 [0.4.1]: https://github.com/MatheusRich/end_of_life/releases/tag/v0.4.1
 [0.4.0]: https://github.com/MatheusRich/end_of_life/releases/tag/v0.4.0
