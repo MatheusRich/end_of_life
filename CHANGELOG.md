@@ -1,5 +1,23 @@
 ## [Unreleased]
 
+- Add `end_of_life schedule` command
+
+It lists the EOL schedule for a particular product, showing all releases with
+their status and EOL dates.
+
+```sh
+$ end_of_life schedule ruby
+┌─────────────────┬───────────┬────────────────────────────┐
+│ Product Release │ Status    │ EOL Date                   │
+├─────────────────┼───────────┼────────────────────────────┤
+│ ruby@3.4.5      │ Supported │ 2028-03-31 (in 2 years)    │
+│ ruby@3.3.9      │ Supported │ 2027-03-31 (in 1 year)     │
+│ ruby@3.2.9      │ Supported │ 2026-03-31 (in 1 month)    │
+│ ruby@3.1.7      │ EOL       │ 2025-03-31 (10 months ago) │
+│ ...             │ ...       │ ...                        │
+└─────────────────┴───────────┴────────────────────────────┘
+```
+
 ## [1.0.0.alpha] - 2025-10-24
 
 - Revamp CLI
