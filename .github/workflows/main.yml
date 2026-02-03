@@ -15,7 +15,7 @@ jobs:
     name: Ruby ${{ matrix.ruby }}
     strategy:
       matrix:
-        ruby: ['3.2', '3.3', '3.4', 'head']
+        ruby: ['3.2', '3.3', '3.4', '4.0']
     env:
       FORCE_COLOR: "1"
       NO_COLOR: "0"
