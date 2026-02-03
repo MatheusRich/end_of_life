@@ -78,5 +78,13 @@ RSpec.configure do |config|
     end
   end
 
+  config.around(:each, :capture_io) do |example|
+    io_class = Class.new(StringIO) { def ioctl(*) = 0 }
+
+    replace_standard_streams(stdout: io_class.new, stderr: io_class.new) do
+      example.run
+    end
+  end
+
   config.include EndOfLife::TestHelpers
 end

@@ -2,20 +2,10 @@
 
 require "spec_helper"
 
-RSpec.describe "end_of_life check", vcr: "products-ruby" do
+RSpec.describe "end_of_life check", :capture_io, vcr: "products-ruby" do
   include EndOfLife::Helpers::Terminal
 
   subject(:cli) { EndOfLife::CLI.new }
-
-  # TTY::Screen doesn't work with StringIO so I have to use this hack to test
-  # the output of the command
-  around(:each) do |example|
-    io_thing = Class.new(StringIO) do
-      def ioctl(*) = 0
-    end
-
-    replace_standard_streams(stdout: io_thing.new, stderr: io_thing.new) { example.run }
-  end
 
   it "shows if the given product version is EOL", :aggregate_failures do
     argv = "check ruby@3.0.0".split

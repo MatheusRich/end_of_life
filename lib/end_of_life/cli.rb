@@ -68,6 +68,18 @@ module EndOfLife
       Check.run(args[:releases], options)
     end
 
+    command :schedule, "List the EOL schedule for a product" do |argv, opt_parser|
+      opt_parser.banner = "Usage: end_of_life schedule PRODUCT [OPTIONS]"
+      opt_parser.parse!(argv)
+
+      argument_parser = ArgumentParser.build do
+        required :product, pattern: EndOfLife.products_pattern
+      end
+      args = argument_parser.parse!(argv)
+
+      Schedule.for(args[:product])
+    end
+
     command :help, "Show this help message" do |args, _|
       io = args.include?("--error") ? $stderr : $stdout
 
