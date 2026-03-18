@@ -137,6 +137,20 @@ RSpec.describe "end_of_life check", :capture_io, vcr: "products-ruby" do
     end
   end
 
+  context "with python", :capture_io, vcr: "products-python" do
+    it "shows if the given product version is EOL", :aggregate_failures do
+      argv = "check python@3.9".split
+
+      expect {
+        cli.call(argv)
+      }.to exit_with_code(1)
+
+      expect($stdout.string).to include("python@3.9")
+      expect($stdout.string).to include("EOL")
+      expect($stderr.string).to be_empty
+    end
+  end
+
   context "when the product version is missing" do
     it "shows an error message", :aggregate_failures do
       argv = "check ruby".split

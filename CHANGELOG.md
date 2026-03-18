@@ -1,5 +1,6 @@
 ## [Unreleased]
 
+- Add support for scanning EOL Python versions
 - Support aliases for products (e.g., `node` for `nodejs`)
 - Add `end_of_life schedule` command
 
