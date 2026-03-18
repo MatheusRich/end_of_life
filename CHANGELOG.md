@@ -1,5 +1,6 @@
 ## [Unreleased]
 
+- Support aliases for products (e.g., `node` for `nodejs`)
 - Add `end_of_life schedule` command
 
 It lists the EOL schedule for a particular product, showing all releases with
