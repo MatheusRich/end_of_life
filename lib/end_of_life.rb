@@ -12,5 +12,5 @@ module EndOfLife
 
   scans_for :ruby
   scans_for :rails
-  scans_for :nodejs, label: "Node.js"
+  scans_for :nodejs, label: "Node.js", aliases: [:node]
 end

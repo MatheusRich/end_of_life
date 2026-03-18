@@ -97,6 +97,27 @@ RSpec.describe "end_of_life check", :capture_io, vcr: "products-ruby" do
     end
   end
 
+  context "with an alias", vcr: "products-nodejs-ruby" do
+    it "resolves the alias to the canonical product", :aggregate_failures do
+      travel_to "2025-09-30" do
+        argv = "check node@18".split
+
+        expect {
+          cli.call(argv)
+        }.to exit_with_code(1)
+
+        expect($stdout.string).to eq <<~OUTPUT
+          ┌─────────────────┬────────┬───────────────────────────┐
+          │ Product Release │ Status │ EOL Date                  │
+          ├─────────────────┼────────┼───────────────────────────┤
+          │ nodejs@18.20.8  │ EOL    │ 2025-04-30 (4 months ago) │
+          └─────────────────┴────────┴───────────────────────────┘
+        OUTPUT
+        expect($stderr.string).to be_empty
+      end
+    end
+  end
+
   context "when the product version is missing" do
     it "shows an error message", :aggregate_failures do
       argv = "check ruby".split

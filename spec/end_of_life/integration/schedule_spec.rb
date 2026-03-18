@@ -37,6 +37,19 @@ RSpec.describe "end_of_life schedule", :capture_io, vcr: "products-ruby" do
     end
   end
 
+  context "with an alias", vcr: "products-nodejs-ruby" do
+    it "resolves the alias to the canonical product", :aggregate_failures do
+      travel_to "2025-09-30" do
+        argv = "schedule node".split
+
+        cli.call(argv)
+
+        expect($stdout.string).to include("nodejs@")
+        expect($stderr.string).to be_empty
+      end
+    end
+  end
+
   context "when the product is unknown" do
     it "shows an error message", :aggregate_failures do
       argv = "schedule unknown".split
