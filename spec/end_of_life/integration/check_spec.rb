@@ -54,7 +54,7 @@ RSpec.describe "end_of_life check", :capture_io, vcr: "products-ruby" do
           ┌─────────────────┬───────────┬───────────────────────────┐
           │ Product Release │ Status    │ EOL Date                  │
           ├─────────────────┼───────────┼───────────────────────────┤
-          │ nodejs@18.20.8  │ EOL       │ 2025-04-30 (4 months ago) │
+          │ nodejs@18.20.8  │ EOL       │ 2025-04-30 (5 months ago) │
           │ ruby@3.4.5      │ Supported │ 2028-03-31 (in 2 years)   │
           └─────────────────┴───────────┴───────────────────────────┘
         OUTPUT
@@ -110,8 +110,27 @@ RSpec.describe "end_of_life check", :capture_io, vcr: "products-ruby" do
           ┌─────────────────┬────────┬───────────────────────────┐
           │ Product Release │ Status │ EOL Date                  │
           ├─────────────────┼────────┼───────────────────────────┤
-          │ nodejs@18.20.8  │ EOL    │ 2025-04-30 (4 months ago) │
+          │ nodejs@18.20.8  │ EOL    │ 2025-04-30 (5 months ago) │
           └─────────────────┴────────┴───────────────────────────┘
+        OUTPUT
+        expect($stderr.string).to be_empty
+      end
+    end
+
+    it "shows Near EOL status with --max-eol-days-away", :aggregate_failures do
+      travel_to "2025-09-30" do
+        argv = "check node@20 --max-eol-days-away 365".split
+
+        expect {
+          cli.call(argv)
+        }.to exit_with_code(1)
+
+        expect($stdout.string).to eq <<~OUTPUT
+          ┌─────────────────┬──────────┬──────────────────────────┐
+          │ Product Release │ Status   │ EOL Date                 │
+          ├─────────────────┼──────────┼──────────────────────────┤
+          │ nodejs@20.19.5  │ Near EOL │ 2026-04-30 (in 7 months) │
+          └─────────────────┴──────────┴──────────────────────────┘
         OUTPUT
         expect($stderr.string).to be_empty
       end
