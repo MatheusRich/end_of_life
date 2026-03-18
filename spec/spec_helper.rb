@@ -32,6 +32,8 @@ module EndOfLife
       date = Date.parse(date)
 
       allow(Date).to receive(:today).and_return(date)
+
+      yield
     end
 
     def exit_with_code(code)

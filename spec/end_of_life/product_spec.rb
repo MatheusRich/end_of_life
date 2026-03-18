@@ -23,12 +23,11 @@ RSpec.describe EndOfLife::Product, vcr: "products-ruby" do
   describe ".latest_eol_release" do
     context "without a custom date" do
       it "returns the latest eol version today" do
-        ruby_2_eol_date = "2016-02-24"
-        travel_to ruby_2_eol_date
+        travel_to "2016-02-24" do
+          version = EndOfLife::Product.find("ruby").latest_eol_release
 
-        version = EndOfLife::Product.find("ruby").latest_eol_release
-
-        expect(version.to_s).to eq "ruby@2.0.0p648"
+          expect(version.to_s).to eq "ruby@2.0.0p648"
+        end
       end
     end
 
