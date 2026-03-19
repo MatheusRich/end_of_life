@@ -80,7 +80,7 @@ GEM
     fiber-storage (1.0.1)
     hashdiff (1.1.2)
     io-event (1.14.0)
-    json (2.18.1)
+    json (2.19.2)
     language_server-protocol (3.17.0.5)
     lint_roller (1.1.0)
     logger (1.7.0)
