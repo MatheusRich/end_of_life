@@ -3,7 +3,7 @@ require "optparse"
 module EndOfLife
   class CLI
     module Command::Registry
-      Command = Data.define(:name, :summary, :parser, :action) do
+      RegisteredCommand = Data.define(:name, :summary, :parser, :action) do
         include Helpers::Terminal
 
         def run(argv)
@@ -29,7 +29,7 @@ module EndOfLife
               exit
             end
           end
-          command_registry[name.to_s] = Command.new(name: name.to_s, summary:, parser: option_parser, action:)
+          command_registry[name.to_s] = RegisteredCommand.new(name: name.to_s, summary:, parser: option_parser, action:)
         end
 
         def commands = command_registry.values
