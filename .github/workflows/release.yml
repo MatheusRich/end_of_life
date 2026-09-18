@@ -4,40 +4,215 @@ on:
   push:
     tags:
       - "v*.*.*"
-    # branches:
-    #   - main
   workflow_dispatch:
 
 permissions:
   contents: write
 
+env:
+  RUBY_FOR_TEBAKO: "3.4.2"
+  TEBAKO_VERSION: "0.15.9"
+
 jobs:
-  build-macos-intel:
-    runs-on: macos-13
-    env:
-      RUBY_FOR_TEBAKO: "3.4.2"
+  macos:
+    name: macOS ${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            arch: arm64
+          - runner: macos-15-intel
+            arch: x86_64
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - name: Select XCode
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: 15.0.1
-
-      - name: Brew install
+      - name: Install build dependencies
         run: |
-          brew install bison flex binutils libffi double-conversion boost jemalloc fmt glog gnu-sed bash zlib ncurses
-          echo "$(brew --prefix bison)/bin" >> $GITHUB_PATH
+          brew install gnu-sed bash pkg-config bison flex binutils libffi gdbm \
+            zlib ncurses double-conversion boost jemalloc fmt glog libevent \
+            libsodium lz4 xz libyaml openssl@3
+          echo "$(brew --prefix bison)/bin" >> "$GITHUB_PATH"
 
-      - name: Install gem
-        run: gem install tebako
+      - name: Select an SDK that matches the runner
+        run: |
+          os_major="$(sw_vers -productVersion | cut -d. -f1)"
+          sdk_major="$(xcrun --show-sdk-version | cut -d. -f1)"
+
+          if [ "$sdk_major" -le "$os_major" ]; then
+            echo "SDKROOT=$(xcrun --show-sdk-path)" >> "$GITHUB_ENV"
+            exit 0
+          fi
+
+          # An SDK newer than the runner weak-links pipe2 and dup3. The Ruby
+          # build links them, the symbols are absent at run time, and miniruby
+          # dies with SIGSEGV during the build.
+          sdk=""
+          for candidate in \
+            /Library/Developer/CommandLineTools/SDKs/MacOSX"$os_major"*.sdk \
+            /Applications/Xcode*.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX"$os_major"*.sdk
+          do
+            if [ -d "$candidate" ]; then
+              sdk="$candidate"
+              break
+            fi
+          done
+
+          if [ -z "$sdk" ]; then
+            echo "SDK $sdk_major is newer than macOS $os_major and no matching SDK is installed." >&2
+            exit 1
+          fi
+
+          echo "SDKROOT=$sdk" >> "$GITHUB_ENV"
+
+      - name: Install tebako
+        run: gem install tebako -v "$TEBAKO_VERSION"
+
+      - name: Cache the packaging environment
+        uses: actions/cache@v4
+        with:
+          path: ~/.tebako
+          key: tebako-${{ matrix.runner }}-${{ env.TEBAKO_VERSION }}-ruby-${{ env.RUBY_FOR_TEBAKO }}
+
+      - name: Set up the packaging environment
+        run: tebako setup --Ruby="$RUBY_FOR_TEBAKO"
 
       - name: Package
         run: |
-          mkdir -p tebako
+          mkdir -p dist
           tebako press \
             --entry-point="end_of_life" \
-            --Ruby="${RUBY_FOR_TEBAKO}" \
+            --Ruby="$RUBY_FOR_TEBAKO" \
             --root=. \
-            --output="tebako/end_of_life" \
+            --output="dist/end_of_life" \
+            --mode=classic
+
+      - name: Test that the binary carries its runtime
+        run: |
+          # An empty home and offline mode hide the runtime cache of this
+          # machine. A package that resolves its runtime at first run fails
+          # here, and a self-contained package passes.
+          env -i PATH=/usr/bin:/bin HOME="$(mktemp -d)" TEBAKO_OFFLINE=1 \
+            ./dist/end_of_life --version
+
+      - name: Test the binary
+        run: |
+          ./dist/end_of_life help
+          ./dist/end_of_life schedule ruby
+
+      - name: Make the archive
+        run: |
+          tar -C dist -czf "end_of_life-${GITHUB_REF_NAME:-dev}-macos-${{ matrix.arch }}.tar.gz" end_of_life
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-${{ matrix.arch }}
+          path: "*.tar.gz"
+          if-no-files-found: error
+
+  linux:
+    name: Linux ${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-22.04
+            arch: x86_64
+          - runner: ubuntu-22.04-arm
+            arch: arm64
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq sudo git curl build-essential pkg-config \
+            bison flex autoconf cmake binutils-dev libevent-dev acl-dev \
+            libfmt-dev libjemalloc-dev libiberty-dev libdouble-conversion-dev \
+            liblz4-dev liblzma-dev libssl-dev libunwind-dev \
+            libboost-filesystem-dev libboost-program-options-dev \
+            libboost-system-dev libboost-iostreams-dev libboost-date-time-dev \
+            libboost-context-dev libboost-regex-dev libboost-thread-dev \
+            libbrotli-dev libdwarf-dev libelf-dev libgoogle-glog-dev libffi-dev \
+            libgdbm-dev libyaml-dev libncurses-dev libreadline-dev \
+            libutfcpp-dev ruby-dev ruby-bundler
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+
+      - name: Install tebako
+        run: gem install tebako -v "$TEBAKO_VERSION"
+
+      - name: Cache the packaging environment
+        uses: actions/cache@v4
+        with:
+          path: ~/.tebako
+          key: tebako-${{ matrix.runner }}-${{ env.TEBAKO_VERSION }}-ruby-${{ env.RUBY_FOR_TEBAKO }}
+
+      - name: Set up the packaging environment
+        run: tebako setup --Ruby="$RUBY_FOR_TEBAKO"
+
+      - name: Package
+        run: |
+          mkdir -p dist
+          tebako press \
+            --entry-point="end_of_life" \
+            --Ruby="$RUBY_FOR_TEBAKO" \
+            --root=. \
+            --output="dist/end_of_life" \
+            --mode=classic
+
+      - name: Test that the binary carries its runtime
+        run: |
+          # An empty home and offline mode hide the runtime cache of this
+          # machine. A package that resolves its runtime at first run fails
+          # here, and a self-contained package passes.
+          env -i PATH=/usr/bin:/bin HOME="$(mktemp -d)" TEBAKO_OFFLINE=1 \
+            ./dist/end_of_life --version
+
+      - name: Test the binary
+        run: |
+          ./dist/end_of_life help
+          ./dist/end_of_life schedule ruby
+
+      - name: Make the archive
+        run: |
+          tar -C dist -czf "end_of_life-${GITHUB_REF_NAME:-dev}-linux-${{ matrix.arch }}.tar.gz" end_of_life
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-${{ matrix.arch }}
+          path: "*.tar.gz"
+          if-no-files-found: error
+
+  release:
+    name: Publish the release assets
+    needs: [macos, linux]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Make the checksum file
+        run: |
+          cd dist
+          sha256sum -- *.tar.gz > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+
+      - name: Upload the assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="$GITHUB_REF_NAME"
+          gh release view "$tag" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1 ||
+            gh release create "$tag" --repo "$GITHUB_REPOSITORY" --title "$tag" --generate-notes
+          gh release upload "$tag" dist/* --repo "$GITHUB_REPOSITORY" --clobber
