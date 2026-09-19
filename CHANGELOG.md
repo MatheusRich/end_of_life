@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [1.0.0.alpha.1] - 2026-09-19
+
 - Add support for scanning EOL Python versions
 - Support aliases for products (e.g., `node` for `nodejs`)
 - Add `end_of_life schedule` command
@@ -210,7 +212,8 @@ $ end_of_life --user=matz # searches on matz's repositories
 
 - Initial release
 
-[unreleased]: https://github.com/MatheusRich/end_of_life/compare/v1.0.0.alpha...HEAD
+[unreleased]: https://github.com/MatheusRich/end_of_life/compare/v1.0.0.alpha.1...HEAD
+[1.0.0.alpha.1]: https://github.com/MatheusRich/end_of_life/releases/tag/v1.0.0.alpha.1
 [1.0.0.alpha]: https://github.com/MatheusRich/end_of_life/releases/tag/v1.0.0.alpha
 [0.5.0]: https://github.com/MatheusRich/end_of_life/releases/tag/v0.5.0
 [0.4.1]: https://github.com/MatheusRich/end_of_life/releases/tag/v0.4.1

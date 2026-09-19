@@ -213,8 +213,18 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           tag="$GITHUB_REF_NAME"
-          gh release view "$tag" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1 ||
-            gh release create "$tag" --repo "$GITHUB_REPOSITORY" --title "$tag" --generate-notes
+          if ! gh release view "$tag" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            case "$tag" in
+              *alpha*|*beta*|*rc*)
+                gh release create "$tag" --repo "$GITHUB_REPOSITORY" \
+                  --title "$tag" --generate-notes --prerelease
+                ;;
+              *)
+                gh release create "$tag" --repo "$GITHUB_REPOSITORY" \
+                  --title "$tag" --generate-notes
+                ;;
+            esac
+          fi
           gh release upload "$tag" dist/* --repo "$GITHUB_REPOSITORY" --clobber
 
   homebrew:
