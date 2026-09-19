@@ -24,6 +24,49 @@ brew tap MatheusRich/end_of_life
 brew install end_of_life
 ```
 
+## Standalone binary
+
+Every release holds a binary for each platform. The binary carries its own Ruby
+runtime, so you need neither Ruby nor Homebrew.
+
+| Platform              | Archive                                 |
+| --------------------- | --------------------------------------- |
+| macOS (Apple Silicon) | `end_of_life-<tag>-macos-arm64.tar.gz`  |
+| macOS (Intel)         | `end_of_life-<tag>-macos-x86_64.tar.gz` |
+| Linux (arm64)         | `end_of_life-<tag>-linux-arm64.tar.gz`  |
+| Linux (x86_64)        | `end_of_life-<tag>-linux-x86_64.tar.gz` |
+
+Download the archive for your platform from the [releases page][], unpack it,
+and move the binary to a directory on your `PATH`:
+
+```sh
+tar xzf end_of_life-v1.0.0.alpha.1-linux-x86_64.tar.gz
+sudo mv end_of_life /usr/local/bin/
+end_of_life --version
+```
+
+Every release also holds a `SHA256SUMS.txt` file. Use it to check the archive
+before you unpack it:
+
+```sh
+# Linux
+sha256sum --check --ignore-missing SHA256SUMS.txt
+
+# macOS
+shasum -a 256 --check --ignore-missing SHA256SUMS.txt
+```
+
+The macOS binaries need macOS 15 (Sequoia) or later. The Linux binaries need
+glibc 2.29 or later, which covers Ubuntu 20.04, Debian 11, and RHEL 9 and
+later. There is no musl build, so the binaries do not run on Alpine.
+
+> [!NOTE]
+> macOS marks a binary that you download in a browser as quarantined, and it
+> stops such a binary at the first run. Remove the mark with
+> `xattr -d com.apple.quarantine end_of_life`.
+
+[releases page]: https://github.com/MatheusRich/end_of_life/releases
+
 > [!IMPORTANT]
 > Please open an issue if you want to see installation support for other
 > platforms or if you encounter any issues.
