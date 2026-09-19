@@ -17,12 +17,16 @@ gem install end_of_life
 
 ## Homebrew
 
-If you're MacOS (>= 15 Sequoia) and use Homebrew, you can install it with:
+If you use Homebrew, you can install it with:
 
 ```sh
 brew tap MatheusRich/end_of_life
 brew install end_of_life
 ```
+
+The formula serves macOS on Apple Silicon and on Intel, and Linux on arm64 and
+on x86_64. It installs the same binaries as the [Standalone
+binary](#standalone-binary) section, so the same platform requirements apply.
 
 ## Standalone binary
 
