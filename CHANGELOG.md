@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- [BUGFIX] Fix `scan` failing with a 414 error on organizations with many repos
+- [BUGFIX] Read a version file in full when GitHub truncates it.
 - [BUGFIX] Ignore `.tool-versions` entries whose version is not a number, such
   as `nodejs lts`. They stopped the scan before.
 
