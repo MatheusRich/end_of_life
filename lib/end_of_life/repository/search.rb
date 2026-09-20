@@ -1,3 +1,6 @@
+require "dry-monads"
+require "octokit"
+
 module EndOfLife
   class Repository
     class Search
@@ -22,29 +25,24 @@ module EndOfLife
           # product we're interested in and then extract the repositories from
           # the results.
           query = Query.new(options).to_s
-          repo_names = github.search_code(query).items.map { |item| item.repository.full_name }.uniq
-          return Success([]) if repo_names.empty?
+          full_names = github.search_code(query).items.map { |item| item.repository.full_name }.uniq
+          return Success([]) if full_names.empty?
 
-          repos_query = repo_names.map { |name| "repo:#{name}" }.join(" ")
-          repos = github.search_repositories(repos_query, {sort: :updated}).items
-
-          Success(
-            repos.filter_map do |repo|
-              next if repo.archived && options[:skip_archived]
-
-              Repository.new(
-                full_name: repo.full_name,
-                url: repo.html_url,
-                github_client: github
-              )
-            end
-          )
+          Success(fetcher_for(github).call(full_names))
         rescue => e
           Failure("Unexpected error: #{e}")
         end
       end
 
       private
+
+      def fetcher_for(github)
+        Fetcher.new(
+          github_client: github,
+          product: options[:product],
+          skip_archived: options[:skip_archived]
+        )
+      end
 
       def github_client
         Maybe(ENV["GITHUB_TOKEN"])

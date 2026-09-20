@@ -1,4 +1,3 @@
-require "async"
 require "dry-monads"
 
 module EndOfLife
@@ -29,11 +28,7 @@ module EndOfLife
       return [] if repositories.empty?
 
       with_loading_spinner("Scanning #{pluralize(repositories.size, "repository", "repositories")} for EOL #{product.label}...") do
-        Sync do
-          repositories
-            .map { |repo| Async { [repo, repo.using_eol?(product, at: max_eol_date)] } }.map(&:wait)
-            .filter_map { |repo, contains_eol| contains_eol ? repo : nil }
-        end
+        repositories.filter { |repo| repo.using_eol?(product, at: max_eol_date) }
       end
     end
 
