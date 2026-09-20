@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+- [BUGFIX] Ignore `.tool-versions` entries whose version is not a number, such
+  as `nodejs lts`. They stopped the scan before.
+
 ## [1.0.0.alpha.1] - 2026-09-19
 
 - Add support for scanning EOL Python versions

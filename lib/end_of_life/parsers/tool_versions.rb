@@ -13,7 +13,9 @@ module EndOfLife
             line = line.split("#").first.strip # inline comments
             tool, version, * = line.split
 
-            next if version == "latest"
+            # Skip a version that is not a number, such as "lts" or "system".
+            # The file still holds versions for the other tools.
+            next unless version && Gem::Version.correct?(version)
 
             [tool, Gem::Version.new(version)]
           }
