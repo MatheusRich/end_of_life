@@ -57,85 +57,79 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
     end
   end
 
-  describe "#search" do
-    it "returns a success monad on successful API call" do
-      with_env GITHUB_TOKEN: "something" do
-        client = build_client
-        allow(Octokit::Client).to receive(:new).and_return(client)
+  describe ".search" do
+    it "returns the full name of each repository the code search finds" do
+      stub_github_client(found: ["thoughtbot/paperclip", "thoughtbot/clearance"])
 
+      result = search_with(user: "thoughtbot")
+
+      expect(result.value!).to eq ["thoughtbot/paperclip", "thoughtbot/clearance"]
+    end
+
+    it "returns no names when the code search finds nothing" do
+      stub_github_client
+
+      result = search_with(user: "thoughtbot", organizations: nil, repository: nil)
+
+      expect(result.value!).to be_empty
+    end
+
+    it "fails when GITHUB_TOKEN is not set", :aggregate_failures do
+      with_env GITHUB_TOKEN: nil do
         result = EndOfLife::Repository.search({product: EndOfLife::Product.find("ruby")})
 
-        expect(result).to be_success
+        expect(result).to be_failure
+        expect(result.failure).to eq "Please set GITHUB_TOKEN environment variable"
       end
-    end
-
-    context "when GITHUB_TOKEN env is not set", :aggregate_failures do
-      it "returns a failure monad" do
-        with_env GITHUB_TOKEN: nil do
-          result = EndOfLife::Repository.search({product: EndOfLife::Product.find("ruby")})
-
-          expect(result).to be_failure
-          expect(result.failure).to eq "Please set GITHUB_TOKEN environment variable"
-        end
-      end
-    end
-
-    it "does not fetch repositories when the code search finds nothing", :aggregate_failures do
-      client = build_client
-      allow(Octokit::Client).to receive(:new).and_return(client)
-
-      search_with(client, user: "thoughtbot", organizations: nil, repository: nil)
-
-      expect(client).to have_received(:search_code).once
-      expect(client).not_to have_received(:post)
     end
 
     # Without this the scan reads the first page of code search results only.
     it "reads every page of the code search" do
-      client = build_client
-      allow(Octokit::Client).to receive(:new).and_return(client)
+      client = stub_github_client
 
-      search_with(client, user: "thoughtbot")
+      search_with(user: "thoughtbot")
 
       expect(client).to have_received(:auto_paginate=).with(true)
     end
+  end
 
-    it "returns the search results" do
-      client = build_client(search_results: [repo_result("thoughtbot/paperclip"), repo_result("thoughtbot/archived", archived: true)])
-      allow(Octokit::Client).to receive(:new).and_return(client)
+  describe ".fetch" do
+    it "fails when GITHUB_TOKEN is not set" do
+      with_env GITHUB_TOKEN: nil do
+        result = EndOfLife::Repository.fetch(["thoughtbot/paperclip"], {product: EndOfLife::Product.find("ruby")})
 
-      repositories = search_with(client, user: "thoughtbot", skip_archived: true)
+        expect(result).to be_failure
+      end
+    end
 
-      expect(repositories.value!.map(&:full_name)).to eq ["thoughtbot/paperclip"]
+    it "skips archived repositories" do
+      stub_github_client(archived: ["thoughtbot/archived"])
+
+      result = fetch_with(["thoughtbot/paperclip", "thoughtbot/archived"], skip_archived: true)
+
+      expect(result.value!.map(&:full_name)).to eq ["thoughtbot/paperclip"]
+    end
+
+    it "keeps archived repositories when asked to" do
+      stub_github_client(archived: ["thoughtbot/archived"])
+
+      result = fetch_with(["thoughtbot/paperclip", "thoughtbot/archived"], skip_archived: false)
+
+      expect(result.value!.map(&:full_name)).to eq ["thoughtbot/paperclip", "thoughtbot/archived"]
     end
 
     it "returns the url of each repository" do
-      client = build_client(search_results: [repo_result("thoughtbot/paperclip")])
-      allow(Octokit::Client).to receive(:new).and_return(client)
+      stub_github_client
 
-      repositories = search_with(client, user: "thoughtbot")
+      result = fetch_with(["thoughtbot/paperclip"])
 
-      expect(repositories.value!.first.url).to eq "https://github.com/thoughtbot/paperclip"
-    end
-
-    it "returns the version files for each repository" do
-      client = build_client(
-        search_results: [repo_result("thoughtbot/paperclip")],
-        files: {"thoughtbot/paperclip" => {".ruby-version" => "2.5.0"}}
-      )
-      allow(Octokit::Client).to receive(:new).and_return(client)
-
-      repositories = search_with(client, user: "thoughtbot")
-
-      expect(repositories.value!.first.min_release_of(EndOfLife::Product.find("ruby")))
-        .to eq(EndOfLife::Product::Release.ruby("2.5.0"))
+      expect(result.value!.first.url).to eq "https://github.com/thoughtbot/paperclip"
     end
 
     # If the alias that asks for a file and the one that reads it disagree,
     # every file gets another file's content.
     it "gives each file the content of the path it asked for", :aggregate_failures do
-      client = build_client(
-        search_results: [repo_result("thoughtbot/paperclip")],
+      stub_github_client(
         files: {
           "thoughtbot/paperclip" => {
             ".ruby-version" => "3.1.0",
@@ -143,9 +137,8 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
           }
         }
       )
-      allow(Octokit::Client).to receive(:new).and_return(client)
 
-      repository = search_with(client, user: "thoughtbot").value!.first
+      repository = fetch_with(["thoughtbot/paperclip"]).value!.first
 
       expect(repository.files.map { |file| [file.path, file.read] })
         .to contain_exactly([".ruby-version", "3.1.0"], [".tool-versions", "ruby 2.5.0"])
@@ -157,14 +150,12 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
     # at the end, so the truncated text would hide the version.
     it "reads the whole file when GitHub truncates it", :aggregate_failures do
       whole_lockfile = "GEM\n  specs:\n\nRUBY VERSION\n   ruby 2.5.0p57\n"
-      client = build_client(
-        search_results: [repo_result("thoughtbot/paperclip")],
+      stub_github_client(
         files: {"thoughtbot/paperclip" => {"Gemfile.lock" => {text: "GEM\n  specs:\n", isTruncated: true}}},
         raw_files: {["thoughtbot/paperclip", "Gemfile.lock"] => whole_lockfile}
       )
-      allow(Octokit::Client).to receive(:new).and_return(client)
 
-      repository = search_with(client, user: "thoughtbot").value!.first
+      repository = fetch_with(["thoughtbot/paperclip"]).value!.first
 
       expect(repository.files.map(&:read)).to eq [whole_lockfile]
       expect(repository.min_release_of(EndOfLife::Product.find("ruby")))
@@ -172,8 +163,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
     end
 
     it "drops a truncated file when the whole file cannot be read" do
-      client = build_client(
-        search_results: [repo_result("thoughtbot/paperclip")],
+      stub_github_client(
         files: {
           "thoughtbot/paperclip" => {
             "Gemfile.lock" => {text: "GEM\n", isTruncated: true},
@@ -181,67 +171,45 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
           }
         }
       )
-      allow(Octokit::Client).to receive(:new).and_return(client)
 
-      repository = search_with(client, user: "thoughtbot").value!.first
+      repository = fetch_with(["thoughtbot/paperclip"]).value!.first
 
       expect(repository.files.map(&:path)).to eq [".ruby-version"]
     end
 
     it "skips a repository that GitHub cannot read" do
-      client = build_client(
-        search_results: [repo_result("thoughtbot/paperclip"), repo_result("thoughtbot/gone")],
-        unreadable: ["thoughtbot/gone"]
-      )
-      allow(Octokit::Client).to receive(:new).and_return(client)
+      stub_github_client(unreadable: ["thoughtbot/gone"])
 
-      repositories = search_with(client, user: "thoughtbot")
+      result = fetch_with(["thoughtbot/paperclip", "thoughtbot/gone"])
 
-      expect(repositories.value!.map(&:full_name)).to eq ["thoughtbot/paperclip"]
+      expect(result.value!.map(&:full_name)).to eq ["thoughtbot/paperclip"]
     end
 
     it "asks for every file the product detector knows about" do
-      client = build_client(search_results: [repo_result("thoughtbot/paperclip")])
-      allow(Octokit::Client).to receive(:new).and_return(client)
+      stub_github_client
 
-      search_with(client, user: "thoughtbot")
+      fetch_with(["thoughtbot/paperclip"])
 
-      query = JSON.parse(captured_graphql_bodies(client).first).fetch("query")
-      expect(query).to include(*ruby_relevant_files.map { |file| "HEAD:#{file}" })
-    end
-
-    context "when not skipping archived repositories" do
-      it "returns the search results" do
-        client = build_client(search_results: [repo_result("thoughtbot/paperclip"), repo_result("thoughtbot/archived", archived: true)])
-        allow(Octokit::Client).to receive(:new).and_return(client)
-
-        repositories = search_with(client, user: "thoughtbot", skip_archived: false)
-
-        expect(repositories.value!.map(&:full_name)).to eq ["thoughtbot/paperclip", "thoughtbot/archived"]
-      end
+      expect(graphql_queries.first).to include(*ruby_relevant_files.map { |file| "HEAD:#{file}" })
     end
 
     # One request for every repository built a URL that GitHub rejects with a
     # 414 once an organization has a few hundred of them.
     it "splits large result sets into batches", :aggregate_failures do
-      search_results = 60.times.map { |i| repo_result("thoughtbot/repo-#{i}") }
-      client = build_client(search_results: search_results)
-      allow(Octokit::Client).to receive(:new).and_return(client)
+      stub_github_client
 
-      repositories = search_with(client, user: "thoughtbot")
+      result = fetch_with(60.times.map { |i| "thoughtbot/repo-#{i}" })
 
-      expect(repositories.value!.size).to eq 60
-      expect(captured_graphql_bodies(client).size).to eq 3
+      expect(result.value!.size).to eq 60
+      expect(graphql_queries.size).to eq 3
     end
 
     it "fetches batches concurrently" do
       seconds_of_sleep = 0.5
-      search_results = 60.times.map { |i| repo_result("thoughtbot/repo-#{i}") }
-      client = build_client(search_results: search_results, delay: seconds_of_sleep)
-      allow(Octokit::Client).to receive(:new).and_return(client)
+      stub_github_client(delay: seconds_of_sleep)
       EndOfLife::Product.find("ruby").all_releases # warm up, so the API call is not timed
 
-      elapsed = time_of { search_with(client, user: "thoughtbot") }
+      elapsed = time_of { fetch_with(60.times.map { |i| "thoughtbot/repo-#{i}" }) }
 
       expect(elapsed).to be_within(0.2).of(seconds_of_sleep)
     end
@@ -249,14 +217,20 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
 
   private
 
-  def search_with(_client, **options)
+  def ruby_relevant_files
+    EndOfLife::Product.find("ruby").version_detector.relevant_files
+  end
+
+  def search_with(**options)
     with_env GITHUB_TOKEN: "FOO" do
       EndOfLife::Repository.search({product: EndOfLife::Product.find("ruby"), **options})
     end
   end
 
-  def ruby_relevant_files
-    EndOfLife::Product.find("ruby").version_detector.relevant_files
+  def fetch_with(full_names, **options)
+    with_env GITHUB_TOKEN: "FOO" do
+      EndOfLife::Repository.fetch(full_names, {product: EndOfLife::Product.find("ruby"), **options})
+    end
   end
 
   def build_repository(contents = {})
@@ -267,28 +241,21 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
     )
   end
 
-  def repo_result(full_name, archived: false)
-    OpenStruct.new(full_name: full_name, archived: archived)
-  end
-
   def time_of
     started_at = Process.clock_gettime(Process::CLOCK_MONOTONIC)
     yield
     Process.clock_gettime(Process::CLOCK_MONOTONIC) - started_at
   end
 
-  def captured_graphql_bodies(client)
-    client.instance_variable_get(:@graphql_bodies)
-  end
+  attr_reader :graphql_queries
 
-  def build_client(search_results: [], files: {}, delay: nil, unreadable: [], raw_files: {})
+  def stub_github_client(found: [], files: {}, archived: [], unreadable: [], raw_files: {}, delay: nil)
+    @graphql_queries = []
     client = Object.new
-    client.instance_variable_set(:@graphql_bodies, [])
 
-    code_search_response = OpenStruct.new(
-      items: search_results.map { |result| OpenStruct.new(repository: OpenStruct.new(full_name: result.full_name)) }
+    allow(client).to receive(:search_code).and_return(
+      OpenStruct.new(items: found.map { |name| OpenStruct.new(repository: OpenStruct.new(full_name: name)) })
     )
-    allow(client).to receive(:search_code).and_return(code_search_response)
     allow(client).to receive(:auto_paginate=).with(true)
     allow(client).to receive(:user).and_return(OpenStruct.new(login: "test_user"))
     # The JSON media type answers with an empty body over 1 MB, so only the raw
@@ -299,34 +266,34 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
       raw_files.fetch([full_name, path]) { raise Octokit::NotFound }
     end
     allow(client).to receive(:post) do |_path, body|
-      client.instance_variable_get(:@graphql_bodies) << body
+      query = JSON.parse(body).fetch("query")
+      @graphql_queries << query
       sleep(delay) if delay
 
-      graphql_response_for(body, search_results, files, unreadable)
+      graphql_response_for(query, files, archived, unreadable)
     end
+    allow(Octokit::Client).to receive(:new).and_return(client)
 
     client
   end
 
-  # Reads the aliases out of the query, so the test cannot assume the code
-  # labels a file the way the test expects.
-  def graphql_response_for(body, search_results, files, unreadable)
-    query = JSON.parse(body).fetch("query")
-    batch = search_results.select { |result| query.include?(%(name: "#{result.full_name.split("/", 2).last}")) }
+  # Reads the repositories and the file aliases out of the query, so the test
+  # cannot assume the code labels them the way the test expects.
+  def graphql_response_for(query, files, archived, unreadable)
+    full_names = query.scan(/repository\(owner: "(.+?)", name: "(.+?)"\)/).map { |owner, name| "#{owner}/#{name}" }
     aliases = query.scan(/(\w+): object\(expression: "HEAD:(.+?)"\)/)
 
-    data = batch.each_with_index.to_h { |result, index|
-      next [:"repository#{index}", nil] if unreadable.include?(result.full_name)
+    data = full_names.each_with_index.to_h { |full_name, index|
+      next [:"repository#{index}", nil] if unreadable.include?(full_name)
 
-      repository_files = files.fetch(result.full_name, {})
-      blobs = aliases.to_h { |name, path| [name.to_sym, blob_for(repository_files[path])] }
+      blobs = aliases.to_h { |name, path| [name.to_sym, blob_for(files.dig(full_name, path))] }
 
       [
         :"repository#{index}",
         {
-          nameWithOwner: result.full_name,
-          url: "https://github.com/#{result.full_name}",
-          isArchived: result.archived
+          nameWithOwner: full_name,
+          url: "https://github.com/#{full_name}",
+          isArchived: archived.include?(full_name)
         }.merge(blobs)
       ]
     }

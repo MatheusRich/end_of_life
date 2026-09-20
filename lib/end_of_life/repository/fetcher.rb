@@ -9,10 +9,10 @@ module EndOfLife
       RAW_CONTENT = "application/vnd.github.raw"
       MAX_CONCURRENT_BATCHES = 10
 
-      def initialize(github_client:, product:, skip_archived:)
+      def initialize(github_client, options)
         @github_client = github_client
-        @product = product
-        @skip_archived = skip_archived
+        @product = options[:product]
+        @skip_archived = options[:skip_archived]
       end
 
       def call(full_names)
@@ -95,6 +95,10 @@ module EndOfLife
       end
 
       def query_for(full_names)
+        fields = file_aliases.map { |name, path|
+          "  #{name}: object(expression: #{"HEAD:#{path}".to_json}) { ... on Blob { isTruncated text } }"
+        }.join("\n")
+
         repositories = full_names.each_with_index.map { |full_name, index|
           owner, name = full_name.split("/", 2)
 
@@ -103,18 +107,12 @@ module EndOfLife
               nameWithOwner
               url
               isArchived
-            #{file_fields}
+            #{fields}
             }
           GRAPHQL
         }
 
         "query {\n#{repositories.join}}"
-      end
-
-      def file_fields
-        @file_fields ||= file_aliases.map { |name, path|
-          "  #{name}: object(expression: #{"HEAD:#{path}".to_json}) { ... on Blob { isTruncated text } }"
-        }.join("\n")
       end
     end
   end

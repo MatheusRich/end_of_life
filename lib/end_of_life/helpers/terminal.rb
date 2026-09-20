@@ -14,8 +14,8 @@ module EndOfLife
       result = nil
 
       new_spinner(message).run do |spinner|
-        result = yield(spinner)
-        spinner.success
+        result = yield
+        result.failure? ? spinner.error : spinner.success
       end
 
       result
