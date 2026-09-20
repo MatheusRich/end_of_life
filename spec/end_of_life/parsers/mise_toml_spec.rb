@@ -31,7 +31,7 @@ RSpec.describe EndOfLife::Parsers::MiseToml do
     end
 
     context "with invalid TOML content" do
-      it "raises a PerfectTOML::ParseError" do
+      it "returns nil for invalid TOML" do
         invalid_toml_content = <<~TOML
           [tools
           ruby = "3.1.2"
