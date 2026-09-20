@@ -37,7 +37,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "argument_parser", "~> 0.1.0"
   spec.add_dependency "async"
-  spec.add_dependency "base64"
   spec.add_dependency "bundler", ">= 2.7.2", "< 3"
   spec.add_dependency "dry-monads", "~> 1.3"
   spec.add_dependency "perfect_toml", "~> 0.9.0"
