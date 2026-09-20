@@ -2,12 +2,13 @@
 
 This tool lists GitHub repositories using end-of-life software.
 
-We currently support Ruby, Rails, and Node.js. If you want to add support for
-more products, please check out the [Contributing](#contributing) section.
+We currently support Ruby, Rails, Node.js, and Python. If you want to add
+support for more products, please check out the [Contributing](#contributing)
+section.
 
 ## Installation
 
-## As a gem
+### As a gem
 
 If you have Ruby installed, you can install End of Life as a gem with:
 
@@ -15,7 +16,7 @@ If you have Ruby installed, you can install End of Life as a gem with:
 gem install end_of_life
 ```
 
-## Homebrew
+### Homebrew
 
 If you use Homebrew, you can install it with:
 
@@ -28,7 +29,7 @@ The formula serves macOS on Apple Silicon and on Intel, and Linux on arm64 and
 on x86_64. It installs the same binaries as the [Standalone
 binary](#standalone-binary) section, so the same platform requirements apply.
 
-## Standalone binary
+### Standalone binary
 
 Every release holds a binary for each platform. The binary carries its own Ruby
 runtime, so you need neither Ruby nor Homebrew.
@@ -174,12 +175,33 @@ $ end_of_life check ruby@$(ruby -v | awk '{print $2}') --max-eol-days-away=365
 └─────────────────┴──────────┴──────────────────────────┘
 ```
 
+### Listing the EOL schedule for a product
+
+> [!IMPORTANT]
+> You don't need a GitHub token to use this command.
+
+The `end_of_life schedule` command lists every release of a product, with its
+status and its EOL date. The newest release comes first:
+
+```sh
+$ end_of_life schedule ruby
+┌─────────────────┬───────────┬───────────────────────────┐
+│ Product Release │ Status    │ EOL Date                  │
+├─────────────────┼───────────┼───────────────────────────┤
+│ ruby@4.0.7      │ Supported │ 2029-03-31 (in 2 years)   │
+│ ruby@3.4.10     │ Supported │ 2028-03-31 (in 1 year)    │
+│ ruby@3.3.12     │ Supported │ 2027-03-31 (in 6 months)  │
+│ ruby@3.2.11     │ EOL       │ 2026-03-31 (5 months ago) │
+│ ...             │ ...       │ ...                       │
+└─────────────────┴───────────┴───────────────────────────┘
+```
+
 ## How it works
 
 This gem fetches all your GitHub repositories that contain code for the
 specified product, then searches for files that may contain version information.
 For Ruby, those files include `.ruby-version`, `Gemfile`, `Gemfile.lock`,
-`mise.toml`, and `.tool-version`. End of Life parses these files and extracts
+`mise.toml`, and `.tool-versions`. End of Life parses these files and extracts
 the minimum version used in each repository.
 
 The EOL version information is provided by https://endoflife.date/.
