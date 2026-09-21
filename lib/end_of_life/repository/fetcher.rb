@@ -31,8 +31,6 @@ module EndOfLife
 
       attr_reader :github_client, :product, :skip_archived, :visibility
 
-      # Answers one entry for each batch: its repositories, or nil when the
-      # batch failed.
       def fetch_in_batches(full_names)
         Sync do
           semaphore = Async::Semaphore.new(MAX_CONCURRENT_BATCHES)
@@ -46,8 +44,6 @@ module EndOfLife
 
       def every_batch_failed?(results) = !results.empty? && results.none?
 
-      # Answers nil when the batch fails, so one bad batch does not throw away
-      # the batches that succeeded.
       def fetch(full_names)
         response = github_client.post("/graphql", {query: query_for(full_names)}.to_json)
 
@@ -75,9 +71,7 @@ module EndOfLife
       end
 
       def build(repository)
-        return if skip_archived && repository[:isArchived]
-        return if visibility == :public && repository[:isPrivate]
-        return if visibility == :private && !repository[:isPrivate]
+        return unless wanted?(repository)
 
         Repository.new(
           full_name: repository[:nameWithOwner],
@@ -86,18 +80,30 @@ module EndOfLife
         )
       end
 
+      # The code search cannot express these options, so the fetch is where the
+      # scan drops the repositories that the user does not want.
+      def wanted?(repository)
+        return false if skip_archived && repository[:isArchived]
+
+        case visibility
+        when :public then !repository[:isPrivate]
+        when :private then repository[:isPrivate]
+        else true
+        end
+      end
+
       def files_in(repository)
         file_aliases.filter_map do |name, path|
-          blob = repository[name] or next
-
-          content = if blob[:isTruncated]
-            whole_file(repository[:nameWithOwner], path) or next
-          else
-            blob[:text].to_s
-          end
+          content = content_of(repository, name, path) or next
 
           InMemoryFile.new(path, content)
         end
+      end
+
+      def content_of(repository, name, path)
+        blob = repository[name] or return
+
+        blob[:isTruncated] ? whole_file(repository[:nameWithOwner], path) : blob[:text].to_s
       end
 
       # GraphQL cuts a blob over ~512 KB, and a Gemfile.lock holds its RUBY
@@ -118,25 +124,29 @@ module EndOfLife
       end
 
       def query_for(full_names)
-        fields = file_aliases.map { |name, path|
-          "  #{name}: object(expression: #{"HEAD:#{path}".to_json}) { ... on Blob { isTruncated text } }"
-        }.join("\n")
-
-        repositories = full_names.each_with_index.map { |full_name, index|
-          owner, name = full_name.split("/", 2)
-
-          <<~GRAPHQL
-            repository#{index}: repository(owner: #{owner.to_json}, name: #{name.to_json}) {
-              nameWithOwner
-              url
-              isArchived
-              isPrivate
-            #{fields}
-            }
-          GRAPHQL
-        }
+        repositories = full_names.each_with_index.map { |full_name, index| repository_query(full_name, index) }
 
         "query {\n#{repositories.join}}"
+      end
+
+      def repository_query(full_name, index)
+        owner, name = full_name.split("/", 2)
+
+        <<~GRAPHQL
+          repository#{index}: repository(owner: #{owner.to_json}, name: #{name.to_json}) {
+            nameWithOwner
+            url
+            isArchived
+            isPrivate
+          #{blob_fields}
+          }
+        GRAPHQL
+      end
+
+      def blob_fields
+        @blob_fields ||= file_aliases.map { |name, path|
+          "  #{name}: object(expression: #{"HEAD:#{path}".to_json}) { ... on Blob { isTruncated text } }"
+        }.join("\n")
       end
     end
   end
