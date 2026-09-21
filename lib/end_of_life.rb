@@ -3,7 +3,7 @@
 require "zeitwerk"
 
 Zeitwerk::Loader.for_gem.tap { |it|
-  it.inflector.inflect("cli" => "CLI", "api" => "API")
+  it.inflector.inflect("cli" => "CLI", "api" => "API", "github" => "GitHub")
 }.setup
 
 module EndOfLife

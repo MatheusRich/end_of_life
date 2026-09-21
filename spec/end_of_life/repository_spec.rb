@@ -220,6 +220,37 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
       expect(graphql_queries.size).to eq 3
     end
 
+    it "answers no repository when there is nothing to fetch" do
+      stub_github_client
+
+      expect(fetch_with([]).value!).to be_empty
+    end
+
+    it "keeps the batches that succeed when one batch fails", :capture_io do
+      stub_github_client(failed_batch: "thoughtbot/repo-30")
+
+      result = fetch_with(60.times.map { |i| "thoughtbot/repo-#{i}" })
+
+      expect(result.value!.size).to eq 35
+    end
+
+    it "reports the repositories it skips when a batch fails", :capture_io do
+      stub_github_client(failed_batch: "thoughtbot/repo-30")
+
+      fetch_with(60.times.map { |i| "thoughtbot/repo-#{i}" })
+
+      expect($stderr.string).to include "Skipped 25 repositories", "502"
+    end
+
+    it "fails when every batch fails, rather than report a clean scan", :aggregate_failures, :capture_io do
+      stub_github_client(failed_batch: "thoughtbot/paperclip")
+
+      result = fetch_with(["thoughtbot/paperclip"])
+
+      expect(result).to be_failure
+      expect(result.failure).to eq "GitHub answered no batch of repositories"
+    end
+
     it "fetches batches concurrently" do
       seconds_of_sleep = 0.5
       stub_github_client(delay: seconds_of_sleep)
@@ -257,15 +288,9 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
     )
   end
 
-  def time_of
-    started_at = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-    yield
-    Process.clock_gettime(Process::CLOCK_MONOTONIC) - started_at
-  end
-
   attr_reader :graphql_queries
 
-  def stub_github_client(found: [], files: {}, archived: [], private_repos: [], unreadable: [], raw_files: {}, delay: nil)
+  def stub_github_client(found: [], files: {}, archived: [], private_repos: [], unreadable: [], raw_files: {}, delay: nil, failed_batch: nil)
     @graphql_queries = []
     client = Object.new
 
@@ -285,6 +310,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
       query = JSON.parse(body).fetch("query")
       @graphql_queries << query
       sleep(delay) if delay
+      raise bad_gateway if full_names_in(query).include?(failed_batch)
 
       graphql_response_for(query, files, archived, private_repos, unreadable)
     end
@@ -293,10 +319,20 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
     client
   end
 
+  def full_names_in(query)
+    query.scan(/repository\(owner: "(.+?)", name: "(.+?)"\)/).map { |owner, name| "#{owner}/#{name}" }
+  end
+
+  def bad_gateway
+    Octokit::BadGateway.from_response(
+      method: :post, url: "https://api.github.com/graphql", status: 502, body: ""
+    )
+  end
+
   # Reads the repositories and the file aliases out of the query, so the test
   # cannot assume the code labels them the way the test expects.
   def graphql_response_for(query, files, archived, private_repos, unreadable)
-    full_names = query.scan(/repository\(owner: "(.+?)", name: "(.+?)"\)/).map { |owner, name| "#{owner}/#{name}" }
+    full_names = full_names_in(query)
     aliases = query.scan(/(\w+): object\(expression: "HEAD:(.+?)"\)/)
 
     data = full_names.each_with_index.to_h { |full_name, index|

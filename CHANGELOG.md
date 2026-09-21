@@ -4,6 +4,13 @@
 - [BUGFIX] Read a version file in full when GitHub truncates it.
 - [BUGFIX] Ignore `.tool-versions` entries whose version is not a number, such
   as `nodejs lts`. They stopped the scan before.
+- [BUGFIX] Fix `--public-only` and `--private-only` finding nothing.
+- [BUGFIX] Keep the repositories that `scan` reads when one batch fails. One
+  transient error threw away the whole scan before.
+- [BUGFIX] Retry the batch request that `scan` sends, and wait between the
+  tries. GitHub answers a 502 now and then, which ended the scan before.
+- [BUGFIX] Report the status that GitHub answers, such as `401 - Bad
+  credentials`. Some machines reported `wrong number of arguments` instead.
 
 ## [1.0.0.alpha.1] - 2026-09-19
 

@@ -24,6 +24,12 @@ RSpec::Matchers.define_negated_matcher :raise_no_error, :raise_error
 
 module EndOfLife
   module TestHelpers
+    def time_of
+      started_at = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      yield
+      Process.clock_gettime(Process::CLOCK_MONOTONIC) - started_at
+    end
+
     def with_env(...)
       ClimateControl.modify(...)
     end

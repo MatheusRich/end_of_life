@@ -1,24 +1,10 @@
-require "dry-monads"
-require "octokit"
-
 module EndOfLife
   class Repository
     class << self
-      include Dry::Monads[:result]
+      # Returns the full name of each repository that may use the product.
+      def search(options) = GitHub.connect { |github| Search.new(github, options).result }
 
-      def search(options) = with_client { |github| Search.new(github, options).result }
-
-      def fetch(full_names, options) = with_client { |github| Fetcher.new(github, options).call(full_names) }
-
-      private
-
-      def with_client
-        token = ENV["GITHUB_TOKEN"] or return Failure("Please set GITHUB_TOKEN environment variable")
-
-        Success(yield(Octokit::Client.new(access_token: token)))
-      rescue => e
-        Failure("Unexpected error: #{e}")
-      end
+      def fetch(full_names, options) = GitHub.connect { |github| Fetcher.new(github, options).call(full_names) }
     end
 
     attr_reader :full_name, :url, :files

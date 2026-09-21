@@ -1,6 +1,7 @@
 require "async"
 require "async/semaphore"
 require "json"
+require "octokit"
 
 module EndOfLife
   class Repository
@@ -17,24 +18,43 @@ module EndOfLife
       end
 
       def call(full_names)
-        Sync do
-          semaphore = Async::Semaphore.new(MAX_CONCURRENT_BATCHES)
+        results = fetch_in_batches(full_names)
 
-          full_names
-            .each_slice(BATCH_SIZE)
-            .map { |batch| semaphore.async { fetch(batch) } }
-            .flat_map(&:wait)
-        end
+        # A report that lists no repository reads the same as a clean scan, so
+        # a scan that reads nothing must fail instead.
+        raise GitHub::Error, "GitHub answered no batch of repositories" if every_batch_failed?(results)
+
+        results.compact.flatten
       end
 
       private
 
       attr_reader :github_client, :product, :skip_archived, :visibility
 
+      # Answers one entry for each batch: its repositories, or nil when the
+      # batch failed.
+      def fetch_in_batches(full_names)
+        Sync do
+          semaphore = Async::Semaphore.new(MAX_CONCURRENT_BATCHES)
+
+          full_names
+            .each_slice(BATCH_SIZE)
+            .map { |batch| semaphore.async { fetch(batch) } }
+            .map(&:wait)
+        end
+      end
+
+      def every_batch_failed?(results) = !results.empty? && results.none?
+
+      # Answers nil when the batch fails, so one bad batch does not throw away
+      # the batches that succeeded.
       def fetch(full_names)
         response = github_client.post("/graphql", {query: query_for(full_names)}.to_json)
 
         repositories_in(response).filter_map { |repository| build(repository) }
+      rescue GitHub::Error, Faraday::Error, Octokit::Error => e
+        warn "\nSkipped #{full_names.size} repositories: #{e.message}"
+        nil
       end
 
       # GitHub sends a null entry for a repository it cannot read, such as one
@@ -43,7 +63,7 @@ module EndOfLife
         body = response.to_h
         data = body[:data]
 
-        raise error_in(body) if data.nil?
+        raise GitHub::Error, error_in(body) if data.nil?
 
         data.to_h.values.compact
       end
