@@ -110,6 +110,22 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
       expect(result.value!.map(&:full_name)).to eq ["thoughtbot/paperclip"]
     end
 
+    it "keeps only public repositories when asked to" do
+      stub_github_client(private_repos: ["thoughtbot/secret"])
+
+      result = fetch_with(["thoughtbot/paperclip", "thoughtbot/secret"], visibility: :public)
+
+      expect(result.value!.map(&:full_name)).to eq ["thoughtbot/paperclip"]
+    end
+
+    it "keeps only private repositories when asked to" do
+      stub_github_client(private_repos: ["thoughtbot/secret"])
+
+      result = fetch_with(["thoughtbot/paperclip", "thoughtbot/secret"], visibility: :private)
+
+      expect(result.value!.map(&:full_name)).to eq ["thoughtbot/secret"]
+    end
+
     it "keeps archived repositories when asked to" do
       stub_github_client(archived: ["thoughtbot/archived"])
 
@@ -249,7 +265,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
 
   attr_reader :graphql_queries
 
-  def stub_github_client(found: [], files: {}, archived: [], unreadable: [], raw_files: {}, delay: nil)
+  def stub_github_client(found: [], files: {}, archived: [], private_repos: [], unreadable: [], raw_files: {}, delay: nil)
     @graphql_queries = []
     client = Object.new
 
@@ -270,7 +286,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
       @graphql_queries << query
       sleep(delay) if delay
 
-      graphql_response_for(query, files, archived, unreadable)
+      graphql_response_for(query, files, archived, private_repos, unreadable)
     end
     allow(Octokit::Client).to receive(:new).and_return(client)
 
@@ -279,7 +295,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
 
   # Reads the repositories and the file aliases out of the query, so the test
   # cannot assume the code labels them the way the test expects.
-  def graphql_response_for(query, files, archived, unreadable)
+  def graphql_response_for(query, files, archived, private_repos, unreadable)
     full_names = query.scan(/repository\(owner: "(.+?)", name: "(.+?)"\)/).map { |owner, name| "#{owner}/#{name}" }
     aliases = query.scan(/(\w+): object\(expression: "HEAD:(.+?)"\)/)
 
@@ -290,15 +306,24 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
 
       [
         :"repository#{index}",
-        {
-          nameWithOwner: full_name,
-          url: "https://github.com/#{full_name}",
-          isArchived: archived.include?(full_name)
-        }.merge(blobs)
+        metadata_for(full_name, archived, private_repos)
+          .select { |field, _| query.match?(/^\s*#{field}\s*$/) }
+          .merge(blobs)
       ]
     }
 
     {data: data, errors: unreadable.any? ? [{type: "NOT_FOUND", message: "Could not resolve to a Repository"}] : nil}
+  end
+
+  # Answers only the fields the query asks for, so a field the code stops
+  # requesting cannot keep working by accident.
+  def metadata_for(full_name, archived, private_repos)
+    {
+      nameWithOwner: full_name,
+      url: "https://github.com/#{full_name}",
+      isArchived: archived.include?(full_name),
+      isPrivate: private_repos.include?(full_name)
+    }
   end
 
   def blob_for(content)

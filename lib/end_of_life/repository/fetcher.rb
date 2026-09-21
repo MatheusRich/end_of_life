@@ -13,6 +13,7 @@ module EndOfLife
         @github_client = github_client
         @product = options[:product]
         @skip_archived = options[:skip_archived]
+        @visibility = options[:visibility]
       end
 
       def call(full_names)
@@ -28,7 +29,7 @@ module EndOfLife
 
       private
 
-      attr_reader :github_client, :product, :skip_archived
+      attr_reader :github_client, :product, :skip_archived, :visibility
 
       def fetch(full_names)
         response = github_client.post("/graphql", {query: query_for(full_names)}.to_json)
@@ -55,6 +56,8 @@ module EndOfLife
 
       def build(repository)
         return if skip_archived && repository[:isArchived]
+        return if visibility == :public && repository[:isPrivate]
+        return if visibility == :private && !repository[:isPrivate]
 
         Repository.new(
           full_name: repository[:nameWithOwner],
@@ -107,6 +110,7 @@ module EndOfLife
               nameWithOwner
               url
               isArchived
+              isPrivate
             #{fields}
             }
           GRAPHQL
