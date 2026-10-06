@@ -1,8 +1,5 @@
-require "dry-monads"
-
 module EndOfLife
   module Scanner
-    include Dry::Monads[:result]
     include Helpers::Terminal
     include Helpers::Text
     extend self
@@ -10,10 +7,12 @@ module EndOfLife
     def scan(product, options)
       options = options.merge(product:)
 
-      search_repositories(product, options)
-        .bind { |full_names| scan_repositories(full_names, product, options) }
-        .fmap { |repositories| output_report(repositories, product, options[:max_eol_date]) }
-        .or { |error| abort "\n#{error_msg(error)}" }
+      result = search_repositories(product, options)
+        .on_success { |full_names| scan_repositories(full_names, product, options) }
+
+      abort "\n#{error_msg(result.error)}" if result.failed?
+
+      output_report(result.value, product, options[:max_eol_date])
     end
 
     private
@@ -25,11 +24,11 @@ module EndOfLife
     end
 
     def scan_repositories(full_names, product, options)
-      return Success([]) if full_names.empty?
+      return Result::Success.new([]) if full_names.empty?
 
       with_loading_spinner("Scanning #{pluralize(full_names.size, "repository", "repositories")} for EOL #{product.label}...") do
-        Repository.fetch(full_names, options).fmap { |repositories|
-          repositories.filter { |repository| repository.using_eol?(product, at: options[:max_eol_date]) }
+        Repository.fetch(full_names, options).on_success { |repositories|
+          Result::Success.new(repositories.filter { |repository| repository.using_eol?(product, at: options[:max_eol_date]) })
         }
       end
     end

@@ -1,4 +1,3 @@
-require "dry-monads"
 require "faraday/retry"
 require "json"
 require "octokit"
@@ -29,16 +28,15 @@ module EndOfLife
     }.freeze
 
     extend self
-    include Dry::Monads[:result]
 
     def connect
-      token = ENV["GITHUB_TOKEN"] or return Failure("Please set GITHUB_TOKEN environment variable")
+      token = ENV["GITHUB_TOKEN"] or return Result::Failure.new("Please set GITHUB_TOKEN environment variable")
 
-      Success(yield(Octokit::Client.new(access_token: token, middleware: middleware)))
+      Result::Success.new(yield(Octokit::Client.new(access_token: token, middleware: middleware)))
     rescue Error, Octokit::Error => e
-      Failure(e.message)
+      Result::Failure.new(e.message)
     rescue => e
-      Failure("Unexpected error: #{e}")
+      Result::Failure.new("Unexpected error: #{e}")
     end
 
     private

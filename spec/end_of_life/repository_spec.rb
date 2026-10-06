@@ -63,7 +63,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
 
       result = search_with(user: "thoughtbot")
 
-      expect(result.value!).to eq ["thoughtbot/paperclip", "thoughtbot/clearance"]
+      expect(result.value).to eq ["thoughtbot/paperclip", "thoughtbot/clearance"]
     end
 
     it "returns no names when the code search finds nothing" do
@@ -71,15 +71,15 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
 
       result = search_with(user: "thoughtbot", organizations: nil, repository: nil)
 
-      expect(result.value!).to be_empty
+      expect(result.value).to be_empty
     end
 
     it "fails when GITHUB_TOKEN is not set", :aggregate_failures do
       with_env GITHUB_TOKEN: nil do
         result = EndOfLife::Repository.search({product: EndOfLife::Product.find("ruby")})
 
-        expect(result).to be_failure
-        expect(result.failure).to eq "Please set GITHUB_TOKEN environment variable"
+        expect(result).to be_failed
+        expect(result.error).to eq "Please set GITHUB_TOKEN environment variable"
       end
     end
 
@@ -98,7 +98,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
       with_env GITHUB_TOKEN: nil do
         result = EndOfLife::Repository.fetch(["thoughtbot/paperclip"], {product: EndOfLife::Product.find("ruby")})
 
-        expect(result).to be_failure
+        expect(result).to be_failed
       end
     end
 
@@ -107,7 +107,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
 
       result = fetch_with(["thoughtbot/paperclip", "thoughtbot/archived"], skip_archived: true)
 
-      expect(result.value!.map(&:full_name)).to eq ["thoughtbot/paperclip"]
+      expect(result.value.map(&:full_name)).to eq ["thoughtbot/paperclip"]
     end
 
     it "keeps only public repositories when asked to" do
@@ -115,7 +115,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
 
       result = fetch_with(["thoughtbot/paperclip", "thoughtbot/secret"], visibility: :public)
 
-      expect(result.value!.map(&:full_name)).to eq ["thoughtbot/paperclip"]
+      expect(result.value.map(&:full_name)).to eq ["thoughtbot/paperclip"]
     end
 
     it "keeps only private repositories when asked to" do
@@ -123,7 +123,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
 
       result = fetch_with(["thoughtbot/paperclip", "thoughtbot/secret"], visibility: :private)
 
-      expect(result.value!.map(&:full_name)).to eq ["thoughtbot/secret"]
+      expect(result.value.map(&:full_name)).to eq ["thoughtbot/secret"]
     end
 
     it "keeps archived repositories when asked to" do
@@ -131,7 +131,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
 
       result = fetch_with(["thoughtbot/paperclip", "thoughtbot/archived"], skip_archived: false)
 
-      expect(result.value!.map(&:full_name)).to eq ["thoughtbot/paperclip", "thoughtbot/archived"]
+      expect(result.value.map(&:full_name)).to eq ["thoughtbot/paperclip", "thoughtbot/archived"]
     end
 
     it "returns the url of each repository" do
@@ -139,7 +139,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
 
       result = fetch_with(["thoughtbot/paperclip"])
 
-      expect(result.value!.first.url).to eq "https://github.com/thoughtbot/paperclip"
+      expect(result.value.first.url).to eq "https://github.com/thoughtbot/paperclip"
     end
 
     # If the alias that asks for a file and the one that reads it disagree,
@@ -154,7 +154,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
         }
       )
 
-      repository = fetch_with(["thoughtbot/paperclip"]).value!.first
+      repository = fetch_with(["thoughtbot/paperclip"]).value.first
 
       expect(repository.files.map { |file| [file.path, file.read] })
         .to contain_exactly([".ruby-version", "3.1.0"], [".tool-versions", "ruby 2.5.0"])
@@ -171,7 +171,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
         raw_files: {["thoughtbot/paperclip", "Gemfile.lock"] => whole_lockfile}
       )
 
-      repository = fetch_with(["thoughtbot/paperclip"]).value!.first
+      repository = fetch_with(["thoughtbot/paperclip"]).value.first
 
       expect(repository.files.map(&:read)).to eq [whole_lockfile]
       expect(repository.min_release_of(EndOfLife::Product.find("ruby")))
@@ -188,7 +188,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
         }
       )
 
-      repository = fetch_with(["thoughtbot/paperclip"]).value!.first
+      repository = fetch_with(["thoughtbot/paperclip"]).value.first
 
       expect(repository.files.map(&:path)).to eq [".ruby-version"]
     end
@@ -198,7 +198,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
 
       result = fetch_with(["thoughtbot/paperclip", "thoughtbot/gone"])
 
-      expect(result.value!.map(&:full_name)).to eq ["thoughtbot/paperclip"]
+      expect(result.value.map(&:full_name)).to eq ["thoughtbot/paperclip"]
     end
 
     it "asks for every file the product detector knows about" do
@@ -216,14 +216,14 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
 
       result = fetch_with(60.times.map { |i| "thoughtbot/repo-#{i}" })
 
-      expect(result.value!.size).to eq 60
+      expect(result.value.size).to eq 60
       expect(graphql_queries.size).to eq 3
     end
 
     it "answers no repository when there is nothing to fetch" do
       stub_github_client
 
-      expect(fetch_with([]).value!).to be_empty
+      expect(fetch_with([]).value).to be_empty
     end
 
     it "keeps the batches that succeed when one batch fails", :capture_io do
@@ -231,7 +231,7 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
 
       result = fetch_with(60.times.map { |i| "thoughtbot/repo-#{i}" })
 
-      expect(result.value!.size).to eq 35
+      expect(result.value.size).to eq 35
     end
 
     it "reports the repositories it skips when a batch fails", :capture_io do
@@ -247,8 +247,8 @@ RSpec.describe EndOfLife::Repository, vcr: "products-ruby" do
 
       result = fetch_with(["thoughtbot/paperclip"])
 
-      expect(result).to be_failure
-      expect(result.failure).to eq "GitHub answered no batch of repositories"
+      expect(result).to be_failed
+      expect(result.error).to eq "GitHub answered no batch of repositories"
     end
 
     it "fetches batches concurrently" do

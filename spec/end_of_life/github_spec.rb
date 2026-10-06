@@ -20,6 +20,14 @@ RSpec.describe EndOfLife::GitHub do
     expect(elapsed).to be > 0.1
   end
 
+  it "fails with the message of an unexpected error" do
+    with_env GITHUB_TOKEN: "token" do
+      result = described_class.connect { raise "connection reset" }
+
+      expect(result.error).to eq "Unexpected error: connection reset"
+    end
+  end
+
   it "leaves the middleware stack of Octokit alone" do
     described_class.send(:middleware)
 

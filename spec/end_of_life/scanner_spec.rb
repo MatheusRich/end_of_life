@@ -4,7 +4,7 @@ RSpec.describe EndOfLife::Scanner do
   describe ".scan" do
     context "when the search finds no repository" do
       it "reports none of them", :capture_io do
-        allow(EndOfLife::Repository).to receive(:search).and_return(Dry::Monads::Success([]))
+        allow(EndOfLife::Repository).to receive(:search).and_return(EndOfLife::Result::Success.new([]))
 
         expect { scan_ruby }.to raise_no_error
         expect($stdout.string).to include("No repositories using EOL Ruby.")
@@ -33,7 +33,7 @@ RSpec.describe EndOfLife::Scanner do
     context "when Repository.search fails" do
       it "aborts with the error message" do
         allow(EndOfLife::Repository).to receive(:search).and_return(
-          Dry::Monads::Failure("API rate limit exceeded")
+          EndOfLife::Result::Failure.new("API rate limit exceeded")
         )
 
         expect { scan_ruby }.to abort_with(/API rate limit exceeded/)
@@ -43,10 +43,10 @@ RSpec.describe EndOfLife::Scanner do
     context "when Repository.fetch fails" do
       it "aborts with the error message" do
         allow(EndOfLife::Repository).to receive(:search).and_return(
-          Dry::Monads::Success(["thoughtbot/paperclip"])
+          EndOfLife::Result::Success.new(["thoughtbot/paperclip"])
         )
         allow(EndOfLife::Repository).to receive(:fetch).and_return(
-          Dry::Monads::Failure("Unexpected error: connection reset")
+          EndOfLife::Result::Failure.new("Unexpected error: connection reset")
         )
 
         expect { scan_ruby }.to abort_with(/connection reset/)
@@ -70,10 +70,10 @@ RSpec.describe EndOfLife::Scanner do
     }
 
     allow(EndOfLife::Repository).to receive(:search).and_return(
-      Dry::Monads::Success(versions_by_full_name.keys)
+      EndOfLife::Result::Success.new(versions_by_full_name.keys)
     )
     allow(EndOfLife::Repository).to receive(:fetch).and_return(
-      Dry::Monads::Success(repositories)
+      EndOfLife::Result::Success.new(repositories)
     )
   end
 end
